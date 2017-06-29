@@ -92,6 +92,14 @@ function createOutputPipe(input) {
 }
 
 function createWaitPipe(msec) {
+  return {
+    fn: function waitPipe(next) {
+      setTimeout(function() {
+        next()
+      }, msec)
+    },
+    input: ['next']
+  }
 }
 
 function createThrottlePipe(msec) {
