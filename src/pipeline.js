@@ -37,7 +37,7 @@ function attachPipelineFunctions(pipeline) {
   const pipes = []
 
   pipeline.input = function(input) {
-    var p = createPipe(pipline, FN_INPUT, input)
+    var p = createPipe(pipeline, FN_INPUT, input)
     pipes.push(p)
     return pipeline
   }
