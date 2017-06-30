@@ -1,3 +1,5 @@
+import { executePipe } from './pipe/executor'
+import { isPlainObject } from './store'
 import { createPipe, FN_WAIT, FN_INPUT, FN_OUTPUT, FN_THROTTLE } from './pipe/builder'
 
 
@@ -12,8 +14,105 @@ export default function createPipeline(name, store, definitions) {
    * Instance of pipeline
    */
   function pipeline() {
-    var args = Array.from(arguments)
+    // Do nothing where there's no pipe at all.
+    if (0 === _pipes.length)
+      return
 
+    /**
+     * Start from the first pipe of the pipeline.
+     * @type {Number}
+     */
+    var step = 0
+
+    /**
+     * Convert original function arguments to array.
+     * 
+     * @type {Array}
+     */
+    const _args = Array.from(arguments)
+
+    /**
+     * Make a shallow clone of the key/value store.
+     * 
+     * @type {Object}
+     */
+    const _rawStore = store.clone()
+
+
+    var previousPipeState
+
+    /**
+     * The pipeline execution function.
+     * @param  {[type]}   err   [description]
+     * @param  {[type]}   key   [description]
+     * @param  {[type]}   value [description]
+     * @return {Function}       [description]
+     */
+    var next = function next(err, key, value) {
+      if (previousPipeState && arguments.length > 1) {
+        // `next` could be called before the return of previous pipe so we need
+        // to set the `autoNext` flag of previous pipe state to false to avoid
+        // `double next`.
+        previousPipeState.autoNext = false
+
+        // We have more than one argument which means the previous pipe produced
+        // some output by calling `next`.  We need to merge this output with 
+        // rawStore before executing the next pipe.
+        mergeOutputWithRawStore(_rawStore, key, value)
+      }
+
+      // Save error to the raw store or get one from it.  This will make sure 
+      // error will be handled properly no matter how it was set.
+      if (err)
+        _rawStore.error = err
+      else
+        err = _rawStore.error
+
+      var pipe
+
+      if (err) {
+        // Throw the error if we don't have error handling function.
+        if ('function' !== typeof _rawStore.errorHandler) {
+          throwError(err, name, step, previousPipeState
+            && previousPipeState.fnName)
+        }
+
+        pipe = _rawStore.errorHandler
+      } else {
+        // Get current pipe and add 1 to the step.
+        pipe = _pipes[step++]
+      }
+
+      if (pipe) {
+        /**
+         * Object for holding execution state, result and other references
+         * of certain pipe For executing pipeline continously.
+         * 
+         * @type {Object}
+         */
+        const pipeState = {
+          ...pipe,
+          next: next,
+          result: undefined,
+          fnReturned: false
+        }
+
+        /**
+         * Keep a reference to pipeState for better error handling.
+         * @type {Object}
+         */
+        previousPipeState = pipeState
+
+        // Excute the pipe.
+        executePipe(err, _args, store, _rawStore, pipeState)
+      }
+    }
+
+    // Save next to the raw store so pipes could retrieve it as input.
+    _rawStore.next = next
+
+    // Start executing the chain
+    next()
   }
 
   pipeline.instanceOfAlfaPipeline = true
@@ -25,6 +124,8 @@ export default function createPipeline(name, store, definitions) {
   } else {
     _pipes = attachPipelineFunctions(pipeline)
   }
+
+  return pipeline
 }
 
 
@@ -68,3 +169,27 @@ function attachPipelineFunctions(pipeline) {
   return pipes
 }
 
+
+function throwError(error, name, step, pipe) {
+  var ex = error
+
+  if ('string' === typeof error) {
+    ex = new Error()
+    ex.name = `Pipeline "${name}" error in step "${step}:${pipe || 'function'}":
+    \n(set "errorHandler" to handle this error inside your pipeline.)`
+    ex.message = error
+  }
+
+  throw ex
+}
+
+function mergeOutputWithRawStore(rawStore, key, value) {
+  if ('string' === key)
+    rawStore[key] = value
+
+  if (isPlainObject(key)) {
+    Object.keys(key).forEach(function(_key) {
+      rawStore[_key] = key[_key]
+    })
+  }
+}
