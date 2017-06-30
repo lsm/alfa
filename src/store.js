@@ -106,3 +106,6 @@ export default function createStore() {
    */
   return new Store()
 }
+export function isPlainObject(obj) {
+  return obj && 'object' === typeof obj && !Array.isArray(obj)
+}
