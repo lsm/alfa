@@ -68,6 +68,12 @@ export default function createStore() {
       }
     }
 
+    clone() {
+      const cloned = {}
+      Object.keys(_store).forEach(key => cloned[key] = _store[key])
+      return cloned
+    }
+
     /**
      * Call listening function when `set` was called on any of the `keys`.
      * 
