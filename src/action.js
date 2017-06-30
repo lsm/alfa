@@ -1,11 +1,11 @@
 import createPipeline from './pipeline'
 
-export default function createAction(alfa) {
+export default function createAction(store) {
   return function action(name, definitions, input, output) {
     if (!name || 'string' !== typeof name)
       throw new Error('`name` is required for creating an action.')
 
-    var pipeline = alfa.get(name)
+    var pipeline = store.get(name)
     if (pipeline)
       return pipeline
 
@@ -22,7 +22,7 @@ export default function createAction(alfa) {
     if (!pipeline)
       pipeline = createPipeline(definitions)
 
-    alfa.set(name, pipeline)
+    store.set(name, pipeline)
 
     return pipeline
   }

@@ -12,12 +12,11 @@ export function createAlfa(name) {
     alfa.name = name
 
   var store = createStore()
-  alfa.get = store.get
-  alfa.onKeysChanged = store.onKeysChanged
 
-  alfa.action = createAction(alfa)
-  alfa.provide = createProvide(alfa)
-  alfa.subscribe = createSubscribe(alfa)
+  alfa.get = store.get
+  alfa.action = createAction(store)
+  alfa.provide = createProvide(store)
+  alfa.subscribe = createSubscribe(store)
   alfa.exposeSet = function() {
     alfa.set = store.set
     return alfa

@@ -4,21 +4,21 @@
  * Public API
  */
 
-export function createProvide(alfa) {
-  return function provide(Component, ...keys) {
+export function createProvide(store) {
+  return function provide(Component, keys) {
     if (isReactComponent(Component))
-      return createAlfaProvidedComponent(alfa, Component, keys)
+      return createAlfaProvidedComponent(store, Component, keys)
     else
-      return createAlfaProvidedFunction(alfa, Component, keys)
+      return createAlfaProvidedFunction(store, Component, keys)
   }
 }
 
-export function createSubscribe(alfa) {
-  return function subscribe(Component, ...keys) {
+export function createSubscribe(store) {
+  return function subscribe(Component, keys) {
     if (isReactComponent(Component))
-      return createAlfaSubscribedComponent(alfa, Component, keys, 'subscribe')
+      return createAlfaSubscribedComponent(store, Component, keys, 'subscribe')
     else
-      throw new Error('alfa.subcribe only accepts ReactComponent.')
+      throw new Error('alfa.subscribe only accepts ReactComponent.')
   }
 }
 
@@ -33,14 +33,14 @@ function isReactComponent(Component) {
 }
 
 
-function createAlfaProvidedFunction(alfa, Func, keys) {
+function createAlfaProvidedFunction(store, Func, keys) {
   function AlfaProvidedFunction(props, context) {
     // Props passed in directly to constructor has higher priority than keys
-    // injected from the alfa store.
-    // Note: We can certainly define and get a non-global alfa instance from 
+    // injected from the store.
+    // Note: We can certainly define and get a non-global store instance from 
     // context.  But, the question is - what are the benefits?
     props = {
-      ...alfa.get(keys),
+      ...store.get(keys),
       ...props
     }
 
@@ -51,13 +51,13 @@ function createAlfaProvidedFunction(alfa, Func, keys) {
   return AlfaProvidedFunction
 }
 
-function createAlfaProvidedComponent(alfa, Component, keys) {
+function createAlfaProvidedComponent(store, Component, keys) {
   class AlfaProvidedComponent extends Component {
     constructor(props, context) {
       // Props passed in directly to constructor has higher priority than keys
-      // injected from the alfa store.
+      // injected from the store.
       props = {
-        ...alfa.get(keys),
+        ...store.get(keys),
         ...props
       }
 
@@ -70,20 +70,21 @@ function createAlfaProvidedComponent(alfa, Component, keys) {
 }
 
 
-function createAlfaSubscribedComponent(alfa, Component, keys) {
+function createAlfaSubscribedComponent(store, Component, keys) {
   class AlfaSubscribedComponent extends Component {
     constructor(props, context) {
       // Call the original constructor.
       super(props, context)
 
       // State of parent constructor has higher priority than keys injected from
-      // the alfa store.
+      // the store.
       this.state = {
-        ...alfa.get(keys),
+        ...store.get(keys),
         ...this.state
       }
 
-      alfa.onKeysChanged(keys, this.setState)
+      if ('function' === typeof this.setState)
+        store.subscribe(keys, this.setState)
 
       return this
     }
