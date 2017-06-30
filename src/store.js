@@ -37,7 +37,8 @@ export default function createStore() {
       } else if (Array.isArray(key) && key.length > 0) {
         const results = {}
         key.forEach(function(k) {
-          results[k] = _store[k]
+          if ('string' === typeof key)
+            results[k] = _store[k]
         })
         return results
       }
@@ -46,24 +47,18 @@ export default function createStore() {
     /**
      * Save the `value` in store with name `key`.
      * 
-     * @param {String}  key   Name of the value in store.
-     * @param {Any}     value Value to save.
+     * @param {String|Object}   key   Name of the value in store.  Or object of
+     * key/value pairs to merge into the store. 
+     * @param {Any}             value Value to save.
      */
     set(key, value) {
-      if ('string' !== typeof key)
-        throw new Error('Type of `key` must be string.')
+      var keyType = typeof key
 
-      _store[key] = value
-
-      // Call subscribed functions if we have.
-      const subs = _subscriptions[key]
-      if (Array.isArray(subs)) {
-        const changed = {
-          [key]: value
-        }
-        subs.forEach(function(subFn) {
-          if ('function' === typeof subFn)
-            subFn(changed)
+      if ('string' === keyType) {
+        setSingle(_store, _subscriptions, key, value)
+      } else if (isPlainObject(key)) {
+        Object.keys(key).forEach(function(_key) {
+          setSingle(_store, _subscriptions, _key, key[_key])
         })
       }
     }
@@ -94,7 +89,8 @@ export default function createStore() {
     }
 
     /**
-     * Unsubscribe function
+     * Unsubscribe function from all keys it's listening to.
+     * 
      * @param  {Function} fn The function to unsubcribe.
      */
     unsubscribe(fn) {
@@ -112,6 +108,29 @@ export default function createStore() {
    */
   return new Store()
 }
+
+
 export function isPlainObject(obj) {
   return obj && 'object' === typeof obj && !Array.isArray(obj)
 }
+
+
+function setSingle(store, subscriptions, key, value) {
+  if ('string' !== typeof key)
+    throw new Error('Type of `key` must be string.')
+
+  store[key] = value
+
+  // Call subscribed functions if we have.
+  const subs = subscriptions[key]
+  if (Array.isArray(subs)) {
+    const changed = {
+      [key]: value
+    }
+    subs.forEach(function(subFn) {
+      if ('function' === typeof subFn)
+        subFn(changed)
+    })
+  }
+}
+
