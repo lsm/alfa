@@ -1,8 +1,7 @@
 import { createPipe, FN_WAIT, FN_INPUT, FN_OUTPUT, FN_THROTTLE } from './pipe/builder'
 
 
-
-export default function createPipeline(definitions) {
+export default function createPipeline(name, store, definitions) {
   /**
    * Internal array which holds all the normalized pipes.
    * @type {Array}

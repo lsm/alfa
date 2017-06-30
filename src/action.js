@@ -10,7 +10,7 @@ export default function createAction(store) {
       return pipeline
 
     if (!definitions) {
-      pipeline = createPipeline()
+      pipeline = createPipeline(name, store)
     } else if ('function' === typeof definitions) {
       // Normalize definitions
       definitions = [[definitions, input, output]]
@@ -20,7 +20,7 @@ export default function createAction(store) {
     }
 
     if (!pipeline)
-      pipeline = createPipeline(definitions)
+      pipeline = createPipeline(name, store, definitions)
 
     store.set(name, pipeline)
 
