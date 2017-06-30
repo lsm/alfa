@@ -20,7 +20,7 @@ export default function createPipeline(name, store, definitions) {
 
   if (definitions) {
     _pipes = definitions.map(function(pipeDef) {
-      return createPipe(pipeline, pipeDef[0], pipeDef[1], pipeDef[2])
+      return createPipe(pipeDef[0], pipeDef[1], pipeDef[2])
     })
   } else {
     _pipes = attachPipelineFunctions(pipeline)
@@ -36,13 +36,13 @@ function attachPipelineFunctions(pipeline) {
   const pipes = []
 
   pipeline.input = function(input) {
-    var p = createPipe(pipeline, FN_INPUT, input)
+    var p = createPipe(FN_INPUT, input)
     pipes.push(p)
     return pipeline
   }
 
   pipeline.pipe = function(fn, input, output) {
-    var p = createPipe(pipeline, fn, input, output)
+    var p = createPipe(fn, input, output)
     pipes.push(p)
     return pipeline
   }
@@ -54,7 +54,7 @@ function attachPipelineFunctions(pipeline) {
   }
 
   pipeline.output = function(input) {
-    var p = createPipe(pipeline, FN_OUTPUT, input)
+    var p = createPipe(FN_OUTPUT, input)
     pipes.push(p)
     return pipeline
   }
