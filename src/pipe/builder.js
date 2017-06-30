@@ -72,7 +72,8 @@ function createInputPipe(input) {
         if (item)
           rawStore[item] = args[idx]
       })
-    }
+    },
+    fnName: 'input'
   }
 }
 
@@ -81,13 +82,12 @@ function createOutputPipe(input) {
 
   return {
     fn: function outputPipe(args, store, rawStore) {
-      const output = {}
-      input.forEach(item => {
-        if (item)
-          output[item] = rawStore[item]
+      input.forEach(key => {
+        if (key)
+          store.set(key, rawStore[key])
       })
-      store.set(output)
-    }
+    },
+    fnName: 'output'
   }
 }
 
@@ -98,7 +98,8 @@ function createWaitPipe(msec) {
         next()
       }, msec)
     },
-    input: ['next']
+    input: ['next'],
+    fnName: 'wait'
   }
 }
 
@@ -114,7 +115,8 @@ function createThrottlePipe(msec) {
       } else {
         return false
       }
-    }
+    },
+    fnName: 'throttle'
   }
 }
 
@@ -204,8 +206,11 @@ function buildPipe(fn, input, output) {
     ofn: fn, // The ofn property might be changed during pipeline execution for
     // loading/generating pipe functions dynamically.
     input: input,
-    output: output.output,
-    outputMap: output.outputMap
+    // `output` contains `output` array and `outputMap` object.
+    ...output,
+    // Set `autoNext` flag to true when no input is required 
+    // or has input but next is not required as dependency.
+    autoNext: !input || -1 === input.indexOf('next')
   }
 }
 
