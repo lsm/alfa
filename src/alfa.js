@@ -9,7 +9,7 @@ export function createAlfa(name) {
   }
 
   if (name)
-    alfa.name = alfa
+    alfa.name = name
 
   var store = createStore()
   alfa.get = store.get
