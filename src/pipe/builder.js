@@ -18,9 +18,7 @@ export const FN_THROTTLE = 'throttle'
 export default function createPipe(fn, input, output) {
   var fnType = typeof fn
 
-  if ('number' === fnType) {
-    return createThrottlePipe(fn)
-  } else if ('string' === fnType) {
+  if ('string' === fnType) {
     switch (fn) {
       case FN_INPUT:
         // .pipe('input', ['input1', 'input2'])
@@ -43,6 +41,8 @@ export default function createPipe(fn, input, output) {
     }
   } else if ('function' === fnType) {
     return buildPipe(fn, input, output)
+  } else if ('number' === fnType) {
+    return createThrottlePipe(fn)
   }
 
   throw new Error(`Unsupported pipe function type "${fnType}".`)
