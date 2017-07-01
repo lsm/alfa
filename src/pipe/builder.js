@@ -15,7 +15,7 @@ export const FN_THROTTLE = 'throttle'
  * @param  {Array|String}   ...input String or array of names of dependencies.
  * @return {Pipeline}       Instance of this Pipeline.
  */
-export default function createPipe(fn, input, output) {
+export function createPipe(fn, input, output) {
   var fnType = typeof fn
 
   if ('string' === fnType) {
