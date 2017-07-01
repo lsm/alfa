@@ -114,6 +114,18 @@ export function isPlainObject(obj) {
   return obj && 'object' === typeof obj && !Array.isArray(obj)
 }
 
+export function setRawStore(rawStore, key, value) {
+  var keyType = typeof key
+
+  if ('string' === keyType && key) {
+    rawStore[key] = value
+  } else if (isPlainObject(key)) {
+    Object.keys(key).forEach(function(_key) {
+      rawStore[_key] = key[_key]
+    })
+  }
+}
+
 
 function setSingle(store, subscriptions, key, value) {
   if ('string' !== typeof key)

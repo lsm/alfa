@@ -1,5 +1,5 @@
 import { executePipe } from './pipe/executor'
-import { isPlainObject } from './store'
+import { setRawStore, isPlainObject } from './store'
 import { createPipe, FN_WAIT, FN_INPUT, FN_OUTPUT, FN_THROTTLE } from './pipe/builder'
 
 
@@ -37,6 +37,18 @@ export default function createPipeline(name, store, definitions) {
      * @type {Object}
      */
     const _rawStore = store.clone()
+
+    /**
+     * The `set` function can only modified the cloned raw store and will
+     * not trigger any listening function.
+     *  
+     * @param {String|Object}   key   Name of the value in store.  Or object of
+     * key/value pairs to merge into the store. 
+     * @param {Any}             value Value to save.
+     */
+    _rawStore.set = function(key, value) {
+      setRawStore(_rawStore, key, value)
+    }
 
 
     var previousPipeState
