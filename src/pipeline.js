@@ -85,8 +85,9 @@ export default function createPipeline(name, store, definitions) {
       if (err) {
         // Throw the error if we don't have error handling function.
         if ('function' !== typeof _rawStore.errorHandler) {
-          throwError(err, name, step, previousPipeState
-            && previousPipeState.fnName)
+          var fnName = previousPipeState && previousPipeState.fnName
+          fnName = fnName || previousPipeState.fn.name || 'function'
+          throwError(err, name, step, fnName)
         }
 
         pipe = _rawStore.errorHandler
@@ -98,7 +99,7 @@ export default function createPipeline(name, store, definitions) {
       if (pipe) {
         /**
          * Object for holding execution state, result and other references
-         * of certain pipe For executing pipeline continously.
+         * of certain pipe for executing pipeline continously.
          * 
          * @type {Object}
          */
@@ -187,7 +188,7 @@ function throwError(error, name, step, pipe) {
 
   if ('string' === typeof error) {
     ex = new Error()
-    ex.name = `Pipeline "${name}" error in step "${step}:${pipe || 'function'}":
+    ex.name = `Pipeline "${name}" error in step "${step}:${pipe}":
     \n(set "errorHandler" to handle this error inside your pipeline.)`
     ex.message = error
   }
