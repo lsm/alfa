@@ -197,7 +197,7 @@ function throwError(error, name, step, pipe) {
 }
 
 function mergeOutputWithRawStore(rawStore, key, value) {
-  if ('string' === key)
+  if ('string' === key && key)
     rawStore[key] = value
 
   if (isPlainObject(key)) {
