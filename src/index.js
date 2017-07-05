@@ -23,4 +23,21 @@ export function createAlfa(name) {
 }
 
 
-export default createAlfa()
+/**
+ * Default global instance of alfa.
+ * @type {Function}
+ */
+const alfa = createAlfa()
+
+
+/**
+ * Export toplevel APIs.
+ */
+export default alfa
+export const get = alfa.get
+export const set = alfa.set
+export const action = alfa.action
+export const provide = alfa.provide
+export const subscribe = alfa.subscribe
+
+
