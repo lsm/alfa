@@ -1,4 +1,4 @@
-import { isPlainObject } from '../store'
+import { isPlainObject } from './store'
 
 
 export function executePipe(err, args, store, rawStore, pipeState) {

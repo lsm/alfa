@@ -1,6 +1,6 @@
-import { executePipe } from './pipe/executor'
+import { executePipe } from './executor'
 import { setRawStore, isPlainObject } from './store'
-import { createPipe, FN_WAIT, FN_INPUT, FN_OUTPUT, FN_THROTTLE } from './pipe/builder'
+import { createPipe, FN_WAIT, FN_INPUT, FN_OUTPUT, FN_THROTTLE } from './builder'
 
 
 export default function createPipeline(name, store, definitions) {
