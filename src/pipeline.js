@@ -103,12 +103,11 @@ export default function createPipeline(name, store, definitions) {
          * 
          * @type {Object}
          */
-        const pipeState = {
-          ...pipe,
+        const pipeState = Object.assign({}, pipe, {
           next: next,
           result: undefined,
           fnReturned: false
-        }
+        })
 
         /**
          * Keep a reference to pipeState for better error handling.

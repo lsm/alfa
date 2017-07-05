@@ -207,7 +207,8 @@ function buildPipe(fn, input, output) {
     // loading/generating pipe functions dynamically.
     input: input,
     // `output` contains `output` array and `outputMap` object.
-    ...output,
+    output: output.output,
+    outputMap: output.outputMap,
     // Set `autoNext` flag to true when no input is required 
     // or has input but next is not required as dependency.
     autoNext: !input || -1 === input.indexOf('next')
