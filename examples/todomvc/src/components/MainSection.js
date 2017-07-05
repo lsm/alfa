@@ -1,9 +1,15 @@
-import { subscribe } from '../alfa'
+import { subscribe } from 'alfa'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import TodoItem from './TodoItem'
 import Footer from './Footer'
+import { SHOW_ALL, SHOW_COMPLETED, SHOW_ACTIVE } from '../constants/TodoFilters'
 
+const TODO_FILTERS = {
+  [SHOW_ALL]: () => true,
+  [SHOW_ACTIVE]: todo => !todo.completed,
+  [SHOW_COMPLETED]: todo => todo.completed
+}
 
 export class MainSection extends Component {
   static propTypes = {
@@ -14,9 +20,10 @@ export class MainSection extends Component {
 
   renderToggleAll(completedCount) {
     const {todos, completeAll} = this.props
-    if (todos.length > 0) {
+    if (todos.length > 0
+      && (completedCount === todos.length || 0 === completedCount)) {
       return (
-        <input className="toggle-all"
+        <input className="toggle-all-fix"
                type="checkbox"
                checked={ completedCount === todos.length }
                onChange={ completeAll } />
@@ -37,12 +44,9 @@ export class MainSection extends Component {
   }
 
   render() {
-    const {todos} = this.props
-    // const {filter} = this.state
+    const {todos, filter} = this.props
 
-    const filteredTodos = todos.filter(function(todo) {
-      return todo
-    })
+    const filteredTodos = todos.filter(TODO_FILTERS[filter])
     const completedCount = todos.reduce((count, todo) => todo.completed ? count + 1 : count,
       0
     )
