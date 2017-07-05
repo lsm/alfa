@@ -243,7 +243,7 @@ function normalizeOutput(output) {
   var outputMap
 
   while (i < len) {
-    var item = output[i]
+    var item = output[i++]
     if (/:/.test(item)) {
       outputMap = outputMap || {}
       var mapping = item.split(':')
