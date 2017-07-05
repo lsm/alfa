@@ -134,43 +134,8 @@ function createThrottlePipe(msec) {
  * @return {Object}                 Pipe definition object.
  */
 function createInjectionPipe(name, input, output) {
-  var pipe
-
-  /**
-   * A wrapper function to handle different types of pipe functions.
-   * It calls the original function and return the result if that is a function. 
-   * Or return the result directly for case like `boolean` value.
-   */
-  var fn = function() {
-    var ofn = pipe.ofn
-    var ofnType = typeof ofn
-    if ('function' === ofnType) {
-      // Call it with the arguments passed in when it's a function.
-      // We call it with `0` to prevent some JS engines injecting the 
-      // default `this`.
-      var result = ofn.apply(0, Array.from(arguments))
-      // When the result is boolean we will need to consider if it's a `not` 
-      // pipe and alter the value based on that.
-      if ('boolean' === typeof result)
-        return pipe.not ? !result : result
-      else
-        return result
-    } else if ('boolean' === ofnType) {
-      // Directly return the value when it is a boolean for flow control.
-      return pipe.not ? !ofn : ofn
-    } else if (true === pipe.optional && 'undefined' === ofnType) {
-      // Optional pipe which its function can not be found.
-      // Return true to ignore and go next.
-      return true
-    } else {
-      // Throw an exception when the original function is not something
-      // we understand.
-      throw new Error('Dependency `' + name + '` is not a function.')
-    }
-  }
-
   // Build the pipe.
-  pipe = buildPipe(fn, input, output)
+  var pipe = buildPipe(null, input, output)
 
   // It's a `not` pipe if the pipe name is started with `!`.
   // Although the actual function name is the value without the exclamation mark.
@@ -206,8 +171,8 @@ function buildPipe(fn, input, output) {
 
   // Return pipe object with function and its metadata.
   return {
-    fn: fn, // Original or wrapped function, should never be changed.
-    ofn: fn, // The ofn property might be changed during pipeline execution for
+    // Original function or null for injection pipe. It should never be changed.
+    fn: fn,
     // loading/generating pipe functions dynamically.
     input: input,
     // `output` contains `output` array and `outputMap` object.

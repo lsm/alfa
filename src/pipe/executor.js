@@ -1,4 +1,4 @@
-import { isPlainObject } from './store'
+import { isPlainObject } from '../store'
 
 
 export function executePipe(err, args, store, rawStore, pipeState) {
@@ -8,11 +8,12 @@ export function executePipe(err, args, store, rawStore, pipeState) {
   var output = pipeState.output
   var fnName = pipeState.fnName
   var _inputArgs = input.length > 0 ? input.map(key => rawStore[key]) : args
+  var injectedFn
 
   // Get the pipe function demanded from dependency container.
   if ('string' === typeof fnName) {
     // Set it as the original pipe function
-    pipeState.ofn = rawStore[fnName]
+    injectedFn = rawStore[fnName]
     if (pipeState.optional) {
       // Optional pipe, go next if any of the dependencies is undefined.
       if (-1 < _inputArgs.indexOf(undefined)) {
@@ -30,11 +31,12 @@ export function executePipe(err, args, store, rawStore, pipeState) {
       // We will handle the auto next behaviour in setWithPipeState function.
       pipeState.autoNext = false
     }
-    // Call customized setDep function instead.
-    if (-1 !== input.indexOf('set')) {
-      modifiedSet = function(key, value) {
-        setWithPipeState(rawStore, pipeState, key, value)
-      }
+    modifiedSet = function(key, value) {
+      setWithPipeState(rawStore, pipeState, key, value)
+    }
+
+    // Call customized set function instead.
+    if (input.indexOf('set') > -1) {
       input.forEach(function(key, idx) {
         if ('set' === key)
           _inputArgs[idx] = modifiedSet
@@ -42,7 +44,13 @@ export function executePipe(err, args, store, rawStore, pipeState) {
     }
   }
 
-  pipeState.result = fn.apply(0, _inputArgs)
+  if ('input' === fnName || 'output' === fnName)
+    pipeState.result = fn.call(0, args, store, rawStore)
+  else if (injectedFn)
+    pipeState.result = executeInjectedFunc(_inputArgs, injectedFn, pipeState)
+  else
+    pipeState.result = fn.apply(0, _inputArgs)
+
   pipeState.fnReturned = true
 
   // Call setDep if a plain object was returned
@@ -131,4 +139,36 @@ function checkFulfillment(key, pipeState, output, fulfilled) {
     throw new Error(`Dependency "${key}" is not defined in output.`)
   if (fulfilled && -1 === fulfilled.indexOf(key))
     fulfilled.push(key)
+}
+
+/**
+ * A function to handle different types of pipe functions.
+ * It calls the original function and return the result if that is a function. 
+ * Or return the result directly for case like `boolean` value.
+ */
+function executeInjectedFunc(args, injectedFn, pipeState) {
+  var injectedFnType = typeof injectedFn
+  if ('function' === injectedFnType) {
+    // Call it with the arguments passed in when it's a function.
+    // We call it with `0` to prevent some JS engines injecting the 
+    // default `this`.
+    var result = injectedFn.apply(0, args)
+    // When the result is boolean we will need to consider if it's a `not` 
+    // pipe and alter the value based on that.
+    if ('boolean' === typeof result)
+      return pipeState.not ? !result : result
+    else
+      return result
+  } else if ('boolean' === injectedFnType) {
+    // Directly return the value when it is a boolean for flow control.
+    return pipeState.not ? !injectedFn : injectedFn
+  } else if (true === pipeState.optional && 'undefined' === injectedFnType) {
+    // Optional pipe which its function can not be found.
+    // Return true to ignore and go next.
+    return true
+  } else {
+    // Throw an exception when the original function is not something
+    // we understand.
+    throw new Error('Dependency `' + name + '` is not a function.')
+  }
 }
