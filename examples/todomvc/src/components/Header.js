@@ -1,4 +1,4 @@
-import { action } from '../alfa'
+import { action } from 'alfa'
 import React from 'react'
 import TodoTextInput from './TodoTextInput'
 

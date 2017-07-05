@@ -1,18 +1,26 @@
 
 
 export function createTodo(todos, newTodoText) {
-  return {
-    todos: todos.concat([{
+  var resultTodos
+
+  if (!newTodoText) {
+    resultTodos = todos
+  } else {
+    resultTodos = todos.concat([{
       id: Math.random(),
       text: newTodoText,
       completed: false
     }])
   }
+
+  return {
+    todos: resultTodos
+  }
 }
 
 
-export function saveTodo(todoID, todoText, todos) {
-  var resultTodos = todos.map(function (todo) {
+export function updateTodo(todoID, todoText, todos) {
+  var resultTodos = todos.map(function(todo) {
     if (todoID === todo.id)
       todo.text = todoText
     return todo

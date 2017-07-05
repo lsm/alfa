@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
-import { set } from './alfa'
+import { set } from 'alfa'
 import App from './containers/App'
 import * as TODO_FILTERS from './constants/TodoFilters'
 

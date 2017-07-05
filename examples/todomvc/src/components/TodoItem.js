@@ -2,12 +2,12 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames'
 import TodoTextInput from './TodoTextInput'
-import { provide } from '../alfa'
+import { provide } from 'alfa'
 
 class TodoItem extends Component {
   static propTypes = {
     todo: PropTypes.object.isRequired,
-    // editTodo: PropTypes.func.isRequired,
+    editTodo: PropTypes.func.isRequired,
     deleteTodo: PropTypes.func.isRequired,
     completeTodo: PropTypes.func.isRequired
   }
@@ -35,7 +35,6 @@ class TodoItem extends Component {
   }
 
   render() {
-    console.log('render TodoItem');
     const {todo, completeTodo, deleteTodo} = this.props
 
     let element
