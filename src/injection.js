@@ -1,4 +1,4 @@
-
+import { Component, createElement } from 'react'
 
 /**
  * Public API
@@ -73,23 +73,36 @@ function createAlfaProvidedComponent(store, WrappedComponent, keys) {
 }
 
 
-function createAlfaSubscribedComponent(store, Component, keys) {
+function createAlfaSubscribedComponent(store, WrappedComponent, keys) {
   class AlfaSubscribedComponent extends Component {
-    constructor(props, context) {
+    // Keep the name of the orginal component which makes debugging logs easier
+    // to understand.
+    static get name() {
+      return WrappedComponent.name
+    }
+
+    constructor(props, context, updater) {
       // Call the original constructor.
-      super(props, context)
+      super(props, context, updater)
 
       // State of parent constructor has higher priority than keys injected from
       // the store.
-      this.state = {
-        ...store.get(keys),
-        ...this.state
-      }
+      var state = store.get(keys)
+      if (this.state)
+        this.state = Object.assign(state, this.state)
+      else
+        this.state = state
 
+      // Call `setState` when subscribed keys changed.
       if ('function' === typeof this.setState)
-        store.subscribe(keys, this.setState)
+        store.subscribe(keys, this.setState.bind(this))
 
       return this
+    }
+
+    render() {
+      var _props = Object.assign({}, this.props, this.state)
+      return createElement(WrappedComponent, _props)
     }
   }
 
