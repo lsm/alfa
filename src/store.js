@@ -76,7 +76,7 @@ export default function createStore() {
      * @param {Function} fn   Subscribing function.
      */
     subscribe(keys, fn) {
-      keys.forEach(function(key) {
+      Array.isArray(keys) && keys.forEach(function(key) {
         const subs = _subscriptions[key]
         if (Array.isArray(subs)) {
           if (-1 === subs.indexOf(key))
