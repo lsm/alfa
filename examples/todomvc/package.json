@@ -1,0 +1,30 @@
+{
+  "name": "todomvc",
+  "version": "0.0.1",
+  "private": true,
+  "devDependencies": {
+    "enzyme": "2.9.1",
+    "react-addons-test-utils": "15.6.0",
+    "react-scripts": "1.0.10"
+  },
+  "dependencies": {
+    "classnames": "2.2.5",
+    "prop-types": "15.5.10",
+    "react": "15.6.1",
+    "react-dom": "15.6.1",
+    "react-test-renderer": "15.6.1",
+    "todomvc-app-css": "2.1.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "eject": "react-scripts eject",
+    "test": "react-scripts test"
+  },
+  "babel": {
+    "presets": [
+      "env",
+      "react"
+    ]
+  }
+}
