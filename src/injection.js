@@ -81,6 +81,8 @@ function createAlfaProvidedComponent(store, WrappedComponent, keys) {
 
 
 function createAlfaSubscribedComponent(store, WrappedComponent, keys) {
+  var subFunc
+
   class AlfaSubscribedComponent extends Component {
     // Keep the name of the orginal component which makes debugging logs easier
     // to understand.
@@ -111,6 +113,10 @@ function createAlfaSubscribedComponent(store, WrappedComponent, keys) {
       }
 
       return this
+    }
+
+    componentWillUnmount() {
+      'function' === typeof subFunc && store.unsubscribe(subFunc)
     }
 
     render() {
