@@ -37,7 +37,7 @@ export default function createStore() {
       } else if (Array.isArray(key) && key.length > 0) {
         const results = {}
         key.forEach(function(k) {
-          if ('string' === typeof key)
+          if ('string' === typeof k)
             results[k] = _store[k]
         })
         return results
