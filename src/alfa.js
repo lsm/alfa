@@ -14,13 +14,10 @@ export function createAlfa(name) {
   var store = createStore()
 
   alfa.get = store.get
+  alfa.set = store.set
   alfa.action = createAction(store)
   alfa.provide = createProvide(store)
   alfa.subscribe = createSubscribe(store)
-  alfa.exposeSet = function() {
-    alfa.set = store.set
-    return alfa
-  }
 
   return alfa
 }
