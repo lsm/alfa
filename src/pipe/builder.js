@@ -72,8 +72,10 @@ function createInputPipe(input) {
         if (item)
           rawStore[item] = args[idx]
       })
+      return true
     },
-    fnName: 'input'
+    fnName: 'input',
+    input: input
   }
 }
 
@@ -86,8 +88,10 @@ function createOutputPipe(input) {
         if (key)
           store.set(key, rawStore[key])
       })
+      return true
     },
-    fnName: 'output'
+    fnName: 'output',
+    input: input
   }
 }
 
