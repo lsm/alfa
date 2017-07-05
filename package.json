@@ -1,11 +1,21 @@
 {
   "name": "alfa",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "cross-env BABEL_ENV=commonjs babel src --out-dir lib"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "Marc Liu <m@liu.pm> (https://github.com/lsm)",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-preset-env": "^1.6.0",
+    "cross-env": "^5.0.1",
+    "react": "^15.6.1"
+  }
 }
