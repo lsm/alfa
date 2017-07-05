@@ -1,0 +1,4 @@
+
+
+build:
+	npm run build
