@@ -44,7 +44,10 @@ function createAlfaProvidedFunction(store, WrappedFunction, keys) {
       // injected from the store.
       // Note: We can certainly define and get a non-global store instance from 
       // context.  But, the question is - what are the benefits?
-      props = Object.assign(store.get(keys), props || {})
+      props = {
+        ...store.get(keys),
+        ...props || {}
+      }
 
       // Call the original function.
       return WrappedFunction(props, context, updater)
@@ -62,10 +65,14 @@ function createAlfaProvidedComponent(store, WrappedComponent, keys) {
       var _props
       // Props passed in directly to constructor has higher priority than keys
       // injected from the store.
-      if (props)
-        _props = Object.assign(store.get(keys), props)
-      else
+      if (props) {
+        _props = {
+          ...store.get(keys),
+          ...props
+        }
+      } else {
         _props = store.get(keys)
+      }
 
       return createElement(WrappedComponent, _props)
     }
@@ -88,20 +95,29 @@ function createAlfaSubscribedComponent(store, WrappedComponent, keys) {
       // State of parent constructor has higher priority than keys injected from
       // the store.
       var state = store.get(keys)
-      if (this.state)
-        this.state = Object.assign(state, this.state)
-      else
+      if (this.state) {
+        this.state = {
+          ...state,
+          ...this.state
+        }
+      } else {
         this.state = state
+      }
 
       // Call `setState` when subscribed keys changed.
-      if ('function' === typeof this.setState)
-        store.subscribe(keys, this.setState.bind(this))
+      if ('function' === typeof this.setState) {
+        subFunc = this.setState.bind(this)
+        store.subscribe(keys, subFunc)
+      }
 
       return this
     }
 
     render() {
-      var _props = Object.assign({}, this.props, this.state)
+      var _props = {
+        ...this.props || {},
+        ...this.state
+      }
       return createElement(WrappedComponent, _props)
     }
   }
