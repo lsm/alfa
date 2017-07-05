@@ -52,22 +52,24 @@ function createAlfaProvidedFunction(store, WrappedFunction, keys) {
   })[funcName]
 }
 
-function createAlfaProvidedComponent(store, Component, keys) {
-  class AlfaProvidedComponent extends Component {
-    constructor(props, context) {
+function createAlfaProvidedComponent(store, WrappedComponent, keys) {
+  // Keep the name of the orginal component which makes debugging logs easier
+  // to understand.
+  var componentName = WrappedComponent.name || 'AlfaProvidedComponent'
+
+  return ({
+    [componentName]: function(props) {
+      var _props
       // Props passed in directly to constructor has higher priority than keys
       // injected from the store.
-      props = {
-        ...store.get(keys),
-        ...props
-      }
+      if (props)
+        _props = Object.assign(store.get(keys), props)
+      else
+        _props = store.get(keys)
 
-      // Call the original constructor.
-      super(props, context)
+      return createElement(WrappedComponent, _props)
     }
-  }
-
-  return AlfaProvidedComponent
+  })[componentName]
 }
 
 
