@@ -39,5 +39,6 @@ export const set = alfa.set
 export const action = alfa.action
 export const provide = alfa.provide
 export const subscribe = alfa.subscribe
+export { default as createStore } from './store'
 
 
