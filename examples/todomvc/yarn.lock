@@ -69,10 +69,6 @@ ajv@^5.0.0:
     co "^4.6.0"
     json-stable-stringify "^1.0.1"
 
-alfa@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/alfa/-/alfa-0.1.0.tgz#085b7c5fa68a1c1d9933888890a150e454b3388b"
-
 align-text@^0.1.1, align-text@^0.1.3:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/align-text/-/align-text-0.1.4.tgz#0cd90a561093f35d0a99256c22b7069433fad117"
@@ -776,7 +772,7 @@ babel-plugin-transform-flow-strip-types@^6.22.0:
     babel-plugin-syntax-flow "^6.18.0"
     babel-runtime "^6.22.0"
 
-babel-plugin-transform-object-rest-spread@6.23.0:
+babel-plugin-transform-object-rest-spread@6.23.0, babel-plugin-transform-object-rest-spread@^6.23.0:
   version "6.23.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-transform-object-rest-spread/-/babel-plugin-transform-object-rest-spread-6.23.0.tgz#875d6bc9be761c58a2ae3feee5dc4895d8c7f921"
   dependencies:
@@ -3030,9 +3026,13 @@ iconv-lite@0.4.13:
   version "0.4.13"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.13.tgz#1f88aba4ab0b1508e8312acc39345f36e992e2f2"
 
-iconv-lite@^0.4.17, iconv-lite@~0.4.13:
+iconv-lite@^0.4.17:
   version "0.4.18"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.18.tgz#23d8656b16aae6742ac29732ea8f0336a4789cf2"
+
+iconv-lite@~0.4.13:
+  version "0.4.15"
+  resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.15.tgz#fe265a218ac6a57cfe854927e9d04c19825eddeb"
 
 icss-replace-symbols@^1.0.2:
   version "1.0.2"
