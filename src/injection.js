@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import { Component, createElement } from 'react'
 
 /**
@@ -5,20 +6,21 @@ import { Component, createElement } from 'react'
  */
 
 export function createProvide(store) {
-  return function provide(Component, keys) {
-    if (isReactComponent(Component))
-      return createAlfaProvidedComponent(store, Component, keys)
+  return function provide(WrappedComponent, keys) {
+    if ('function' === typeof WrappedComponent)
+      return createAlfaProvidedComponent(store, WrappedComponent, keys,
+        isReactComponent(WrappedComponent) && 'component')
     else
-      return createAlfaProvidedFunction(store, Component, keys)
+      throw new Error('alfa.provide only accepts function or class.')
   }
 }
 
 export function createSubscribe(store) {
-  return function subscribe(Component, keys) {
-    if (isReactComponent(Component))
-      return createAlfaSubscribedComponent(store, Component, keys, 'subscribe')
+  return function subscribe(WrappedComponent, keys) {
+    if ('function' === typeof WrappedComponent)
+      return createAlfaSubscribedComponent(store, WrappedComponent, keys)
     else
-      throw new Error('alfa.subscribe only accepts ReactComponent.')
+      throw new Error('alfa.subscribe only accepts function or class.')
   }
 }
 
@@ -33,50 +35,37 @@ function isReactComponent(Component) {
 }
 
 
-function createAlfaProvidedFunction(store, WrappedFunction, keys) {
-  // Keep the name of the orginal function which makes debugging logs easier
+function createAlfaProvidedComponent(store, WrappedComponent, keys, type) {
+  // Keep the name of the orginal component which makes debugging logs easier
   // to understand.
-  var funcName = WrappedFunction.name || 'AlfaProvidedFunction'
+  var componentName = WrappedComponent.name || 'AlfaProvidedComponent'
 
-  return ({
-    [funcName]: function(props, context, updater) {
+  // Solution 1
+  var wrapper = {
+    [componentName]: function(props, context, updater) {
+      // See if we have an alternative alfa store to use.
+      store = context && context.alfaStore ? context.alfaStore : store
       // Props passed in directly to constructor has higher priority than keys
       // injected from the store.
-      // Note: We can certainly define and get a non-global store instance from 
-      // context.  But, the question is - what are the benefits?
       props = {
         ...store.get(keys),
         ...props || {}
       }
 
-      // Call the original function.
-      return WrappedFunction(props, context, updater)
+      if ('component' === type)
+        // Create an element if it's react component.
+        return createElement(WrappedComponent, props)
+      else
+        // Otherwise, call the original function.
+        return WrappedFunction(props, context, updater)
     }
-  })[funcName]
-}
+  }
 
-function createAlfaProvidedComponent(store, WrappedComponent, keys) {
-  // Keep the name of the orginal component which makes debugging logs easier
-  // to understand.
-  var componentName = WrappedComponent.name || 'AlfaProvidedComponent'
+  wrapper[componentName].contextTypes = {
+    alfaStore: PropTypes.object
+  }
 
-  return ({
-    [componentName]: function(props) {
-      var _props
-      // Props passed in directly to constructor has higher priority than keys
-      // injected from the store.
-      if (props) {
-        _props = {
-          ...store.get(keys),
-          ...props
-        }
-      } else {
-        _props = store.get(keys)
-      }
-
-      return createElement(WrappedComponent, _props)
-    }
-  })[componentName]
+  return wrapper[componentName]
 }
 
 
@@ -90,40 +79,41 @@ function createAlfaSubscribedComponent(store, WrappedComponent, keys) {
       return WrappedComponent.name
     }
 
+    static contextTypes = {
+      alfaStore: PropTypes.object
+    }
+
     constructor(props, context, updater) {
       // Call the original constructor.
       super(props, context, updater)
+      // See if we have an alternative alfa store to use.
+      store = context && context.alfaStore ? context.alfaStore : store
 
-      // State of parent constructor has higher priority than keys injected from
-      // the store.
-      var state = store.get(keys)
-      if (this.state) {
-        this.state = {
-          ...state,
-          ...this.state
-        }
-      } else {
-        this.state = state
-      }
+      // Inject all keys as state.
+      this.state = store.get(keys)
 
       // Call `setState` when subscribed keys changed.
       if ('function' === typeof this.setState) {
+        // Make sure we use the correct store for unsubscribe.
+        this.store = store
         subFunc = this.setState.bind(this)
         store.subscribe(keys, subFunc)
       }
-
-      return this
     }
 
     componentWillUnmount() {
-      'function' === typeof subFunc && store.unsubscribe(subFunc)
+      'function' === typeof subFunc && this.store.unsubscribe(subFunc)
     }
 
     render() {
+      // State injected may change during normal component lifecycle.
+      // So in this case it has higher priority than props.
       var _props = {
         ...this.props || {},
         ...this.state
       }
+
+      // State and props are merged and passed to wrapped component as props.
       return createElement(WrappedComponent, _props)
     }
   }
