@@ -8,17 +8,35 @@
   ],
   "scripts": {
     "build": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
-    "watch": "cross-env BABEL_ENV=commonjs babel src --watch --out-dir lib"
+    "build-watch": "cross-env BABEL_ENV=commonjs babel src --watch --out-dir lib",
+    "test": "BABEL_ENV=development nyc ava",
+    "watch": "BABEL_ENV=development ava --watch --verbose",
+    "report": "BABEL_ENV=development nyc report --reporter=html",
+    "update-snapshots": "BABEL_ENV=development ava --update-snapshots"
   },
   "author": "Marc Liu <m@liu.pm> (https://github.com/lsm)",
   "license": "MIT",
   "devDependencies": {
+    "ava": "^0.21.0",
     "babel-cli": "^6.24.1",
+    "babel-plugin-istanbul": "^4.1.4",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-preset-env": "^1.6.0",
+    "babel-preset-react": "^6.24.1",
+    "coveralls": "^2.13.1",
     "cross-env": "^5.0.1",
+    "eslint": "^4.2.0",
+    "eslint-plugin-ava": "^4.2.1",
+    "nyc": "^11.0.3",
     "prop-types": "^15.5.10",
-    "react": "^15.6.1"
+    "react": "^15.6.1",
+    "react-test-renderer": "^15.6.1"
+  },
+  "ava": {
+    "require": [
+      "babel-register"
+    ],
+    "babel": "inherit"
   }
 }
