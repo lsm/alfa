@@ -10,8 +10,12 @@ unit:
 	npm run test
 
 report:
-	npm run coverage
+	npm run nyc
 	npm run report
+
+coveralls:
+	npm run nyc
+	npm run coverage
 
 update-snapshots:
 	npm run update-snapshots

@@ -9,10 +9,11 @@
   "scripts": {
     "build": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
     "build-watch": "cross-env BABEL_ENV=commonjs babel src --watch --out-dir lib",
+    "nyc": "BABEL_ENV=development nyc ava",
     "test": "BABEL_ENV=development ava --verbose",
     "watch": "BABEL_ENV=development ava --watch --verbose",
-    "report": "BABEL_ENV=development nyc report --reporter=html",
-    "coverage": "BABEL_ENV=development nyc ava",
+    "report": "nyc report --reporter=html",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
     "update-snapshots": "BABEL_ENV=development ava --update-snapshots"
   },
   "author": "Marc Liu <m@liu.pm> (https://github.com/lsm)",
