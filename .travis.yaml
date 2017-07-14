@@ -1,0 +1,38 @@
+sudo: false
+language: node_js
+matrix:
+  fast_finish: true
+  include:
+    # - node_js: "4"
+    #   env: TASK=browser
+    # - node_js: "4"
+    #   env: TASK=coverage
+    - node_js: "8"
+      env: TASK=unit
+    - node_js: "7"
+      env: TASK=unit
+    - node_js: "6"
+      env: TASK=unit
+    - node_js: "5"
+      env: TASK=unit
+    - node_js: "3"
+      env: TASK=unit
+    - node_js: "2"
+      env: TASK=unit
+    - node_js: "1"
+      env: TASK=unit
+    - node_js: "0.12"
+      env: TASK=unit
+    - node_js: "0.10"
+      env: TASK=unit
+cache:
+  directories:
+  - node_modules
+script:
+  - make ${TASK}
+after_script:
+  - 'if [ "${TASK}" == "coverage" ]; then cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js; fi'
+env:
+  global:
+  - secure: D7TwkiKbaSeHWk7bUDA4aL1rYzQBrKjDdPgJYoV35km8KipPvujbWacpdREz4mgpXjtE01U1exLjQsTq2aoG576a/PArdQx+6Wfw7rTA18xRBBf6FovAw9y0i/6I6Y3Qhb2OevD/DfctEVuoQHK+IfEk1xHf3VtXJ2XXeN0VPqI=
+  - secure: FPMYWtm9QGNAQJ4zWT0e6vVwsvfeFe5xEBs4nv+XLd2RiKt+sa5eoVoOxqDl3h95MfTFngr+UylR7MKnwAgwrZzsDlMZrgDItObVgsVvEHBjCT185m9MyW7W0tPEHG3TFsuS71F6J+Qr2TiqUt3Y441A5Dp1Z74+dKkxTPp9go0=

@@ -9,7 +9,8 @@ watch:
 unit:
 	npm run test
 
-report: unit
+report:
+	npm run coverage
 	npm run report
 
 update-snapshots:
