@@ -11,8 +11,8 @@
 
 
 
-[dep-url]: https://david-dm.org/lsm/alfa
-[dep-image]: https://david-dm.org/lsm/alfa.svg
+[dep-url]: https://david-dm.org/lsm/alfa?type=dev
+[dep-image]: https://david-dm.org/lsm/alfa/dev-status.svg
 [license-img]: https://img.shields.io/npm/l/alfa.svg
 [license-url]: http://opensource.org/licenses/MIT
 [npm-img]: http://img.shields.io/npm/v/alfa.svg
