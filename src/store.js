@@ -26,7 +26,7 @@ export default function createStore() {
     /**
      * Get value from store by key.
      * 
-     * @param  {String} key Name of the value to get.
+     * @param  {String|undefined} key Name of the value to get.
      * @return {Any}        Value.
      */
     get(key) {
@@ -39,8 +39,14 @@ export default function createStore() {
         key.forEach(function(k) {
           if ('string' === typeof k)
             results[k] = _store[k]
+          else
+            throw new TypeError('Type of `key` must be string, array of strings or undefined.')
         })
         return results
+      } else if ('undefined' === keyType) {
+        return this.clone()
+      } else {
+        throw new TypeError('Type of `key` must be string, array of strings or undefined.')
       }
     }
 
