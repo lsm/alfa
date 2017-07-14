@@ -3,13 +3,10 @@ import createAction from './action'
 import { createProvide, createSubscribe } from './injection'
 
 
-export function createAlfa(name) {
-  function alfa(name) {
-    return createAlfa(name)
+function createAlfa() {
+  function alfa() {
+    return createAlfa()
   }
-
-  if (name)
-    alfa.name = name
 
   var store = createStore()
 
