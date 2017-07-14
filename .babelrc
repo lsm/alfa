@@ -1,6 +1,12 @@
 {
   "presets": [
-    "env"
+    "env",
+    "react"
   ],
-  "plugins": ["transform-object-rest-spread", "transform-class-properties"]
+  "plugins": ["transform-object-rest-spread", "transform-class-properties"],
+  "env": {
+    "development": {
+      "sourceMaps": "inline"
+    }
+  }
 }
