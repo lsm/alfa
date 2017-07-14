@@ -91,13 +91,11 @@ function createAlfaSubscribedComponent(store, WrappedComponent, keys) {
       // Inject all keys as state.
       this.state = store.get(keys)
 
+      // Make sure we use the correct store for unsubscribe.
+      this.store = store
+      subFunc = this.setState.bind(this)
       // Call `setState` when subscribed keys changed.
-      if ('function' === typeof this.setState) {
-        // Make sure we use the correct store for unsubscribe.
-        this.store = store
-        subFunc = this.setState.bind(this)
-        store.subscribe(keys, subFunc)
-      }
+      store.subscribe(keys, subFunc)
     }
 
     componentWillUnmount() {
