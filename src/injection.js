@@ -40,7 +40,6 @@ function createAlfaProvidedComponent(store, WrappedComponent, keys, type) {
   // to understand.
   var componentName = WrappedComponent.name || 'AlfaProvidedComponent'
 
-  // Solution 1
   var wrapper = {
     [componentName]: function(props, context, updater) {
       // See if we have an alternative alfa store to use.
@@ -57,7 +56,7 @@ function createAlfaProvidedComponent(store, WrappedComponent, keys, type) {
         return createElement(WrappedComponent, props)
       else
         // Otherwise, call the original function.
-        return WrappedFunction(props, context, updater)
+        return WrappedComponent(props, context, updater)
     }
   }
 
