@@ -23,12 +23,10 @@ class TodoItem extends Component {
   }
 
   handleSave = (id, text) => {
-    console.log('handleSave', id, text);
-    if (text.length === 0) {
+    if (0 === text.length)
       this.props.deleteTodo(id)
-    } else {
+    else
       this.props.editTodo(id, text)
-    }
     this.setState({
       editing: false
     })
@@ -60,11 +58,12 @@ class TodoItem extends Component {
       )
     }
 
+    const css = classnames({
+      completed: todo.completed,
+      editing: this.state.editing
+    })
     return (
-      <li className={ classnames({
-                  completed: todo.completed,
-                  editing: this.state.editing
-                }) }>
+      <li className={ css }>
         { element }
       </li>
     )

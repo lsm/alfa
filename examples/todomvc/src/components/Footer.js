@@ -21,7 +21,7 @@ class Footer extends Component {
 
   renderTodoCount() {
     const {activeCount} = this.props
-    const itemWord = activeCount === 1 ? 'item' : 'items'
+    const itemWord = 1 === activeCount ? 'item' : 'items'
 
     return (
       <span className="todo-count"><strong>{ activeCount || 'No' }</strong> { itemWord } left</span>
@@ -31,11 +31,11 @@ class Footer extends Component {
   renderFilterLink(filter) {
     const title = FILTER_TITLES[filter]
     const {filter: selectedFilter} = this.props
-
+    const css = classnames({
+      selected: filter === selectedFilter
+    })
     return (
-      <a className={ classnames({
-                 selected: filter === selectedFilter
-               }) }
+      <a className={ css }
          style={ { cursor: 'pointer' } }
          onClick={ () => set('filter', filter) }>
         { title }
