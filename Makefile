@@ -7,7 +7,7 @@ watch:
 	npm run watch
 
 unit:
-	npm run test
+	npm run lint && npm run test
 
 report:
 	npm run nyc
