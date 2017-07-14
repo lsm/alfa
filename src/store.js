@@ -90,8 +90,7 @@ export default function createStore() {
       Array.isArray(keys) && keys.forEach(function(key) {
         const subs = _subscriptions[key]
         if (Array.isArray(subs)) {
-          if (-1 === subs.indexOf(key))
-            subs.push(fn)
+          -1 === subs.indexOf(key) && subs.push(fn)
         } else {
           _subscriptions[key] = [fn]
           return
@@ -107,8 +106,7 @@ export default function createStore() {
     unsubscribe(fn) {
       Object.keys(_subscriptions).forEach(function(key) {
         const subs = _subscriptions[key]
-        if (Array.isArray(subs))
-          _subscriptions[key] = subs.filter((f) => f !== fn)
+        subs && (_subscriptions[key] = subs.filter((f) => f !== fn))
       })
     }
   }
@@ -139,22 +137,20 @@ export function setRawStore(rawStore, key, value) {
   }
 }
 
-
+/**
+ * Set a single value to an object.
+ */
 function setSingle(store, subscriptions, key, value) {
-  if ('string' !== typeof key)
-    throw new Error('Type of `key` must be string.')
-
   store[key] = value
 
   // Call subscribed functions if we have.
   const subs = subscriptions[key]
-  if (Array.isArray(subs)) {
+  if (subs) {
     const changed = {
       [key]: value
     }
     subs.forEach(function(subFn) {
-      if ('function' === typeof subFn)
-        subFn(changed)
+      subFn(changed)
     })
   }
 }
