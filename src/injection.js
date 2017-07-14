@@ -7,7 +7,8 @@ import { Component, createElement } from 'react'
 
 export function createProvide(store) {
   return function provide(WrappedComponent, keys) {
-    if ('function' === typeof WrappedComponent)
+    if ('function' === typeof WrappedComponent) {
+      keys = normalizeKeys(keys, 'provide')
       return createAlfaProvidedComponent(store, WrappedComponent, keys,
         isReactComponent(WrappedComponent) && 'component')
     else
@@ -17,7 +18,8 @@ export function createProvide(store) {
 
 export function createSubscribe(store) {
   return function subscribe(WrappedComponent, keys) {
-    if ('function' === typeof WrappedComponent)
+    if ('function' === typeof WrappedComponent) {
+      keys = normalizeKeys(keys, 'subscribe')
       return createAlfaSubscribedComponent(store, WrappedComponent, keys)
     else
       throw new Error('alfa.subscribe only accepts function or class.')
@@ -28,6 +30,16 @@ export function createSubscribe(store) {
 /**
  * Private functions
  */
+
+function normalizeKeys(keys, name) {
+  if ('string' === typeof keys) {
+    return [keys]
+  } else if (Array.isArray(keys)) {
+    return keys
+  } else {
+    throw new TypeError(`"${name}" only accepts string or array of strings as second parameter.`)
+  }
+}
 
 
 function isReactComponent(Component) {
