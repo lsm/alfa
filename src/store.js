@@ -66,6 +66,8 @@ export default function createStore() {
         Object.keys(key).forEach(function(_key) {
           setSingle(_store, _subscriptions, _key, key[_key])
         })
+      } else {
+        throw new TypeError('Type of `key` must be string or plain object.')
       }
     }
 
@@ -82,6 +84,9 @@ export default function createStore() {
      * @param {Function} fn   Subscribing function.
      */
     subscribe(keys, fn) {
+      if ('function' !== typeof fn)
+        throw new TypeError('`fn` must be a function')
+
       Array.isArray(keys) && keys.forEach(function(key) {
         const subs = _subscriptions[key]
         if (Array.isArray(subs)) {
@@ -129,6 +134,8 @@ export function setRawStore(rawStore, key, value) {
     Object.keys(key).forEach(function(_key) {
       rawStore[_key] = key[_key]
     })
+  } else {
+    throw new TypeError('Type of `key` must be string or plain object.')
   }
 }
 
