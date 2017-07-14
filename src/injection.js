@@ -34,13 +34,12 @@ export function createSubscribe(store) {
  */
 
 function normalizeKeys(keys, name) {
-  if ('string' === typeof keys) {
+  if ('string' === typeof keys)
     return [keys]
-  } else if (Array.isArray(keys)) {
+  else if (Array.isArray(keys))
     return keys
-  } else {
+  else
     throw new TypeError(`"${name}" only accepts string or array of strings as second parameter.`)
-  }
 }
 
 
