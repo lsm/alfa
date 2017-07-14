@@ -11,8 +11,9 @@ export function createProvide(store) {
       keys = normalizeKeys(keys, 'provide')
       return createAlfaProvidedComponent(store, WrappedComponent, keys,
         isReactComponent(WrappedComponent) && 'component')
-    else
-      throw new Error('alfa.provide only accepts function or class.')
+    } else {
+      throw new TypeError('alfa.provide only accepts function or class.')
+    }
   }
 }
 
@@ -21,8 +22,9 @@ export function createSubscribe(store) {
     if ('function' === typeof WrappedComponent) {
       keys = normalizeKeys(keys, 'subscribe')
       return createAlfaSubscribedComponent(store, WrappedComponent, keys)
-    else
-      throw new Error('alfa.subscribe only accepts function or class.')
+    } else {
+      throw new TypeError('alfa.subscribe only accepts function or class.')
+    }
   }
 }
 
