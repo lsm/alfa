@@ -59,8 +59,8 @@ function createAlfaProvidedComponent(store, WrappedComponent, keys, type) {
       // Props passed in directly to constructor has lower priority than keys
       // injected from the store.
       props = {
-        ...store.get(keys),
-        ...props || {}
+        ...props || {},
+        ...injectedProps
       }
 
       if ('component' === type)
@@ -116,7 +116,7 @@ function createAlfaSubscribedComponent(store, WrappedComponent, keys) {
       // State injected may change during normal component lifecycle.
       // So in this case it has higher priority than props.
       var _props = {
-        ...this.props || {},
+        ...this.props,
         ...this.state
       }
 
