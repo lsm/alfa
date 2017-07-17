@@ -135,6 +135,10 @@ function getInjectedProps(keys, store, contextStore) {
     ...(contextStore ? contextStore.get(keys) : undefined)
   }
 
+  // Need to inject set.
+  if (keys.indexOf('set') > -1) {
+    injectedProps.set = (contextStore || store).set
+  }
 
   Object.keys(injectedProps).forEach(function(key) {
     const prop = injectedProps[key]
