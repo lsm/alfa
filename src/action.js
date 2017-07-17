@@ -7,7 +7,7 @@ export default function createAction(store) {
 
     var pipeline = store.get(name)
     if (pipeline)
-      return pipeline
+      throw new Error(`Action "${name}" already defined.`)
 
     if (!definitions) {
       pipeline = createPipeline(name, store)
@@ -17,6 +17,8 @@ export default function createAction(store) {
       // Add an output pipe if it's provided in this special case.
       if (output)
         definitions[1] = ['output', output]
+    } else if (!Array.isArray(definitions)) {
+      throw new TypeError('Action definitions must be function, array or undefined.')
     }
 
     if (!pipeline)
