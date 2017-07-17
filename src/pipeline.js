@@ -11,121 +11,133 @@ export default function createPipeline(name, store, definitions) {
   var _pipes
 
   /**
-   * Instance of pipeline
+   * Instance of pipeline.  It takes an optional instance of store and return
+   * a function which could trigger the execution of the pipeline.
+   *
+   * @param {Object|undefined} theStore Instance of alfa store.  Default store
+   *                                    will be used if it's not provided.
    */
-  function pipeline() {
-    // Do nothing where there's no pipe at all.
-    if (0 === _pipes.length)
-      return
+  function pipeline(theStore) {
+    theStore = theStore || store
 
     /**
-     * Start from the first pipe of the pipeline.
-     * @type {Number}
+     * This is the function will be called by end user.  It triggers the 
+     * execution of the pipeline.
      */
-    var step = 0
+    return function execPipeline() {
+      // Do nothing where there's no pipe at all.
+      if (0 === _pipes.length)
+        return
 
-    /**
-     * Convert original function arguments to array.
-     * 
-     * @type {Array}
-     */
-    const _args = Array.from(arguments)
+      /**
+       * Start from the first pipe of the pipeline.
+       * @type {Number}
+       */
+      var step = 0
 
-    /**
-     * Make a shallow clone of the key/value store.
-     * 
-     * @type {Object}
-     */
-    const _rawStore = store.clone()
+      /**
+       * Convert original function arguments to array.
+       * 
+       * @type {Array}
+       */
+      const _args = Array.from(arguments)
 
-    /**
-     * The `set` function can only modified the cloned raw store and will
-     * not trigger any listening function.
-     *  
-     * @param {String|Object}   key   Name of the value in store.  Or object of
-     * key/value pairs to merge into the store. 
-     * @param {Any}             value Value to save.
-     */
-    _rawStore.set = function(key, value) {
-      setRawStore(_rawStore, key, value)
-    }
+      /**
+       * Make a shallow clone of the key/value store.
+       * 
+       * @type {Object}
+       */
+      const _rawStore = theStore.clone()
 
-
-    var previousPipeState
-
-    /**
-     * The pipeline execution function.
-     * @param  {[type]}   err   [description]
-     * @param  {[type]}   key   [description]
-     * @param  {[type]}   value [description]
-     * @return {Function}       [description]
-     */
-    var next = function next(err, key, value) {
-      if (previousPipeState && arguments.length > 1) {
-        // `next` could be called before the return of previous pipe so we need
-        // to set the `autoNext` flag of previous pipe state to false to avoid
-        // `double next`.
-        previousPipeState.autoNext = false
-
-        // We have more than one argument which means the previous pipe produced
-        // some output by calling `next`.  We need to merge this output with 
-        // rawStore before executing the next pipe.
-        mergeOutputWithRawStore(_rawStore, key, value)
+      /**
+       * The `set` function can only modified the cloned raw store and will
+       * not trigger any listening functions.
+       *  
+       * @param {String|Object}   key   Name of the value in store.  Or object of
+       * key/value pairs to merge into the store. 
+       * @param {Any}             value Value to save.
+       */
+      _rawStore.set = function(key, value) {
+        setRawStore(_rawStore, key, value)
       }
 
-      // Save error to the raw store or get one from it.  This will make sure 
-      // error will be handled properly no matter how it was set.
-      if (err)
-        _rawStore.error = err
-      else
-        err = _rawStore.error
+      var previousPipeState
 
-      var pipe
+      /**
+       * The function which helps executing functions in the pipeline one by one.
+       * 
+       * @param  {Object|null}    err   Error object if any.
+       * @param  {String|Object}  key   Key of value to store or object of 
+       *                                key/value maps.
+       * @param  {Any}            value Value to store.
+       */
+      var next = function next(err, key, value) {
+        if (previousPipeState && arguments.length > 1) {
+          // `next` could be called before the return of previous pipe so we need
+          // to set the `autoNext` flag of previous pipe state to false to avoid
+          // `double next`.
+          previousPipeState.autoNext = false
 
-      if (err) {
-        // Throw the error if we don't have error handling function.
-        if ('function' !== typeof _rawStore.errorHandler) {
-          var fnName = previousPipeState && previousPipeState.fnName
-          fnName = fnName || previousPipeState.fn.name || 'function'
-          throwError(err, name, step, fnName)
+          // We have more than one argument which means the previous pipe produced
+          // some output by calling `next`.  We need to merge this output with 
+          // rawStore before executing the next pipe.
+          mergeOutputWithRawStore(_rawStore, key, value)
         }
 
-        pipe = _rawStore.errorHandler
-      } else {
-        // Get current pipe and add 1 to the step.
-        pipe = _pipes[step++]
-      }
+        // Save error to the raw store or get one from it.  This will make sure 
+        // error will be handled properly no matter how it was set.
+        if (err)
+          _rawStore.error = err
+        else
+          err = _rawStore.error
 
-      if (pipe) {
-        /**
-         * Object for holding execution state, result and other references
-         * of certain pipe for executing pipeline continously.
-         * 
-         * @type {Object}
-         */
-        const pipeState = {
-          ...pipe,
-          next: next,
-          result: undefined,
-          fnReturned: false
+        var pipe
+
+        if (err) {
+          // Throw the error if we don't have error handling function.
+          if ('function' !== typeof _rawStore.errorHandler) {
+            var fnName = previousPipeState && previousPipeState.fnName
+            fnName = fnName || previousPipeState.fn.name || 'function'
+            throwError(err, name, step, fnName)
+          }
+
+          pipe = _rawStore.errorHandler
+        } else {
+          // Get current pipe and add 1 to the step.
+          pipe = _pipes[step++]
         }
 
-        /**
-         * Keep a reference to pipeState for better error handling.
-         * @type {Object}
-         */
-        previousPipeState = pipeState
+        if (pipe) {
+          /**
+           * Object for holding execution state, result and other references
+           * of certain pipe for executing pipeline continously.
+           * 
+           * @type {Object}
+           */
+          const pipeState = {
+            ...pipe,
+            next: next,
+            result: undefined,
+            fnReturned: false
+          }
 
-        // Excute the pipe.
-        executePipe(err, _args, store, _rawStore, pipeState)
+          /**
+           * Keep a reference to pipeState for better error handling.
+           * @type {Object}
+           */
+          previousPipeState = pipeState
+
+          // Excute the pipe.
+          executePipe(err, _args, theStore, _rawStore, pipeState)
+        }
       }
+
+      // Save next to the raw store so pipes could retrieve it as input.
+      _rawStore.next = next
+
+      // Start executing the chain
+      next()
     }
-
-    // Save next to the raw store so pipes could retrieve it as input.
-    _rawStore.next = next
-
-    // Start executing the chain
-    next()
   }
 
   pipeline.instanceOfAlfaPipeline = true

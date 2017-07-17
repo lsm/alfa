@@ -55,9 +55,8 @@ function createAlfaProvidedComponent(store, WrappedComponent, keys, type) {
 
   var wrapper = {
     [componentName]: function(props, context, updater) {
-      // See if we have an alternative alfa store to use.
-      store = context && context.alfaStore ? context.alfaStore : store
-      // Props passed in directly to constructor has higher priority than keys
+      const injectedProps = getInjectedProps(keys, store, context && context.alfaStore)
+      // Props passed in directly to constructor has lower priority than keys
       // injected from the store.
       props = {
         ...store.get(keys),
@@ -98,11 +97,9 @@ function createAlfaSubscribedComponent(store, WrappedComponent, keys) {
     constructor(props, context, updater) {
       // Call the original constructor.
       super(props, context, updater)
-      // See if we have an alternative alfa store to use.
-      store = context && context.alfaStore ? context.alfaStore : store
 
       // Inject all keys as state.
-      this.state = store.get(keys)
+      this.state = getInjectedProps(keys, store, context && context.alfaStore)
 
       // Make sure we use the correct store for unsubscribe.
       this.store = store
@@ -129,4 +126,21 @@ function createAlfaSubscribedComponent(store, WrappedComponent, keys) {
   }
 
   return AlfaSubscribedComponent
+}
+
+function getInjectedProps(keys, store, contextStore) {
+  const injectedProps = {
+    ...store.get(keys),
+    // See if we have an alternative alfa store to use.
+    ...(contextStore ? contextStore.get(keys) : undefined)
+  }
+
+
+  Object.keys(injectedProps).forEach(function(key) {
+    const prop = injectedProps[key]
+    if (true === prop.instanceOfAlfaPipeline)
+      injectedProps[key] = prop(store)
+  })
+
+  return injectedProps
 }
