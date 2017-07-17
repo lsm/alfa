@@ -1,3 +1,18 @@
+0.4.0 (2017/07/16)
+==================
+The top level API `set` and `get` have been removed from this version to avoid 
+anti-pattern usage and confusion when multiple stores are involved. Full list of
+changes see below:
+
+- [Breaking] Remove `get` from top level API.
+- [Breaking] Remove `set` from top level API.
+`set` can be retrived through `provide` or `subscribe`.
+- [Breaking] Function `action` doesn't work as getter anymore.  All defined actions should 
+be retrived from `provide` or `subscribe`.
+- [Breaking] Data injected from store always have higher priority than props.
+This makes the behavior of `priority` consistent between `provide` and 
+`subscribe`.
+- Action now can use the correct store at execution time.
 
 
 0.3.0 (2017/07/14)

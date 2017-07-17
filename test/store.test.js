@@ -99,15 +99,14 @@ test('store.get() with invalidate key', t => {
 test('store.subscribe()', t => {
   t.plan(6)
 
-  const store = createStore()
-  const data = {
+  const store = createStore({
     a: 1,
     b: {
       c: new Date()
     },
     d: true,
     e: 'value which will not be changed'
-  }
+  })
 
   store.subscribe(['e'], function() {
     throw new Error('`e` should not be changed.')

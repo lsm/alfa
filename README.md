@@ -1,4 +1,5 @@
 # Alfa
+React state management and flow control.
 
 
 [![License MIT][license-img]][license-url]
