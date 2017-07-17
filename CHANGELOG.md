@@ -1,3 +1,11 @@
+0.3.2 (2017/07/17)
+==================
+- When getting multiple keys from a store using `store.get(keys)` the result
+will not contain undefined value if the internal data object of store has no
+such property.
+- Always use store instance from context if it exists.
+
+
 0.3.1 (2017/07/16)
 ==================
 Fix a crash for `provide/subscribe` when required value is undefined.
