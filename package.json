@@ -1,6 +1,6 @@
 {
   "name": "alfa",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "",
   "main": "lib/index.js",
   "files": [
@@ -43,7 +43,9 @@
     "react-test-renderer": "15.6.1"
   },
   "ava": {
-    "files": ["test/*.test.js"],
+    "files": [
+      "test/*.test.js"
+    ],
     "source": [
       "src/*.js"
     ],
