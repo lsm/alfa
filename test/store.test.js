@@ -60,11 +60,12 @@ test('store.get(keys)', t => {
   store.set(data)
   store.set('key', 'value')
 
-  var result = store.get(['a', 'b'])
+  var result = store.get(['a', 'b', 'c'])
 
   t.is(result.a, data.a)
   t.is(result.b, data.b)
   t.is(result.key, undefined)
+  t.is(result.hasOwnProperty('c'), false)
 })
 
 test('store.get() with invalidate key', t => {
