@@ -99,13 +99,14 @@ function createAlfaSubscribedComponent(store, WrappedComponent, keys) {
       super(props, context, updater)
 
       // Inject all keys as state.
-      this.state = getInjectedProps(keys, store, context && context.alfaStore)
+      const contextStore = context && context.alfaStore
+      this.state = getInjectedProps(keys, store, contextStore)
 
       // Make sure we use the correct store for unsubscribe.
-      this.store = store
+      this.store = contextStore || store
       subFunc = this.setState.bind(this)
       // Call `setState` when subscribed keys changed.
-      store.subscribe(keys, subFunc)
+      this.store.subscribe(keys, subFunc)
     }
 
     componentWillUnmount() {
@@ -142,7 +143,7 @@ function getInjectedProps(keys, store, contextStore) {
   Object.keys(injectedProps).forEach(function(key) {
     const prop = injectedProps[key]
     if ('function' === typeof prop && true === prop.instanceOfAlfaPipeline)
-      injectedProps[key] = prop(store)
+      injectedProps[key] = prop(contextStore || store)
   })
 
   return injectedProps
