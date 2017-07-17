@@ -5,12 +5,14 @@
  * 
  * @return {Store}
  */
-export default function createStore() {
+export default function createStore(data) {
   /**
    * Internal object which holds the key/value map.
    * @type {Object}
    */
-  const _store = {}
+  const _store = {
+    ...data
+  }
 
   /**
    * Internal object which holds all the subscription functions.
