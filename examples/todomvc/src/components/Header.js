@@ -1,16 +1,16 @@
-import { action } from 'alfa'
+import { provide } from 'alfa'
 import React from 'react'
 import TodoTextInput from './TodoTextInput'
 
-const Header = () => {
+const Header = (props) => {
   return (
     <header className="header">
       <h1>todos</h1>
-      <TodoTextInput onSave={ action('addToDo') }
+      <TodoTextInput onSave={ props.addToDo }
                      newTodo
                      placeholder="What needs to be done?" />
     </header>
   )
 }
 
-export default Header
+export default provide(Header, ['addToDo'])
