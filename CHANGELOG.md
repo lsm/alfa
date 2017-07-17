@@ -1,3 +1,8 @@
+0.3.1 (2017/07/16)
+==================
+Fix a crash for `provide/subscribe` when required value is undefined.
+
+
 0.3.0 (2017/07/16)
 ==================
 The top level API `set` and `get` have been removed from this version to avoid 

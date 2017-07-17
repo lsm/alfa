@@ -80,10 +80,11 @@ test('action() produces output to store', t => {
 })
 
 test('get action from provide and subscribe', t => {
-  t.plan(10)
+  t.plan(11)
 
   const store = createStore({
-    title: 'value 3'
+    title: 'value 3',
+    content: undefined
   })
   const App = getApp(store)
   const action = createAction(store)
@@ -93,7 +94,7 @@ test('get action from provide and subscribe', t => {
   let counter = 1
   action('getAndChangeTitle')
     .input('theTitle')
-    .pipe(function(theTitle, title) {
+    .pipe(function(theTitle, title, content) {
       if (1 === counter)
         t.is(title, 'value 3')
       else if (2 === counter)
@@ -103,7 +104,7 @@ test('get action from provide and subscribe', t => {
       return {
         title: 'value 3' + counter++
       }
-    }, ['theTitle', 'title'], ['title'])
+    }, ['theTitle', 'title', 'content'], ['title'])
     .pipe('output', 'title')
 
   /**
@@ -112,7 +113,8 @@ test('get action from provide and subscribe', t => {
 
   const fn1 = provide(function(props) {
     props.getAndChangeTitle(props.title)
-  }, ['getAndChangeTitle', 'title'])
+    t.is(props.content, undefined)
+  }, ['getAndChangeTitle', 'title', 'content'])
 
   t.is(store.get('title'), 'value 3')
   fn1()
