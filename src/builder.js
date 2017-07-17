@@ -186,7 +186,7 @@ function buildPipe(fn, input, output) {
 
 function normalizeInput(input) {
   var inputType = typeof input
-  if ('string' === inputType)
+  if ('string' === inputType || 'number' === inputType || null === input)
     input = [input]
 
   if (input && !Array.isArray(input)) {
@@ -194,6 +194,15 @@ function normalizeInput(input) {
       input = [input]
     else
       throw new Error('`input` should be either string, array or object of dependency maps when presents')
+  }
+
+  if (Array.isArray(input) && 'number' === typeof input[0]) {
+    var numberOfNulls = input[0]
+    input = input.slice(1)
+    while (numberOfNulls > 0) {
+      numberOfNulls--
+      input.unshift(null)
+    }
   }
 
   return input
@@ -205,6 +214,8 @@ function normalizeOutput(output) {
 
   if (output && !Array.isArray(output))
     throw new Error('`output` should be either string or array of output names when presents')
+
+  output = output || []
 
   // Detect any mapped output. Use the format `theOriginalName:theNewName` in
   // `output` array will map the output `theOriginalName` to `theNewName`.

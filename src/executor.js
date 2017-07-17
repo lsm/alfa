@@ -7,8 +7,19 @@ export function executePipe(err, args, store, rawStore, pipeState) {
   var input = pipeState.input
   var output = pipeState.output
   var fnName = pipeState.fnName
-  var _inputArgs = input.length > 0 ? input.map(key => rawStore[key]) : args
+  var _inputArgs
   var injectedFn
+
+  if (!input || !(input.length > 0)) {
+    _inputArgs = args
+  } else {
+    _inputArgs = input.map((key, idx) => {
+      if (!key)
+        return args[idx]
+      else
+        return rawStore[key]
+    })
+  }
 
   // Get the pipe function demanded from dependency container.
   if ('string' === typeof fnName) {
