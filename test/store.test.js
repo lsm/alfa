@@ -122,13 +122,11 @@ test('store.subscribe()', t => {
   store.set('a', 2)
 
   store.subscribe(['b', 'd'], function(changed) {
-    if (changed.b) {
+    if (changed.b)
       t.is(changed.b, b)
-    }
 
-    if (changed.d) {
+    if (changed.d)
       t.is(changed.d, 'false')
-    }
   })
 
   const b = {

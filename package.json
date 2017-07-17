@@ -43,6 +43,7 @@
     "react-test-renderer": "15.6.1"
   },
   "ava": {
+    "files": ["test/*.test.js"],
     "require": [
       "babel-register"
     ],

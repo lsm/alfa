@@ -1,5 +1,6 @@
 import test from 'ava'
-import render from 'react-test-renderer';
+import render from 'react-test-renderer'
+import getApp from './app'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { createStore } from '../src'
@@ -125,27 +126,25 @@ test('injection.createSubscribe()', t => {
 })
 
 
-function getApp(store) {
-  return class App extends Component {
-    static propTypes = {
-      component: PropTypes.func.isRequired
-    }
+test('provide and use set', t => {
+  t.plan(3)
 
-    static childContextTypes = {
-      alfaStore: PropTypes.object,
-    }
+  const store = createStore({
+    title: 'value'
+  })
+  const App = getApp(store)
+  const provide = createProvide(store)
 
-    getChildContext() {
-      return {
-        alfaStore: store
-      }
-    }
-
-    render() {
-      const Component = this.props.component
-      return <div>
-               <Component/>
-             </div>
-    }
+  function FnComponent(props) {
+    t.is(props.title, 'value')
+    props.set('title', 'new title')
+    return <h4>{props.title}</h4>
   }
-}
+
+  const ProvidedFnComponent = provide(FnComponent, ['set', 'title'])
+  const component = render.create(<App component={ ProvidedFnComponent } />)
+  const tree = component.toJSON()
+  t.snapshot(tree)
+
+  t.is(store.get('title'), 'new title')
+})
