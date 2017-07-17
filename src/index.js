@@ -10,8 +10,6 @@ function createAlfa() {
 
   var store = createStore()
 
-  alfa.get = store.get
-  alfa.set = store.set
   alfa.action = createAction(store)
   alfa.provide = createProvide(store)
   alfa.subscribe = createSubscribe(store)
@@ -31,8 +29,6 @@ const alfa = createAlfa()
  * Export toplevel APIs.
  */
 export default alfa
-export const get = alfa.get
-export const set = alfa.set
 export const action = alfa.action
 export const provide = alfa.provide
 export const subscribe = alfa.subscribe
