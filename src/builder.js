@@ -1,4 +1,5 @@
 export const FN_WAIT = 'wait'
+export const FN_ERROR = 'error'
 export const FN_INPUT = 'input'
 export const FN_OUTPUT = 'output'
 export const FN_THROTTLE = 'throttle'
@@ -28,6 +29,9 @@ export function createPipe(fn, input, output) {
         // .pipe('output', ['result'])
         inputIsRequired(input, fnType)
         return createOutputPipe(input)
+      case FN_ERROR:
+        // .pipe('error', 'theErrorHandler', ['input1', 'input2'])
+        return createErrorPipe(input, output)
       case FN_THROTTLE:
         // .pipe('throttle', 300)
         inputIsRequired(input, fnType)
@@ -74,7 +78,7 @@ function createInputPipe(input) {
       })
       return true
     },
-    fnName: 'input',
+    fnName: FN_INPUT,
     input: input
   }
 }
@@ -90,7 +94,24 @@ function createOutputPipe(input) {
       })
       return true
     },
-    fnName: 'output',
+    fnName: FN_OUTPUT,
+    input: input
+  }
+}
+
+function createErrorPipe(errorFn, input) {
+  input = normalizeStringInput(input || 'error')
+
+  return {
+    fn: function errorPipe(args, rawStore) {
+      if ('string' === typeof errorFn)
+        errorFn = rawStore[errorFn]
+      if ('function' !== typeof errorFn)
+        throw new Error(`The error handling function "${errorFn}" is not a function.`)
+
+      errorFn.apply(0, args)
+    },
+    fnName: FN_ERROR,
     input: input
   }
 }
@@ -103,7 +124,7 @@ function createWaitPipe(msec) {
       }, msec)
     },
     input: ['next'],
-    fnName: 'wait'
+    fnName: FN_WAIT
   }
 }
 
@@ -120,7 +141,7 @@ function createThrottlePipe(msec) {
         return false
       }
     },
-    fnName: 'throttle'
+    fnName: FN_THROTTLE
   }
 }
 

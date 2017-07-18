@@ -1,6 +1,6 @@
 import { executePipe } from './executor'
 import { setRawStore, isPlainObject } from './store'
-import { createPipe, FN_WAIT, FN_INPUT, FN_OUTPUT, FN_THROTTLE } from './builder'
+import { createPipe, FN_WAIT, FN_ERROR, FN_INPUT, FN_OUTPUT, FN_THROTTLE } from './builder'
 
 
 export default function createPipeline(name, store, definitions) {
@@ -9,6 +9,8 @@ export default function createPipeline(name, store, definitions) {
    * @type {Array}
    */
   var _pipes
+
+  var errorHandler
 
   /**
    * Instance of pipeline.  It takes an optional instance of store and return
@@ -95,13 +97,13 @@ export default function createPipeline(name, store, definitions) {
 
         if (err) {
           // Throw the error if we don't have error handling function.
-          if ('function' !== typeof _rawStore.errorHandler) {
+          if (!pipeline.errorPipe) {
             var fnName = previousPipeState && previousPipeState.fnName
             fnName = fnName || previousPipeState.fn.name || 'function'
             throwError(err, name, step, fnName)
           }
 
-          pipe = _rawStore.errorHandler
+          pipe = pipeline.errorPipe
         } else {
           // Get current pipe and add 1 to the step.
           pipe = _pipes[step++]
@@ -143,8 +145,13 @@ export default function createPipeline(name, store, definitions) {
   pipeline.instanceOfAlfaPipeline = true
 
   if (definitions) {
-    _pipes = definitions.map(function(pipeDef) {
-      return createPipe(pipeDef[0], pipeDef[1], pipeDef[2])
+    _pipes = []
+    definitions.forEach(pipeDef => {
+      const _pipe = createPipe(pipeDef[0], pipeDef[1], pipeDef[2])
+      if (FN_ERROR === _pipe.fnName)
+        pipeline.errorPipe = _pipe
+      else
+        _pipes.push(_pipe)
     })
   } else {
     _pipes = attachPipelineFunctions(pipeline)
@@ -162,31 +169,39 @@ function attachPipelineFunctions(pipeline) {
   const pipes = []
 
   pipeline.input = function(input) {
-    var p = createPipe(FN_INPUT, input)
+    const p = createPipe(FN_INPUT, input)
     pipes.push(p)
     return pipeline
   }
 
   pipeline.pipe = function(fn, input, output) {
-    var p = createPipe(fn, input, output)
+    if ('error' === fn)
+      return pipeline.error(input, output)
+
+    const p = createPipe(fn, input, output)
     pipes.push(p)
     return pipeline
   }
 
+  pipeline.error = function(fn, input) {
+    pipeline.errorPipe = createPipe(FN_ERROR, fn, input)
+    return pipeline
+  }
+
   pipeline.wait = function(input) {
-    var p = createPipe(FN_WAIT, input)
+    const p = createPipe(FN_WAIT, input)
     pipes.push(p)
     return pipeline
   }
 
   pipeline.output = function(input) {
-    var p = createPipe(FN_OUTPUT, input)
+    const p = createPipe(FN_OUTPUT, input)
     pipes.push(p)
     return pipeline
   }
 
   pipeline.throttle = function(input) {
-    var p = createPipe(FN_THROTTLE, input)
+    const p = createPipe(FN_THROTTLE, input)
     pipes.push(p)
     return pipeline
   }
@@ -201,7 +216,7 @@ function throwError(error, name, step, pipe) {
   if ('string' === typeof error) {
     ex = new Error()
     ex.name = `Pipeline "${name}" error in step "${step}:${pipe}":
-    \n(set "errorHandler" to handle this error inside your pipeline.)`
+    \n(use .pipe("error", errorHandlerFn, ['input']) to handle this error inside your pipeline.)`
     ex.message = error
   }
 

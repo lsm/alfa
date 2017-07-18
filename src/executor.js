@@ -1,4 +1,5 @@
 import { isPlainObject } from './store'
+import { FN_ERROR, FN_INPUT, FN_OUTPUT } from './builder'
 
 
 export function executePipe(err, args, store, rawStore, pipeState) {
@@ -55,8 +56,10 @@ export function executePipe(err, args, store, rawStore, pipeState) {
     }
   }
 
-  if ('input' === fnName || 'output' === fnName)
+  if (FN_INPUT === fnName || FN_OUTPUT === fnName)
     pipeState.result = fn.call(0, args, store, rawStore)
+  else if (FN_ERROR === fnName)
+    pipeState.result = fn(_inputArgs, rawStore)
   else if (injectedFn)
     pipeState.result = executeInjectedFunc(_inputArgs, injectedFn, pipeState)
   else
