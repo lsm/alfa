@@ -10,8 +10,6 @@ export default function createPipeline(name, store, definitions) {
    */
   var _pipes
 
-  var errorHandler
-
   /**
    * Instance of pipeline.  It takes an optional instance of store and return
    * a function which could trigger the execution of the pipeline.
