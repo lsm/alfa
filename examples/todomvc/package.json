@@ -10,7 +10,7 @@
     "react-scripts": "1.0.10"
   },
   "dependencies": {
-    "alfa": "0.3.2",
+    "alfa": "0.3.3",
     "classnames": "2.2.5",
     "prop-types": "15.5.10",
     "react": "15.6.1",

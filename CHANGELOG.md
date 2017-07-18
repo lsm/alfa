@@ -1,3 +1,8 @@
+0.3.3 (2017/07/18)
+==================
+- Implement error pipe.
+
+
 0.3.2 (2017/07/17)
 ==================
 - When getting multiple keys from a store using `store.get(keys)` the result

@@ -1,5 +1,5 @@
-import { set, action } from 'alfa'
-import * as pipes from './pipes'
+import { action } from 'alfa'
+
 
 // Set all pipes to the store.
 set(pipes)

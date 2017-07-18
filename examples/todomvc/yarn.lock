@@ -69,9 +69,9 @@ ajv@^5.0.0:
     co "^4.6.0"
     json-stable-stringify "^1.0.1"
 
-alfa@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/alfa/-/alfa-0.2.0.tgz#37c3be9a205cad20a29547be21a55bae7dbb9448"
+alfa@0.3.2:
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/alfa/-/alfa-0.3.2.tgz#bbafccd0d69ec150280511410533dee495e7c7d8"
 
 align-text@^0.1.1, align-text@^0.1.3:
   version "0.1.4"
@@ -567,7 +567,7 @@ babel-plugin-transform-async-to-generator@^6.22.0:
     babel-plugin-syntax-async-functions "^6.8.0"
     babel-runtime "^6.22.0"
 
-babel-plugin-transform-class-properties@6.24.1, babel-plugin-transform-class-properties@^6.24.1:
+babel-plugin-transform-class-properties@6.24.1:
   version "6.24.1"
   resolved "https://registry.yarnpkg.com/babel-plugin-transform-class-properties/-/babel-plugin-transform-class-properties-6.24.1.tgz#6a79763ea61d33d36f37b611aa9def81a81b46ac"
   dependencies:
@@ -776,7 +776,7 @@ babel-plugin-transform-flow-strip-types@^6.22.0:
     babel-plugin-syntax-flow "^6.18.0"
     babel-runtime "^6.22.0"
 
-babel-plugin-transform-object-rest-spread@6.23.0, babel-plugin-transform-object-rest-spread@^6.23.0:
+babel-plugin-transform-object-rest-spread@6.23.0:
   version "6.23.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-transform-object-rest-spread/-/babel-plugin-transform-object-rest-spread-6.23.0.tgz#875d6bc9be761c58a2ae3feee5dc4895d8c7f921"
   dependencies:
