@@ -55,20 +55,30 @@ function createAlfaProvidedComponent(store, WrappedComponent, keys, type) {
 
   var wrapper = {
     [componentName]: function(props, context, updater) {
-      const injectedProps = getInjectedProps(keys, store, context && context.alfaStore)
+      const injectedProps = getInjectedProps(keys, store,
+        context && context.alfaStore)
       // Props passed in directly to constructor has lower priority than keys
       // injected from the store.
-      props = {
-        ...props || {},
+      var _props = {
+        ...props,
         ...injectedProps
+      }
+
+      const dynamicProps = getDynamicProps(WrappedComponent.keys, _props,
+        store, context && context.alfaStore)
+      if (dynamicProps) {
+        _props = {
+          ..._props,
+          ...dynamicProps.props
+        }
       }
 
       if ('component' === type)
         // Create an element if it's react component.
-        return createElement(WrappedComponent, props)
+        return createElement(WrappedComponent, _props)
       else
         // Otherwise, call the original function.
-        return WrappedComponent(props, context, updater)
+        return WrappedComponent(_props, context, updater)
     }
   }
 
