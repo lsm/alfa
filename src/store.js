@@ -86,10 +86,14 @@ export default function createStore(data) {
      * 
      * @param {Array}   keys  Array of keys the function will be subscribing to.
      * @param {Function} fn   Subscribing function.
+     * @param {Object} [maps] Optional injection key to real key mapping.
      */
-    subscribe(keys, fn) {
+    subscribe(keys, fn, maps) {
       if ('function' !== typeof fn)
         throw new TypeError('`fn` must be a function')
+
+      if (maps)
+        fn.maps = maps
 
       Array.isArray(keys) && keys.forEach(function(key) {
         const subs = _subscriptions[key]
@@ -150,10 +154,23 @@ function setSingle(store, subscriptions, key, value) {
   // Call subscribed functions if we have.
   const subs = subscriptions[key]
   if (subs) {
-    const changed = {
+    var changed = {
       [key]: value
     }
     subs.forEach(function(subFn) {
+      if (subFn.maps) {
+        var maps = subFn.maps
+        Object.keys(maps).some(function(injectKey) {
+          const realKey = maps[injectKey]
+          if (realKey === key) {
+            changed = {
+              [injectKey]: value
+            }
+            return true
+          }
+          return false
+        })
+      }
       subFn(changed)
     })
   }
