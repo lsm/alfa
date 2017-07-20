@@ -110,13 +110,33 @@ function createAlfaSubscribedComponent(store, WrappedComponent, keys) {
 
       // Inject all keys as state.
       const contextStore = context && context.alfaStore
-      this.state = getInjectedProps(keys, store, contextStore)
+      const state = getInjectedProps(keys, store, contextStore)
+
+      // Get dynamic props.
+      const dynamicProps = getDynamicProps(WrappedComponent.keys,
+        {
+          ...props,
+          ...state
+        }, store, context && context.alfaStore)
+
+      var maps
+      if (dynamicProps) {
+        keys = keys.concat(dynamicProps.keys)
+        maps = dynamicProps.maps
+        this.state = {
+          ...state,
+          ...dynamicProps.props
+        }
+      } else {
+        this.state = state
+      }
 
       // Make sure we use the correct store for unsubscribe.
       this.store = contextStore || store
       subFunc = this.setState.bind(this)
+
       // Call `setState` when subscribed keys changed.
-      this.store.subscribe(keys, subFunc)
+      this.store.subscribe(keys, subFunc, maps)
     }
 
     componentWillUnmount() {
