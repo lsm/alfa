@@ -138,7 +138,7 @@ test('provide and use set', t => {
   function FnComponent(props) {
     t.is(props.title, 'value')
     props.set('title', 'new title')
-    return <h4>{props.title}</h4>
+    return <h4>{ props.title }</h4>
   }
 
   const ProvidedFnComponent = provide(FnComponent, ['set', 'title'])
@@ -147,4 +147,85 @@ test('provide and use set', t => {
   t.snapshot(tree)
 
   t.is(store.get('title'), 'new title')
+})
+
+test('provide with dynamic injection', t => {
+  t.plan(4)
+
+  const store = createStore({
+    title: 'The title',
+    subTitle: 'The sub title'
+  })
+
+  const App = getApp(store)
+  const provide = createProvide(store)
+
+  class ReactComponent extends Component {
+    static propTypes = {
+      title: PropTypes.string.isRequired,
+      subTitle: PropTypes.string.isRequired
+    }
+
+    static keys = function(props) {
+      t.is(props.title, 'The title')
+      return ['subTitle']
+    }
+
+    render() {
+      t.is(this.props.title, store.get('title'))
+      t.is(this.props.subTitle, store.get('subTitle'))
+      return (<div>
+                <h1>{ this.props.title }</h1>
+                <h3>{ this.props.subTitle }</h3>
+              </div>)
+    }
+  }
+
+  const ProvidedReactComponent = provide(ReactComponent, ['title'])
+  const tree = render.create(<App component={ ProvidedReactComponent } />).toJSON()
+  t.snapshot(tree)
+})
+
+
+test('subscribe with dynamic injection', t => {
+  t.plan(7)
+
+  const store = createStore({
+    title: 'The title',
+    'The title key': 'The sub title'
+  })
+
+  const App = getApp(store)
+  const subscribe = createSubscribe(store)
+
+  class ReactComponent extends Component {
+    static propTypes = {
+      title: PropTypes.string.isRequired,
+      subTitle: PropTypes.string.isRequired
+    }
+
+    static keys = function(props) {
+      t.is(props.title, 'The title')
+      return {
+        'subTitle': props.title + ' key'
+      }
+    }
+
+    render() {
+      t.is(this.props.title, store.get('title'))
+      t.is(this.props.subTitle, store.get('The title key'))
+      return (<div>
+                <h2>{ this.props.title }</h2>
+                <h5>{ this.props.subTitle }</h5>
+              </div>)
+    }
+  }
+
+  const SubscribedReactComponent = subscribe(ReactComponent, ['title'])
+  const component = render.create(<App component={ SubscribedReactComponent } />)
+  t.snapshot(component.toJSON())
+
+  store.set('The title key', 'New sub title')
+
+  t.snapshot(component.toJSON())
 })
