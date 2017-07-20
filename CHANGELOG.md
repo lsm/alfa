@@ -1,3 +1,11 @@
+0.4.0 (2017/07/20)
+==================
+- Support dynamically inject props based on the return of `Component.keys(props)`.
+- Support output dynamic keys to the store using format `realKey:$mappedKey`
+where `mappedKey` is a key from the store which its value will be used as the
+key of the output.
+
+
 0.3.3 (2017/07/18)
 ==================
 - Implement error pipe.
