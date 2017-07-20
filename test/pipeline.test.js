@@ -85,3 +85,22 @@ test('error pipe', t => {
       }, ['next'])()()
   }, Error)
 })
+
+test('pipeline with dynamic output', t => {
+  const store = createStore({
+    arg1: 'value1'
+  })
+  const result = 'dynamic value'
+  const pipeline = action('test dynamic output')
+    .pipe((arg1) => {
+      t.is(arg1, 'value1')
+      return {
+        result1: result
+      }
+    }, ['arg1'], ['result1'])
+    .output(['result1:$arg1'])
+
+  pipeline(store)()
+
+  t.is(store.get('value1', result))
+})
