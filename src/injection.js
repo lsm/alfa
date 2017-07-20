@@ -148,3 +148,33 @@ function getInjectedProps(keys, store, contextStore) {
 
   return injectedProps
 }
+
+function getDynamicProps(keys, props, store, contextStore) {
+  if (keys && 'function' === typeof keys) {
+    const _keys = keys(props)
+    if (Array.isArray(_keys)) {
+      return {
+        keys: _keys,
+        props: getInjectedProps(_keys, store, contextStore)
+      }
+    } else if (_keys && 'object' === typeof _keys) {
+      const injectionKeys = Object.keys(_keys)
+      const realkeys = injectionKeys.map(function(key) {
+        return _keys[key]
+      })
+      const _props = getInjectedProps(realkeys, store, contextStore)
+      const result = {}
+
+      injectionKeys.forEach(function(key) {
+        const realKey = _keys[key]
+        result[key] = _props[realKey]
+      })
+
+      return {
+        keys: realkeys,
+        maps: _keys,
+        props: result
+      }
+    }
+  }
+}
