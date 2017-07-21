@@ -87,6 +87,8 @@ test('error pipe', t => {
 })
 
 test('pipeline with dynamic output', t => {
+  t.plan(2)
+
   const store = createStore({
     arg1: 'value1'
   })
@@ -98,9 +100,9 @@ test('pipeline with dynamic output', t => {
         result1: result
       }
     }, ['arg1'], ['result1'])
-    .output(['result1:$arg1'])
+    .output(['arg1', 'result1:$arg1'])
 
   pipeline(store)()
 
-  t.is(store.get('value1', result))
+  t.is(store.get('value1'), result)
 })

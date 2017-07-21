@@ -84,12 +84,11 @@ function createInputPipe(input) {
 }
 
 function createOutputPipe(input) {
-  input = normalizeOutput(input)
+  const output = normalizeStringInput(input)
+  const outputMap = {}
 
   var i = 0
-  var len = input.length
-  var output = input.output
-  var outputMap = {}
+  const len = output.length
 
   while (i < len) {
     var item = output[i++]
@@ -111,7 +110,8 @@ function createOutputPipe(input) {
           var mapping = outputMap[key]
           if (mapping) {
             origKey = mapping.origKey
-            if (/^$/.test(mapping.outputKey)) {
+            outputKey = mapping.outputKey
+            if (/^\$/.test(outputKey)) {
               // 'originalKey:$dynamicOutputKey'
               outputKey = rawStore[outputKey.slice(1)]
             }
