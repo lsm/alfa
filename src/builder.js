@@ -57,6 +57,11 @@ function inputIsRequired(input, fnType) {
     throw new Error(`'input' is required for ${fnType} pipe.`)
 }
 
+function onlyOneArgumentIsAllowed(args, name) {
+  if (args.length > 1)
+    throw new Error(`Only 1 argument is allowed for function "${name}".`)
+}
+
 function normalizeStringInput(input, fnType) {
   if ('string' === typeof input)
     input = [input]
@@ -68,6 +73,7 @@ function normalizeStringInput(input, fnType) {
 }
 
 function createInputPipe(input) {
+  onlyOneArgumentIsAllowed(arguments)
   input = normalizeStringInput(input)
 
   return {
@@ -84,6 +90,7 @@ function createInputPipe(input) {
 }
 
 function createOutputPipe(input) {
+  onlyOneArgumentIsAllowed(arguments)
   const output = normalizeStringInput(input)
   const outputMap = {}
 
