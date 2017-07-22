@@ -94,6 +94,8 @@ function createAlfaProvidedComponent(store, WrappedComponent, keys, type) {
 
 function createAlfaSubscribedComponent(store, WrappedComponent, keys) {
   var subFunc
+  var subKeys
+  var subMaps
 
   class AlfaSubscribedComponent extends Component {
     // Keep the name of the orginal component which makes debugging logs easier
@@ -121,10 +123,10 @@ function createAlfaSubscribedComponent(store, WrappedComponent, keys) {
           ...state
         }, store, context && context.alfaStore)
 
-      var maps
+      // var maps
       if (dynamicProps) {
         keys = keys.concat(dynamicProps.keys)
-        maps = dynamicProps.maps
+        subMaps = dynamicProps.maps
         this.state = {
           ...state,
           ...dynamicProps.props
@@ -133,12 +135,16 @@ function createAlfaSubscribedComponent(store, WrappedComponent, keys) {
         this.state = state
       }
 
-      // Make sure we use the correct store for unsubscribe.
+      // Use the correct store for subscribe/unsubscribe.
       this.store = contextStore || store
-      subFunc = this.setState.bind(this)
 
+      subKeys = keys
+      subFunc = this.setState.bind(this)
+    }
+
+    componentDidMount() {
       // Call `setState` when subscribed keys changed.
-      this.store.subscribe(keys, subFunc, maps)
+      this.store.subscribe(subKeys, subFunc, subMaps)
     }
 
     componentWillUnmount() {
