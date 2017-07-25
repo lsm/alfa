@@ -158,6 +158,14 @@ function setSingle(store, subscriptions, key, value) {
       [key]: value
     }
     subs.forEach(function(subFn) {
+      // Make sure the subFn is still legit at the time we are calling it since
+      // all subscribing functions are actually `setStat`.  And previous
+      // `setState` calls could trigger unmount component which later `setState`
+      // belongs to.
+      var _subs = subscriptions[key]
+      if (subs && -1 === _subs.indexOf(subFn))
+        return
+
       if (subFn.maps) {
         var maps = subFn.maps
         Object.keys(maps).some(function(injectKey) {
