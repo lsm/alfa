@@ -41,7 +41,7 @@ function normalizeKeys(keys, name, dynamicKeys) {
   else if ('function' === typeof dynamicKeys)
     return []
   else
-    throw new TypeError(`"${name}" only accepts string or array of strings as second parameter.`)
+    throw new TypeError(`"${name}" only accepts string or array of strings as second parameter when static property 'keys' of component not exists.`)
 }
 
 
@@ -87,6 +87,9 @@ function createAlfaProvidedComponent(store, WrappedComponent, keys, type) {
   wrapper[componentName].contextTypes = {
     alfaStore: PropTypes.object
   }
+
+  if (WrappedComponent.keys)
+    wrapper[componentName].keys = WrappedComponent.keys
 
   return wrapper[componentName]
 }
@@ -158,6 +161,9 @@ function createAlfaSubscribedComponent(store, WrappedComponent, keys) {
       return createElement(WrappedComponent, _props)
     }
   }
+
+  if (WrappedComponent.keys)
+    AlfaSubscribedComponent.keys = WrappedComponent.keys
 
   return AlfaSubscribedComponent
 }

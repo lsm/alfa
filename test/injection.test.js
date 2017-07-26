@@ -229,3 +229,62 @@ test('subscribe with dynamic injection', t => {
 
   t.snapshot(component.toJSON())
 })
+
+
+test('subscribe/provide with only `keys`', t => {
+  t.plan(10)
+
+  const store = createStore()
+
+  const provide = createProvide(store)
+  const subscribe = createSubscribe(store)
+
+  function FnComponent() {
+  }
+
+  FnComponent.keys = function(props) {
+    return {
+      theKey: props.theValueOfKey
+    }
+  }
+
+  var SubscribedFnComponent
+  t.notThrows(() => {
+    SubscribedFnComponent = subscribe(FnComponent)
+    t.pass()
+  })
+
+  var ProvidedFnComponent
+  t.notThrows(() => {
+    ProvidedFnComponent = provide(SubscribedFnComponent)
+    t.pass()
+  })
+
+  t.notThrows(() => {
+    subscribe(ProvidedFnComponent)
+    t.pass()
+  })
+
+  class ReactComponent extends Component {
+
+  }
+
+  t.throws(() => {
+    provide(ReactComponent)
+  }, TypeError)
+
+  t.throws(() => {
+    subscribe(ReactComponent)
+  }, TypeError)
+
+  function NoKeysComponent() {
+  }
+
+  t.throws(() => {
+    provide(NoKeysComponent)
+  }, TypeError)
+
+  t.throws(() => {
+    subscribe(NoKeysComponent)
+  }, TypeError)
+})
