@@ -35,7 +35,7 @@ export function executePipe(err, args, store, rawStore, pipeState) {
     }
   }
 
-  var modifiedSet
+  var localSet
   if (output && 0 < output.length) {
     if (true === pipeState.autoNext) {
       // Only track output when autoNext is true.
@@ -43,15 +43,15 @@ export function executePipe(err, args, store, rawStore, pipeState) {
       // We will handle the auto next behaviour in setWithPipeState function.
       pipeState.autoNext = false
     }
-    modifiedSet = function(key, value) {
+    localSet = function(key, value) {
       setWithPipeState(rawStore, pipeState, key, value)
     }
 
     // Call customized set function instead.
-    if (input.indexOf('set') > -1) {
+    if (input && input.indexOf('set') > -1) {
       input.forEach(function(key, idx) {
         if ('set' === key)
-          _inputArgs[idx] = modifiedSet
+          _inputArgs[idx] = localSet
       })
     }
   }
@@ -69,7 +69,7 @@ export function executePipe(err, args, store, rawStore, pipeState) {
 
   // Call setDep if a plain object was returned
   if (isPlainObject(pipeState.result))
-    (modifiedSet || rawStore.set)(pipeState.result)
+    (localSet || rawStore.set)(pipeState.result)
 
   // Check if we need to run next automatically when:
   // 1. result is true

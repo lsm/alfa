@@ -7,7 +7,7 @@ import { createStore } from '../src'
 import { createProvide, createSubscribe } from '../src/injection'
 
 
-test('action() with number input', t => {
+test('action(fn, [2, "key"]) with number input', t => {
   t.plan(4)
 
   const store = createStore({
@@ -26,6 +26,22 @@ test('action() with number input', t => {
   t.throws(() => {
     action('number input')
   }, Error)
+
+  store.get('number input')()('arg1', 'arg2')
+})
+
+test('action(fn, null, output) with null input', t => {
+  t.plan(2)
+
+  const store = createStore({
+    key: 'value'
+  })
+  const action = createAction(store)
+
+  action('number input', function(arg1, arg2) {
+    t.is(arg1, 'arg1')
+    t.is(arg2, 'arg2')
+  }, null)
 
   store.get('number input')()('arg1', 'arg2')
 })

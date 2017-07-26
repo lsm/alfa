@@ -244,7 +244,7 @@ function buildPipe(fn, input, output) {
 
 function normalizeInput(input) {
   var inputType = typeof input
-  if ('string' === inputType || 'number' === inputType || null === input)
+  if ('string' === inputType || 'number' === inputType)
     input = [input]
 
   if (input && !Array.isArray(input)) {
