@@ -158,8 +158,66 @@ test('get action from provide and subscribe', t => {
 
   const SubscribedFnComponent = subscribe(ReactComponent, ['getAndChangeTitle', 'title'])
   const App = app(SubscribedFnComponent, store)
-  const tree1 = render.create(<App />).toJSON()
-  t.snapshot(tree1)
+  const tree = render.create(<App />).toJSON()
+  // The rendered title at this point should be `value 31` since subscribe only
+  // bind changes to `setState` after `componentDidMount`
+  t.snapshot(tree)
 
   t.is(store.get('title'), 'value 32')
+})
+
+test.cb('action in action', t => {
+  t.plan(5)
+
+  const store = createStore({
+    title: 'Action in Action',
+    content: 'Test action in action'
+  })
+  const action = createAction(store)
+  const provide = createProvide(store)
+
+  action('changeTitle', (title) => {
+    t.is(title, 'Action in Action')
+    return {
+      title: 'Actions in Actions'
+    }
+  }, 'title', 'title')
+
+
+  action('change')
+    .pipe('changeTitle')
+    .pipe((content, next) => {
+      t.is(content, 'Test action in action')
+      setTimeout(function() {
+        next(null, {
+          content: 'Test actions in actions'
+        })
+      }, 50)
+    }, ['content', 'next'], ['content'])
+    .output(['title', 'content'])
+    .pipe(function() {
+      const tree2 = render.create(<App />).toJSON()
+      t.snapshot(tree2)
+    })
+    .pipe(t.end)
+
+
+  function FnComponent(props) {
+    return (<div>
+              <h1>{ props.title }</h1>
+              <p>
+                { props.content }
+              </p>
+            </div>)
+  }
+
+  const ProvidedFnComponent = provide(FnComponent, ['title', 'content'])
+  const App = app(ProvidedFnComponent, store)
+  const tree = render.create(<App />).toJSON()
+  t.snapshot(tree)
+
+  store.get('change')(store)()
+
+  // The `change` action is async so this should be still the old value.
+  t.is(store.get('content'), 'Test action in action')
 })

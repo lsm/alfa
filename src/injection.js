@@ -181,7 +181,7 @@ function getInjectedProps(keys, store, contextStore) {
 
   Object.keys(injectedProps).forEach(function(key) {
     const prop = injectedProps[key]
-    if ('function' === typeof prop && true === prop.instanceOfAlfaPipeline)
+    if ('function' === typeof prop && true === prop.isAlfaPipeline)
       injectedProps[key] = prop(contextStore || store)
   })
 

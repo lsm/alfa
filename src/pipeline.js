@@ -17,14 +17,14 @@ export default function createPipeline(name, store, definitions) {
    * @param {Object|undefined} theStore Instance of alfa store.  Default store
    *                                    will be used if it's not provided.
    */
-  function pipeline(theStore) {
+  function pipeline(theStore, theRawStore, callback) {
     theStore = theStore || store
 
     /**
      * This is the function will be called by end user.  It triggers the 
      * execution of the pipeline.
      */
-    return function execPipeline() {
+    function execPipeline() {
       // Do nothing where there's no pipe at all.
       if (0 === _pipes.length)
         return
@@ -47,7 +47,7 @@ export default function createPipeline(name, store, definitions) {
        * 
        * @type {Object}
        */
-      const _rawStore = theStore.clone()
+      const _rawStore = theRawStore || theStore.clone()
 
       /**
        * The `set` function can only modified the cloned raw store and will
@@ -129,6 +129,10 @@ export default function createPipeline(name, store, definitions) {
 
           // Excute the pipe.
           executePipe(err, _args, theStore, _rawStore, pipeState)
+        } else if (callback) {
+          // No more pipes, let's call the `callback` to indicate the pipeline
+          // has done exection if it's provided.
+          callback(err)
         }
       }
 
@@ -138,9 +142,11 @@ export default function createPipeline(name, store, definitions) {
       // Start executing the chain
       next()
     }
+
+    return execPipeline
   }
 
-  pipeline.instanceOfAlfaPipeline = true
+  pipeline.isAlfaPipeline = true
 
   if (definitions) {
     _pipes = []
