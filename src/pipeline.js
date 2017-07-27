@@ -1,5 +1,5 @@
 import { executePipe } from './executor'
-import { setRawStore, isPlainObject } from './store'
+import { setRawStore } from './store'
 import { createPipe, FN_WAIT, FN_ERROR, FN_INPUT, FN_OUTPUT, FN_THROTTLE } from './builder'
 
 
@@ -81,7 +81,7 @@ export default function createPipeline(name, store, definitions) {
           // We have more than one argument which means the previous pipe produced
           // some output by calling `next`.  We need to merge this output with 
           // rawStore before executing the next pipe.
-          mergeOutputWithRawStore(_rawStore, key, value)
+          setRawStore(_rawStore, key, value)
         }
 
         // Save error to the raw store or get one from it.  This will make sure 
@@ -219,15 +219,4 @@ function throwError(error, name, step, pipe) {
   }
 
   throw ex
-}
-
-function mergeOutputWithRawStore(rawStore, key, value) {
-  if ('string' === key && key)
-    rawStore[key] = value
-
-  if (isPlainObject(key)) {
-    Object.keys(key).forEach(function(_key) {
-      rawStore[_key] = key[_key]
-    })
-  }
 }
