@@ -26,6 +26,11 @@ export default function createStore(data) {
   class Store {
 
     /**
+     * @type {Boolean}
+     */
+    isAlfaStore = true
+
+    /**
      * Get value from store by key.
      * 
      * @param  {String|undefined} key Name of the value to get.

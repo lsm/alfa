@@ -32,6 +32,7 @@ export default alfa
 export const action = alfa.action
 export const provide = alfa.provide
 export const subscribe = alfa.subscribe
+export { default as app } from './app'
 export { default as createStore } from './store'
 
 
