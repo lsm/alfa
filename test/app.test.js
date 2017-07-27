@@ -5,7 +5,7 @@ import React, { Component } from 'react'
 import { app, provide } from '../src'
 
 
-test('app(Component, dat): with initial data', t => {
+test('app(Component, data): with initial data', t => {
   function FnComponent(props) {
     return <h1>{ props.title }</h1>
   }
