@@ -19,6 +19,22 @@
   },
   "author": "Marc Liu <m@liu.pm> (https://github.com/lsm)",
   "license": "MIT",
+  "ava": {
+    "files": [
+      "test/*.test.js"
+    ],
+    "source": [
+      "src/*.js"
+    ],
+    "require": [
+      "babel-register"
+    ],
+    "babel": "inherit"
+  },
+  "dependencies": {
+    "prop-types": "^15.5.10",
+    "react": "^15.6.1"
+  },
   "devDependencies": {
     "ava": "0.21.0",
     "babel-cli": "6.24.1",
@@ -38,20 +54,6 @@
     "eslint-plugin-jsx-a11y": "5.1.0",
     "eslint-plugin-react": "7.1.0",
     "nyc": "11.0.3",
-    "prop-types": "15.5.10",
-    "react": "15.6.1",
     "react-test-renderer": "15.6.1"
-  },
-  "ava": {
-    "files": [
-      "test/*.test.js"
-    ],
-    "source": [
-      "src/*.js"
-    ],
-    "require": [
-      "babel-register"
-    ],
-    "babel": "inherit"
   }
 }
