@@ -4,7 +4,10 @@ import { action, createStore } from '../src'
 
 test.cb('pipeline instance', t => {
   const store = createStore({
-    arg1: 'value1'
+    arg1: 'value1',
+    goNext: true,
+    shouldStop: false,
+    optionalFn: function() {}
   })
   const pipeline = action('test')
     .input('arg1')
@@ -17,6 +20,10 @@ test.cb('pipeline instance', t => {
       }
     }, ['arg1'], ['arg2', 'time'])
     .wait(200)
+    .pipe('goNext')
+    .pipe('optionalFn?', 'Nonexistent value')
+    .pipe('!shouldStop')
+    .pipe('nonexistent function?')
     .pipe(function(time) {
       const now = new Date()
       t.is(now - time >= 200, true)
@@ -26,6 +33,12 @@ test.cb('pipeline instance', t => {
       t.is(store.get('arg2'), 'value2')
       t.end()
     })
+    .pipe(set => {
+      set('setKey', 'The value to set')
+    }, 'set', 'setKey')
+    .pipe(setKey => {
+      t.is(setKey, 'The value to set')
+    }, 'setKey')
     .error('errorHandler')
 
   pipeline(store)(store.get('arg1'))

@@ -27,8 +27,9 @@ export function executePipe(err, args, store, rawStore, pipeState) {
     // Set it as the original pipe function
     injectedFn = rawStore[fnName]
     if (pipeState.optional) {
-      // Optional pipe, go next if any of the dependencies is undefined.
-      if (-1 < _inputArgs.indexOf(undefined)) {
+      // Optional pipe, go next if any of the dependencies or the function 
+      // itself is undefined.
+      if (-1 < _inputArgs.indexOf(undefined) || 'undefined' === typeof injectedFn) {
         next()
         return
       }
@@ -185,10 +186,6 @@ function executeInjectedFunc(args, injectedFn, pipeState, store, rawStore) {
   } else if ('boolean' === injectedFnType) {
     // Directly return the value when it is a boolean for flow control.
     return pipeState.not ? !injectedFn : injectedFn
-  } else if (true === pipeState.optional && 'undefined' === injectedFnType) {
-    // Optional pipe which its function can not be found.
-    // Return true to ignore and go next.
-    return true
   } else {
     // Throw an exception when the original function is not something
     // we understand.
