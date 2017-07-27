@@ -1,16 +1,14 @@
 import test from 'ava'
 import render from 'react-test-renderer'
-import getApp from './app'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { createStore } from '../src'
+import { app, createStore } from '../src'
 import { createProvide, createSubscribe } from '../src/injection'
 
 
 test('injection.createProvide()', t => {
   const store = createStore()
   store.set('title', 'value')
-  const App = getApp(store)
   const provide = createProvide(store)
 
   t.is(typeof provide, 'function')
@@ -36,7 +34,8 @@ test('injection.createProvide()', t => {
   }
 
   const ProvidedFnComponent = provide(FnComponent, 'title')
-  const tree1 = render.create(<App component={ ProvidedFnComponent } />).toJSON()
+  const App1 = app(ProvidedFnComponent, store)
+  const tree1 = render.create(<App1/>).toJSON()
   t.snapshot(tree1)
 
   /**
@@ -54,7 +53,8 @@ test('injection.createProvide()', t => {
   }
 
   const ProvidedReactComponent = provide(ReactComponent, ['title'])
-  const tree2 = render.create(<App component={ ProvidedReactComponent } />).toJSON()
+  const App2 = app(ProvidedReactComponent, store)
+  const tree2 = render.create(<App2 />).toJSON()
   t.snapshot(tree2)
 
 
@@ -68,7 +68,6 @@ test('injection.createSubscribe()', t => {
 
   const store = createStore()
   store.set('title', 'Old Title')
-  const App = getApp(store)
   const subscribe = createSubscribe(store)
 
   t.is(typeof subscribe, 'function')
@@ -96,7 +95,8 @@ test('injection.createSubscribe()', t => {
   }
 
   const SubscribedFnComponent = subscribe(FnComponent, 'title')
-  const tree1 = render.create(<App component={ SubscribedFnComponent } />).toJSON()
+  const App1 = app(SubscribedFnComponent, store)
+  const tree1 = render.create(<App1 />).toJSON()
   t.snapshot(tree1)
 
   /**
@@ -116,7 +116,8 @@ test('injection.createSubscribe()', t => {
   }
 
   const SubscribedReactComponent = subscribe(ReactComponent, ['title'])
-  const component = render.create(<App component={ SubscribedReactComponent } />)
+  const App2 = app(SubscribedReactComponent, store)
+  const component = render.create(<App2 />)
   const tree2 = component.toJSON()
   t.snapshot(tree2)
 
@@ -132,7 +133,6 @@ test('provide and use set', t => {
   const store = createStore({
     title: 'value'
   })
-  const App = getApp(store)
   const provide = createProvide(store)
 
   function FnComponent(props) {
@@ -142,7 +142,8 @@ test('provide and use set', t => {
   }
 
   const ProvidedFnComponent = provide(FnComponent, ['set', 'title'])
-  const component = render.create(<App component={ ProvidedFnComponent } />)
+  const App = app(ProvidedFnComponent, store)
+  const component = render.create(<App />)
   const tree = component.toJSON()
   t.snapshot(tree)
 
@@ -156,8 +157,6 @@ test('provide with dynamic injection', t => {
     title: 'The title',
     subTitle: 'The sub title'
   })
-
-  const App = getApp(store)
   const provide = createProvide(store)
 
   class ReactComponent extends Component {
@@ -182,7 +181,8 @@ test('provide with dynamic injection', t => {
   }
 
   const ProvidedReactComponent = provide(ReactComponent, ['title'])
-  const tree = render.create(<App component={ ProvidedReactComponent } />).toJSON()
+  const App = app(ProvidedReactComponent, store)
+  const tree = render.create(<App />).toJSON()
   t.snapshot(tree)
 })
 
@@ -194,8 +194,6 @@ test('subscribe with dynamic injection', t => {
     title: 'The title',
     'The title key': 'The sub title'
   })
-
-  const App = getApp(store)
   const subscribe = createSubscribe(store)
 
   class ReactComponent extends Component {
@@ -222,7 +220,8 @@ test('subscribe with dynamic injection', t => {
   }
 
   const SubscribedReactComponent = subscribe(ReactComponent, ['title'])
-  const component = render.create(<App component={ SubscribedReactComponent } />)
+  const App = app(SubscribedReactComponent, store)
+  const component = render.create(<App />)
   t.snapshot(component.toJSON())
 
   store.set('The title key', 'New sub title')

@@ -1,9 +1,8 @@
 import test from 'ava'
 import React from 'react'
-import getApp from './app'
 import render from 'react-test-renderer'
 import createAction from '../src/action'
-import { createStore } from '../src'
+import { app, createStore } from '../src'
 import { createProvide, createSubscribe } from '../src/injection'
 
 
@@ -102,7 +101,6 @@ test('get action from provide and subscribe', t => {
     title: 'value 3',
     content: undefined
   })
-  const App = getApp(store)
   const action = createAction(store)
   const provide = createProvide(store)
   const subscribe = createSubscribe(store)
@@ -159,7 +157,8 @@ test('get action from provide and subscribe', t => {
   }
 
   const SubscribedFnComponent = subscribe(ReactComponent, ['getAndChangeTitle', 'title'])
-  const tree1 = render.create(<App component={ SubscribedFnComponent } />).toJSON()
+  const App = app(SubscribedFnComponent, store)
+  const tree1 = render.create(<App />).toJSON()
   t.snapshot(tree1)
 
   t.is(store.get('title'), 'value 32')
