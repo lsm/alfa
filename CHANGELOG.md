@@ -1,3 +1,32 @@
+0.5.0 (2017/07/28)
+==================
+- Bug fix for calling `setState` of unmounted component.
+1a787500760d25a356f23d78ec1b0aa1da0d12d6
+- Use `null` as input to get all original arguments of action call.
+f8b44c7745622fade83dcc21dd448cbcabebeadd
+- Bug fix for provide/subscribe when only `keys` are provided through static 
+property of component. cd53ef2503df5520fa7db7d54ed8f0013656a9b8
+- Add top level API `app()` for binding root react component.
+3b8467e0958e04adff512316037a0aa566f2ac2f
+- Support for calling actions in action.
+e7f83358649c0a2c8d480a1816f7e64a59acf3c9
+- Bug fix for `not`, `optional` and `boolean` value pipes.
+9a60144988c2aff7fc9af1f3dce0bac96b002e80
+- Predefined output keys is required for calling set. Map dynamic keys to its 
+real key value. 6ca202cf48b4005af493a28bb558e49003d935e9
+
+
+0.4.1-0.4.2 (2017/07/20)
+========================
+- Allow calling subscribe/provide without keys when Component.keys exists.
+8abc242859891fe47b5cecb8858b0683bc5dddf4
+- Bug fix for dynamic output. 482a6420f8dc48fdff692f01f98d0c4499e4af4a
+- Only subscribe after componentDidMount.
+98a4cacc35863772cde0eac707f3f7b9e7443275
+- Bug fix for incorrectly scoped subscription variables.
+305852107f732da9c48d6c5614749fc38d710f58
+
+
 0.4.0 (2017/07/20)
 ==================
 - Support dynamically inject props based on the return of `Component.keys(props)`.
