@@ -141,7 +141,7 @@ test('provide and use set', t => {
     return <h4>{ props.title }</h4>
   }
 
-  const ProvidedFnComponent = provide(FnComponent, ['set', 'title'])
+  const ProvidedFnComponent = provide(FnComponent, ['set', 'title'], ['title'])
   const App = app(ProvidedFnComponent, store)
   const component = render.create(<App />)
   const tree = component.toJSON()
@@ -234,7 +234,6 @@ test('subscribe/provide with only `keys`', t => {
   t.plan(10)
 
   const store = createStore()
-
   const provide = createProvide(store)
   const subscribe = createSubscribe(store)
 
@@ -286,4 +285,73 @@ test('subscribe/provide with only `keys`', t => {
   t.throws(() => {
     subscribe(NoKeysComponent)
   }, TypeError)
+})
+
+test('provide or subscribe set without output keys should throw', t => {
+  const store = createStore()
+  const provide = createProvide(store)
+  const subscribe = createSubscribe(store)
+
+  function FnComponent() {
+  }
+
+  t.throws(() => {
+    provide(FnComponent, ['set'])
+  }, Error)
+
+  t.throws(() => {
+    subscribe(FnComponent, ['set'])
+  }, Error)
+})
+
+test('Call set without predefined output should throw', t => {
+  const store = createStore()
+  const subscribe = createSubscribe(store)
+
+  class ReactComponent extends Component {
+    componentWillMount() {
+      this.props.set('predefinedOutput', 'the value')
+      this.props.set('invaildOutput', 'the value which does not matter')
+    }
+
+    render() {
+      return <div></div>
+    }
+  }
+
+  const SubscribedReactComponent = subscribe(ReactComponent, ['set'], ['predefinedOutput'])
+  const App = app(SubscribedReactComponent, store)
+
+  t.throws(() => {
+    render.create(<App />).toJSON()
+  }, Error)
+
+  t.is(store.get('predefinedOutput'), 'the value')
+})
+
+test('Should set dynamic key correctly', t => {
+  const store = createStore()
+  const provide = createProvide(store)
+
+  class ReactComponent extends Component {
+    static keys(props) {
+      return {
+        theDynamicKey: props.target
+      }
+    }
+
+    componentWillMount() {
+      this.props.set('theDynamicKey', 'the value which does matter')
+    }
+
+    render() {
+      return <div></div>
+    }
+  }
+
+  const ProvidedReactComponent = provide(ReactComponent, ['set'], ['theDynamicKey'])
+  const App = app(ProvidedReactComponent, store)
+  render.create(<App target='theTargetKey' />).toJSON()
+
+  t.is(store.get('theTargetKey'), 'the value which does matter')
 })
