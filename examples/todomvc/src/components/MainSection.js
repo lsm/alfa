@@ -35,7 +35,7 @@ export class MainSection extends Component {
     const {todos} = this.props
     const activeCount = todos.length - completedCount
 
-    if (todos.length) {
+    if (todos.length > 0) {
       return (
         <Footer completedCount={ completedCount }
                 activeCount={ activeCount } />

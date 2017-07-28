@@ -1,28 +1,28 @@
 import { action } from 'alfa'
+import { createTodo, updateTodo, removeTodoByID, toggleTodoComplete } from './pipes'
 
 
 // Set all pipes to the store.
-set(pipes)
 
 
 action('addToDo')
   .pipe('input', ['newTodoText'])
-  .pipe('createTodo', ['todos', 'newTodoText'], ['todos'])
+  .pipe(createTodo, ['todos', 'newTodoText'], ['todos'])
   .pipe('output', ['todos'])
 
 action('completeTodo')
   .input('todoID')
-  .pipe('toggleTodoComplete', ['todos', 'todoID'], 'todos')
+  .pipe(toggleTodoComplete, ['todos', 'todoID'], 'todos')
   .output(['todos'])
 
 action('deleteTodo')
   .input(['todoId'])
-  .pipe('removeTodoByID', ['todoId', 'todos', 'next'], 'todos')
+  .pipe(removeTodoByID, ['todoId', 'todos', 'next'], 'todos')
   .output('todos')
 
 action('editTodo')
   .input(['todoId', 'todoText'])
-  .pipe('updateTodo', ['todoId', 'todoText', 'todos'], 'todos')
+  .pipe(updateTodo, ['todoId', 'todoText', 'todos'], 'todos')
   .output('todos')
 
 

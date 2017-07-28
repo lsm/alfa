@@ -1,4 +1,4 @@
-import { set, subscribe } from 'alfa'
+import { provide, subscribe } from 'alfa'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames'
@@ -37,7 +37,7 @@ class Footer extends Component {
     return (
       <a className={ css }
          style={ { cursor: 'pointer' } }
-         onClick={ () => set('filter', filter) }>
+         onClick={ () => this.props.set('filter', filter) }>
         { title }
       </a>
     )
@@ -71,4 +71,4 @@ class Footer extends Component {
   }
 }
 
-export default subscribe(Footer, ['filter', 'completeAll', 'clearCompleted'])
+export default subscribe(Footer, ['set', 'filter', 'completeAll', 'clearCompleted'], ['filter'])
