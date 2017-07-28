@@ -144,13 +144,17 @@ function createAlfaSubscribedComponent(store, WrappedComponent, keys, output) {
       if (dynamicProps) {
         this.subKeys = [...keys, ...dynamicProps.keys]
         this.subMaps = dynamicProps.maps
+        if (_props.set)
+          state.set = _props.set
         this.state = {
-          ..._props,
+          ...state,
           ...dynamicProps.props
         }
       } else {
         this.subKeys = keys
-        this.state = _props
+        if (_props.set)
+          state.set = _props.set
+        this.state = state
       }
 
       // Use the correct store for subscribe/unsubscribe.
@@ -168,8 +172,12 @@ function createAlfaSubscribedComponent(store, WrappedComponent, keys, output) {
     }
 
     render() {
+      const props = {
+        ...this.props,
+        ...this.state
+      }
       // State and props are merged and passed to wrapped component as props.
-      return createElement(WrappedComponent, this.state)
+      return createElement(WrappedComponent, props)
     }
   }
 
