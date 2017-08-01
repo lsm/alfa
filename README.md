@@ -192,6 +192,8 @@ You can find the finished version of the above example in the folder [examples/h
 *to be continued*
 
 
+## MIT License
+
 [dep-url]: https://david-dm.org/lsm/alfa
 [dep-image]: https://david-dm.org/lsm/alfa.svg
 [dev-url]: https://david-dm.org/lsm/alfa?type=dev
