@@ -1,4 +1,4 @@
-# Alfa TodoMVC Example
+# Alfa Hello World Example
 
 *This example is ported from Redux TodoMVC example*
 
