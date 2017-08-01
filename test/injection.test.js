@@ -327,6 +327,29 @@ test('Call set without predefined output should throw', t => {
   }, Error)
 
   t.is(store.get('predefinedOutput'), 'the value')
+
+
+  class NewComponent extends Component {
+    componentWillMount() {
+      this.props.set({
+        'predefinedOutput': 'new value',
+        'someInvaildOutput': 'the value which does not matter'
+      })
+    }
+
+    render() {
+      return <div></div>
+    }
+  }
+
+  const SubscribedNewComponent = subscribe(NewComponent, ['set'], ['predefinedOutput'])
+  const NewApp = app(SubscribedNewComponent, store)
+
+  t.throws(() => {
+    render.create(<NewApp />).toJSON()
+  }, Error)
+
+  t.is(store.get('predefinedOutput'), 'new value')
 })
 
 test('Should set dynamic key correctly', t => {
@@ -336,12 +359,16 @@ test('Should set dynamic key correctly', t => {
   class ReactComponent extends Component {
     static keys(props) {
       return {
-        theDynamicKey: props.target
+        theDynamicKey: props.target,
+        anotherDynamicKey: props.anotherTarget
       }
     }
 
     componentWillMount() {
       this.props.set('theDynamicKey', 'the value which does matter')
+      this.props.set({
+        anotherDynamicKey: 'another value does matter'
+      })
     }
 
     render() {
@@ -351,7 +378,9 @@ test('Should set dynamic key correctly', t => {
 
   const ProvidedReactComponent = provide(ReactComponent, ['set'], ['theDynamicKey'])
   const App = app(ProvidedReactComponent, store)
-  render.create(<App target='theTargetKey' />).toJSON()
+  render.create(<App target='theTargetKey'
+                     anotherTarget="anotherTargetKey" />).toJSON()
 
   t.is(store.get('theTargetKey'), 'the value which does matter')
+  t.is(store.get('anotherTargetKey'), 'another value does matter')
 })

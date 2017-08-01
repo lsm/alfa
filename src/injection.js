@@ -242,6 +242,12 @@ function getDynamicProps(keys, props, output, store, contextStore) {
     const _set = props.set
     const maps = result && result.maps
     props.set = function(key, value) {
+      if ('object' === typeof key) {
+        Object.keys(key).forEach(function(_key) {
+          props.set(_key, key[_key])
+        })
+        return
+      }
       // The output key is a dynamic key.  Set with its real key.
       if (maps && maps[key]) {
         key = maps[key]
