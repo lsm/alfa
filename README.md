@@ -39,11 +39,11 @@ Or use `yarn` if you prefer:
 yarn add alfa
 ```
 
-## Guide
+# Guide
 Alfa has two major parts: state management & flow control. An application can use each part with or without the involvement of another part.
 
 
-### State Management
+## State Management
 [React](https://facebook.github.io/react/) is a perfect library for managing interactive and stateful views. But, things become unclear when you need to `share state across components`. That is exactly the thing why Alfa was created.
 
 Alfa is designed based on the same simple idea of React: `one-way data flow`. The diagram below is the perfect answer if you ask how Alfa works:
@@ -60,7 +60,7 @@ changes |    |-----------|    | notifies
 
 The above diagram is simple, and you don't need anything other than React to adopt this pattern. But, it does not tell what to do if we use and modify the same state in different components.  We can call this type of state `Shared State`.  Then we call the state which is used just inside a component `Local State`.
 
-#### Getting State from Alfa Store
+### Getting State from Alfa Store
 Alfa could convert your regular React component into a `dependency injected component` by `providing` application states from the store.  So let Alfa handle the state if it is used in different places of your app:
 
 ```jsx
@@ -110,7 +110,7 @@ render(<Root />, document.getElementById('root'))
 We don't need to pass the `name` to `HelloMessage` component as Alfa will get that value for us from the store.  That allows us to quickly move the component around without worrying about how to get the data.
 
 
-#### Changing the State
+### Changing the State
 The simplest way to modify the state of Alfa store is to provide the `set` function to the component which the changes will be made:
 
 ```jsx
@@ -162,7 +162,7 @@ If you run the app and try modifying the value in the input field, the `name` on
 
 Because components made by `provide` will not trigger re-render when we change the provided state in the store.  We will need to replace it with another function called `subscribe`.
 
-#### Subscribing State
+### Subscribing State
 We need to call `subscribe` instead of `provide` if we want to trigger the re-render of the component when we change the state. Simply swap `provide` with `subscribe` and you will see the name is changing when you are typing in the input field:
 
 ```jsx
@@ -187,7 +187,7 @@ The `subscribe` has exactly same API as `provide`. The reason why Alfa provides 
 
 You can find the finished version of the above example in the folder [examples/hello](https://github.com/lsm/alfa/tree/master/examples/hello).
 
-### Flow control
+## Flow control
 
 *to be continued*
 
