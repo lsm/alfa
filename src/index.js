@@ -2,13 +2,13 @@ import createStore from './store'
 import createAction from './action'
 import { createProvide, createSubscribe } from './injection'
 
-
-function createAlfa() {
-  function alfa() {
-    return createAlfa()
-  }
-
-  var store = createStore()
+/**
+ * Export function for creating a new alfa instance.
+ * @return {Function}
+ */
+export function createAlfa() {
+  const alfa = {}
+  const store = createStore()
 
   alfa.action = createAction(store)
   alfa.provide = createProvide(store)
@@ -26,7 +26,7 @@ const alfa = createAlfa()
 
 
 /**
- * Export toplevel APIs.
+ * Export other toplevel APIs.
  */
 export default alfa
 export const action = alfa.action
