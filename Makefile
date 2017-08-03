@@ -3,6 +3,9 @@
 build:
 	npm run build
 
+build-watch:
+	npm run build-watch
+
 watch:
 	npm run watch
 
