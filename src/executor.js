@@ -2,7 +2,7 @@ import { isPlainObject } from './store'
 import { FN_ERROR, FN_INPUT, FN_OUTPUT } from './builder'
 
 
-export function executePipe(err, args, store, rawStore, pipeState) {
+export function executePipe(err, args, store, rawStore, globalStore, pipeState) {
   var fn = pipeState.fn
   var next = pipeState.next
   var input = pipeState.input
@@ -25,7 +25,15 @@ export function executePipe(err, args, store, rawStore, pipeState) {
   // Get the pipe function demanded from dependency container.
   if ('string' === typeof fnName) {
     // Set it as the original pipe function
-    injectedFn = rawStore[fnName]
+    if (rawStore.hasOwnProperty(fnName))
+      injectedFn = rawStore[fnName]
+    else
+      // An injection pipe but fn could not be found. The is bacause we 
+      // register actions in global store but application may choose to  provide
+      // their own store through context or during execution. Let's try to get 
+      // it from the orginal store (global) where actions were saved.
+      injectedFn = globalStore.get(fnName)
+
     if (pipeState.optional) {
       // Optional pipe, go next if any of the dependencies or the function 
       // itself is undefined.

@@ -128,7 +128,7 @@ export default function createPipeline(name, store, definitions) {
           previousPipeState = pipeState
 
           // Excute the pipe.
-          executePipe(err, _args, theStore, _rawStore, pipeState)
+          executePipe(err, _args, theStore, _rawStore, store, pipeState)
         } else if (callback) {
           // No more pipes, let's call the `callback` to indicate the pipeline
           // has done exection if it's provided.

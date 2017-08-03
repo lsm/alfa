@@ -2,7 +2,7 @@ import test from 'ava'
 import React from 'react'
 import render from 'react-test-renderer'
 import createAction from '../src/action'
-import { app, createStore } from '../src'
+import { app, action, createStore } from '../src'
 import { createProvide, createSubscribe } from '../src/injection'
 
 
@@ -217,6 +217,128 @@ test.cb('action in action', t => {
   t.snapshot(tree)
 
   store.get('change')(store)()
+
+  // The `change` action is async so this should be still the old value.
+  t.is(store.get('content'), 'Test action in action')
+})
+
+test.cb('action in action with input output', t => {
+  t.plan(6)
+
+  const title = 'Action in Action with Input Output'
+  const content = 'Test action in action with input & output'
+  const contentToChange = 'Test actions in actions with input & output'
+
+  const store = createStore({
+    title: title,
+    content: content
+  })
+
+  const action = createAction(store)
+  const provide = createProvide(store)
+
+  action('changeTitle')
+    .pipe('input', 'newTitle')
+    .pipe((oldTitle, newTitle) => {
+      t.is(oldTitle, title)
+      return {
+        title: newTitle
+      }
+    }, 'title', 'title')
+    .pipe('output', 'title')
+
+  action('changeContentAndTitle')
+    .input('newConent')
+    .pipe('changeTitle')
+    .pipe((oldContent, newConent, next) => {
+      t.is(oldContent, content)
+      setTimeout(function() {
+        next(null, {
+          content: newConent
+        })
+      }, 50)
+    }, ['content', 'newConent', 'next'], ['content'])
+    .output(['title', 'content'])
+    .pipe(function() {
+      const tree2 = render.create(<App />).toJSON()
+      t.snapshot(tree2)
+    })
+    .pipe(function(newConent) {
+      t.is(newConent, contentToChange)
+      t.end()
+    })
+
+  function FnComponent(props) {
+    return (<div>
+              <h1>{ props.title }</h1>
+              <p>
+                { props.content }
+              </p>
+            </div>)
+  }
+
+  const ProvidedFnComponent = provide(FnComponent, ['title', 'content'])
+  const App = app(ProvidedFnComponent, store)
+  const tree = render.create(<App />).toJSON()
+  t.snapshot(tree)
+
+  store.get('changeContentAndTitle')(store)(contentToChange)
+
+  // The `change` action is async so this should be still the old value.
+  t.is(store.get('content'), content)
+})
+
+test.cb('action in action with global action', t => {
+  t.plan(5)
+
+  const store = createStore({
+    title: 'Action in Action',
+    content: 'Test action in action'
+  })
+  // const action = createAction(store)
+  const provide = createProvide(store)
+
+  action('changeTitle', (title) => {
+    t.is(title, 'Action in Action')
+    return {
+      title: 'Actions in Actions'
+    }
+  }, 'title', 'title')
+
+
+  const change = action('change')
+    .pipe('changeTitle')
+    .pipe((content, next) => {
+      t.is(content, 'Test action in action')
+      setTimeout(function() {
+        next(null, {
+          content: 'Test actions in actions'
+        })
+      }, 50)
+    }, ['content', 'next'], ['content'])
+    .output(['title', 'content'])
+    .pipe(function() {
+      const tree2 = render.create(<App />).toJSON()
+      t.snapshot(tree2)
+    })
+    .pipe(t.end)
+
+
+  function FnComponent(props) {
+    return (<div>
+              <h1>{ props.title }</h1>
+              <p>
+                { props.content }
+              </p>
+            </div>)
+  }
+
+  const ProvidedFnComponent = provide(FnComponent, ['title', 'content'])
+  const App = app(ProvidedFnComponent, store)
+  const tree = render.create(<App />).toJSON()
+  t.snapshot(tree)
+
+  change(store)()
 
   // The `change` action is async so this should be still the old value.
   t.is(store.get('content'), 'Test action in action')
