@@ -1,3 +1,15 @@
+0.5.2 (2017/08/03)
+==================
+- Bug fix for using action in action with global store. (447fc15)
+
+
+0.5.1 (2017/08/01)
+==================
+- Export main export as object instead of function. (ec2ec6e)
+- Bug fix for setting object with dynamic keys. (d7c86ca)
+- Update examples and docs. (73a410a, 986e65a, 85eb6ee, 5f5fafb, 2d4ca79)
+
+
 0.5.0 (2017/07/28)
 ==================
 - Bug fix for calling `setState` of unmounted component.
