@@ -40,7 +40,7 @@ export default function createPipeline(name, store, definitions) {
        * 
        * @type {Array}
        */
-      const _args = Array.from(arguments)
+      const _args = Array.prototype.slice.call(arguments)
 
       /**
        * Make a shallow clone of the key/value store.
