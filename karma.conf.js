@@ -121,9 +121,9 @@ module.exports = function(config) {
     // public: 'public'
     },
     captureTimeout: 180 * 1000,
-    browserNoActivityTimeout: 45 * 1000,
-    browserDisconnectTimeout: 15 * 1000,
-    browserDisconnectTolerance: 2,
+    browserNoActivityTimeout: 90 * 1000,
+    browserDisconnectTimeout: 30 * 1000,
+    browserDisconnectTolerance: 3,
     browsers: browsers,
     customLaunchers: !local && customLaunchers,
 
@@ -134,7 +134,7 @@ module.exports = function(config) {
 
     // Concurrency level
     // how many browser should be started simultaneous
-    concurrency: 5
+    concurrency: 2
   })
 }
 
@@ -146,12 +146,12 @@ var customLaunchers = {
   //   browserName: 'chrome',
   //   version: '50'
   // },
-  // sl_chrome_latest: {
-  //   base: 'SauceLabs',
-  //   browserName: 'chrome',
-  //   platform: 'OS X 10.12',
-  //   version: 'latest'
-  // },
+  sl_chrome_latest: {
+    base: 'SauceLabs',
+    browserName: 'chrome',
+    platform: 'OS X 10.12',
+    version: 'latest'
+  },
   // sl_firefox_old: {
   //   base: 'SauceLabs',
   //   browserName: 'firefox',
@@ -163,23 +163,23 @@ var customLaunchers = {
     browserName: 'firefox',
     version: 'latest'
   },
-// IE 11 has bugs.
-// sl_ie_11: {
-//   base: 'SauceLabs',
-//   browserName: 'internet explorer',
-//   platform: 'Windows 8.1',
-//   version: '11'
-// },
-// sl_edge: {
-//   base: 'SauceLabs',
-//   browserName: 'microsoftedge',
-//   platform: 'Windows 10',
-//   version: '15'
-// },
+  // IE 11 has bugs.
+  // sl_ie_11: {
+  //   base: 'SauceLabs',
+  //   browserName: 'internet explorer',
+  //   platform: 'Windows 8.1',
+  //   version: '11'
+  // },
+  sl_edge: {
+    base: 'SauceLabs',
+    browserName: 'microsoftedge',
+    platform: 'Windows 10',
+    version: '15'
+  },
 // sl_safari: {
 //   base: 'SauceLabs',
 //   browserName: 'safari',
-//   version: '10'
+//   version: 'latest'
 // },
 // sl_iphone_old: {
 //   base: 'SauceLabs',

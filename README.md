@@ -8,6 +8,8 @@
 [![Coverage Status][coverage-img]][coverage-url]
 [![Code Climate][climate-img]][climate-url]
 
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/alfajs.svg)](https://saucelabs.com/u/alfajs)
+
 Alfa is a library for React state management and flow control.  It is designed to have much **fewer noises and things to learn** compare with other solutions while at the same time provides your essential tools to keep your complex UI apps easy to reason about and change.  Here is a list of things why you want to use Alfa today:
 
 
