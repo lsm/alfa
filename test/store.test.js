@@ -1,4 +1,4 @@
-import test from 'ava'
+import test from 'tape'
 import { createStore } from '../src'
 import { setRawStore } from '../src/store'
 
@@ -10,6 +10,7 @@ const data = {
 }
 
 test('store.set(key, value)', t => {
+  t.plan(2)
   const store = createStore()
   store.set('key', 'value')
   t.is(store.get('key'), 'value', 'Set & get string value')
@@ -20,6 +21,7 @@ test('store.set(key, value)', t => {
 })
 
 test('store.set(plainObject)', t => {
+  t.plan(2)
   const store = createStore()
   store.set(data)
 
@@ -28,22 +30,20 @@ test('store.set(plainObject)', t => {
 })
 
 test('store.set with invalidate key', t => {
+  t.plan(2)
   const store = createStore()
 
-  var error = t.throws(() => {
+  t.throws(() => {
     store.set(true, true)
-  }, TypeError)
+  }, 'Type of `key` must be string or plain object.')
 
-  t.is(error.message, 'Type of `key` must be string or plain object.')
-
-  error = t.throws(() => {
+  t.throws(() => {
     store.set(null)
-  }, TypeError)
-
-  t.is(error.message, 'Type of `key` must be string or plain object.')
+  }, 'Type of `key` must be string or plain object.')
 })
 
 test('store.get() -> shallow clone', t => {
+  t.plan(4)
   const store = createStore()
   store.set(data)
 
@@ -56,6 +56,7 @@ test('store.get() -> shallow clone', t => {
 })
 
 test('store.get(keys)', t => {
+  t.plan(4)
   const store = createStore()
   store.set(data)
   store.set('key', 'value')
@@ -69,36 +70,29 @@ test('store.get(keys)', t => {
 })
 
 test('store.get() with invalidate key', t => {
+  t.plan(4)
   const store = createStore()
   const errMsg = 'Type of `key` must be string, array of strings or undefined.'
 
-  var error = t.throws(() => {
+  t.throws(() => {
     store.get(true)
-  }, TypeError)
+  }, errMsg)
 
-  t.is(error.message, errMsg)
-
-  error = t.throws(() => {
+  t.throws(() => {
     store.get({})
-  }, TypeError)
+  }, errMsg)
 
-  t.is(error.message, errMsg)
-
-  error = t.throws(() => {
+  t.throws(() => {
     store.get(null)
-  }, TypeError)
+  }, errMsg)
 
-  t.is(error.message, errMsg)
-
-  error = t.throws(() => {
+  t.throws(() => {
     store.get([123])
-  }, TypeError)
-
-  t.is(error.message, errMsg)
+  }, errMsg)
 })
 
 test('store.subscribe()', t => {
-  t.plan(6)
+  t.plan(5)
 
   const store = createStore({
     a: 1,
@@ -135,11 +129,9 @@ test('store.subscribe()', t => {
   store.set('b', b)
   store.set('d', 'false')
 
-  var error = t.throws(() => {
+  t.throws(() => {
     store.subscribe(['key1'], {})
-  }, TypeError)
-
-  t.is(error.message, '`fn` must be a function')
+  }, '`fn` must be a function')
 })
 
 test('store.unsubscribe()', t => {
@@ -157,6 +149,7 @@ test('store.unsubscribe()', t => {
 })
 
 test('store private function setRawStore()', t => {
+  t.plan(3)
   const store = {}
 
   setRawStore(store, 'key', 'value')
@@ -169,9 +162,7 @@ test('store private function setRawStore()', t => {
 
   t.is(store.key, 'new value')
 
-  var error = t.throws(() => {
+  t.throws(() => {
     setRawStore(store, [])
-  }, TypeError)
-
-  t.is(error.message, 'Type of `key` must be string or plain object.')
+  }, 'Type of `key` must be string or plain object.')
 })

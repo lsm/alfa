@@ -1,9 +1,18 @@
-import test from 'ava'
+import './setup'
+
+import test from 'tape'
+
 import React from 'react'
-import render from 'react-test-renderer'
+import Adapter from 'enzyme-adapter-react-16'
 import createAction from '../src/action'
 import { app, action, createStore } from '../src'
+import { mount, configure } from 'enzyme'
 import { createProvide, createSubscribe } from '../src/injection'
+
+
+configure({
+  adapter: new Adapter()
+})
 
 
 test('action(fn, [2, "key"]) with number input', t => {
@@ -94,6 +103,8 @@ test('action() produces output to store', t => {
   t.is(store2.get('newKey'), 'new key')
 })
 
+
+
 test('get action from provide and subscribe', t => {
   t.plan(11)
 
@@ -158,15 +169,16 @@ test('get action from provide and subscribe', t => {
 
   const SubscribedFnComponent = subscribe(ReactComponent, ['getAndChangeTitle', 'title'])
   const App = app(SubscribedFnComponent, store)
-  const tree = render.create(<App />).toJSON()
+  const wrapper = mount(<App/>)
   // The rendered title at this point should be `value 31` since subscribe only
   // bind changes to `setState` after `componentDidMount`
-  t.snapshot(tree)
-
+  t.is(wrapper.contains(<p>
+                          value 31
+                        </p>), true)
   t.is(store.get('title'), 'value 32')
 })
 
-test.cb('action in action', t => {
+test('action in action', t => {
   t.plan(5)
 
   const store = createStore({
@@ -196,8 +208,10 @@ test.cb('action in action', t => {
     }, ['content', 'next'], ['content'])
     .output(['title', 'content'])
     .pipe(function() {
-      const tree2 = render.create(<App />).toJSON()
-      t.snapshot(tree2)
+      const wrapper2 = mount(<App/>)
+      t.is(wrapper2.contains(<p>
+                               Test actions in actions
+                             </p>), true)
     })
     .pipe(t.end)
 
@@ -213,8 +227,11 @@ test.cb('action in action', t => {
 
   const ProvidedFnComponent = provide(FnComponent, ['title', 'content'])
   const App = app(ProvidedFnComponent, store)
-  const tree = render.create(<App />).toJSON()
-  t.snapshot(tree)
+
+  const wrapper = mount(<App/>)
+  t.is(wrapper.contains(<p>
+                          Test action in action
+                        </p>), true)
 
   store.get('change')(store)()
 
@@ -222,7 +239,7 @@ test.cb('action in action', t => {
   t.is(store.get('content'), 'Test action in action')
 })
 
-test.cb('action in action with input output', t => {
+test('action in action with input output', t => {
   t.plan(6)
 
   const title = 'Action in Action with Input Output'
@@ -260,8 +277,10 @@ test.cb('action in action with input output', t => {
     }, ['content', 'newConent', 'next'], ['content'])
     .output(['title', 'content'])
     .pipe(function() {
-      const tree2 = render.create(<App />).toJSON()
-      t.snapshot(tree2)
+      const wrapper2 = mount(<App/>)
+      t.is(wrapper2.contains(<p>
+                               { contentToChange }
+                             </p>), true)
     })
     .pipe(function(newConent) {
       t.is(newConent, contentToChange)
@@ -279,8 +298,11 @@ test.cb('action in action with input output', t => {
 
   const ProvidedFnComponent = provide(FnComponent, ['title', 'content'])
   const App = app(ProvidedFnComponent, store)
-  const tree = render.create(<App />).toJSON()
-  t.snapshot(tree)
+
+  const wrapper = mount(<App/>)
+  t.is(wrapper.contains(<p>
+                          { content }
+                        </p>), true)
 
   store.get('changeContentAndTitle')(store)(contentToChange)
 
@@ -288,7 +310,7 @@ test.cb('action in action with input output', t => {
   t.is(store.get('content'), content)
 })
 
-test.cb('action in action with global action', t => {
+test('action in action with global action', t => {
   t.plan(5)
 
   const store = createStore({
@@ -318,8 +340,10 @@ test.cb('action in action with global action', t => {
     }, ['content', 'next'], ['content'])
     .output(['title', 'content'])
     .pipe(function() {
-      const tree2 = render.create(<App />).toJSON()
-      t.snapshot(tree2)
+      const wrapper2 = mount(<App/>)
+      t.is(wrapper2.contains(<p>
+                               Test actions in actions
+                             </p>), true)
     })
     .pipe(t.end)
 
@@ -335,8 +359,11 @@ test.cb('action in action with global action', t => {
 
   const ProvidedFnComponent = provide(FnComponent, ['title', 'content'])
   const App = app(ProvidedFnComponent, store)
-  const tree = render.create(<App />).toJSON()
-  t.snapshot(tree)
+
+  const wrapper = mount(<App/>)
+  t.is(wrapper.contains(<p>
+                          Test action in action
+                        </p>), true)
 
   change(store)()
 

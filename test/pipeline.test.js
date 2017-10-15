@@ -1,8 +1,8 @@
-import test from 'ava'
+import test from 'tape'
 import { action, createStore } from '../src'
 
 
-test.cb('pipeline instance', t => {
+test('pipeline instance', t => {
   const store = createStore({
     arg1: 'value1',
     goNext: true,

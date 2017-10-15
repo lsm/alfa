@@ -1,4 +1,4 @@
-import test from 'ava'
+import test from 'tape'
 import alfa, { action, provide, subscribe, createAlfa, createStore } from '../src'
 
 test('Public alfa api exists', t => {
@@ -8,6 +8,7 @@ test('Public alfa api exists', t => {
   t.is(typeof subscribe, 'function')
   t.is(typeof createAlfa, 'function')
   t.is(typeof createStore, 'function')
+  t.end()
 })
 
 test('alfa() returns a new alfa instance', t => {
@@ -16,4 +17,5 @@ test('alfa() returns a new alfa instance', t => {
   t.is(typeof newAlfa.action, 'function')
   t.is(typeof newAlfa.provide, 'function')
   t.is(typeof newAlfa.subscribe, 'function')
+  t.end()
 })
