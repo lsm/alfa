@@ -1,5 +1,3 @@
-import './setup'
-
 import test from 'tape'
 import React, { Component } from 'react'
 import Adapter from 'enzyme-adapter-react-16'

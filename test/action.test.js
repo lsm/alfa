@@ -1,7 +1,4 @@
-import './setup'
-
 import test from 'tape'
-
 import React from 'react'
 import Adapter from 'enzyme-adapter-react-16'
 import createAction from '../src/action'

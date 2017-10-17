@@ -11,7 +11,6 @@ module.exports = function(config) {
     case 'browser':
       browsers = Object.keys(customLaunchers)
       reporters = ['dots', 'saucelabs']
-      process.env.NODE_ENV = 'production'
       break
     // default is local
     default:
@@ -34,7 +33,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'src/*.js',
-      'test/unit.js'
+      'test/browser.js'
     ],
 
     webpack: { // kind of a copy of your webpack config
@@ -75,7 +74,7 @@ module.exports = function(config) {
     preprocessors: {
       // add webpack as preprocessor
       'src/*.js': ['webpack', 'sourcemap'],
-      'test/unit.js': ['webpack', 'sourcemap']
+      'test/*.js': ['webpack', 'sourcemap']
     },
 
 
@@ -176,31 +175,31 @@ var customLaunchers = {
     platform: 'Windows 10',
     version: '15'
   },
-// sl_safari: {
-//   base: 'SauceLabs',
-//   browserName: 'safari',
-//   version: 'latest'
-// },
-// sl_iphone_old: {
-//   base: 'SauceLabs',
-//   browserName: 'iphone',
-//   version: '8.1',
-//   deviceName: 'iPhone 6 Plus',
-//   deviceOrientation: 'portrait'
-// },
-// sl_iphone_latest: {
-//   base: 'SauceLabs',
-//   browserName: 'iphone',
-//   version: 'latest',
-//   deviceName: 'iPhone 7 Plus',
-//   deviceOrientation: 'portrait'
-// },
-// sl_android_latest: {
-//   base: 'SauceLabs',
-//   browserName: 'android',
-//   version: 'latest',
-//   deviceName: 'Android Emulator',
-//   deviceType: 'phone',
-//   deviceOrientation: 'portrait'
-// }
+  sl_safari: {
+    base: 'SauceLabs',
+    browserName: 'safari',
+    version: 'latest'
+  },
+  // sl_iphone_old: {
+  //   base: 'SauceLabs',
+  //   browserName: 'iphone',
+  //   version: '8.1',
+  //   deviceName: 'iPhone 6 Plus',
+  //   deviceOrientation: 'portrait'
+  // },
+  sl_iphone_latest: {
+    base: 'SauceLabs',
+    browserName: 'iphone',
+    version: 'latest',
+    deviceName: 'iPhone 7 Plus',
+    deviceOrientation: 'portrait'
+  },
+  sl_android_latest: {
+    base: 'SauceLabs',
+    browserName: 'android',
+    version: 'latest',
+    deviceName: 'Android Emulator',
+    deviceType: 'phone',
+    deviceOrientation: 'portrait'
+  }
 }
