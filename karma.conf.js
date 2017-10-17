@@ -120,8 +120,8 @@ module.exports = function(config) {
     // public: 'public'
     },
     captureTimeout: 180 * 1000,
-    browserNoActivityTimeout: 90 * 1000,
-    browserDisconnectTimeout: 30 * 1000,
+    browserNoActivityTimeout: 600 * 1000,
+    browserDisconnectTimeout: 60 * 1000,
     browserDisconnectTolerance: 3,
     browsers: browsers,
     customLaunchers: !local && customLaunchers,
@@ -133,7 +133,7 @@ module.exports = function(config) {
 
     // Concurrency level
     // how many browser should be started simultaneous
-    concurrency: 2
+    concurrency: 5
   })
 }
 
