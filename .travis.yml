@@ -10,8 +10,6 @@ matrix:
       env: TASK=coveralls
     - node_js: "8"
       env: TASK=unit
-    - node_js: "6"
-      env: TASK=unit
 cache:
   directories:
   - node_modules
