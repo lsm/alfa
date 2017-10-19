@@ -140,53 +140,62 @@ module.exports = function(config) {
 // Browsers to run on Sauce Labs
 // Check out https://saucelabs.com/platforms for all browser/OS combos
 var customLaunchers = {
-  // sl_chrome_old: {
-  //   base: 'SauceLabs',
-  //   browserName: 'chrome',
-  //   version: '50'
-  // },
+  sl_chrome_old: {
+    base: 'SauceLabs',
+    browserName: 'chrome',
+    version: '26'
+  },
   sl_chrome_latest: {
     base: 'SauceLabs',
     browserName: 'chrome',
     platform: 'OS X 10.12',
     version: 'latest'
   },
-  // sl_firefox_old: {
-  //   base: 'SauceLabs',
-  //   browserName: 'firefox',
-  //   platform: 'Windows 8.1',
-  //   version: '40'
-  // },
+  sl_firefox_old: {
+    base: 'SauceLabs',
+    browserName: 'firefox',
+    // platform: 'Windows 8.1',
+    version: '18'
+  },
   sl_firefox_latest: {
     base: 'SauceLabs',
     browserName: 'firefox',
     version: 'latest'
   },
-  // IE 11 has bugs.
-  // sl_ie_11: {
-  //   base: 'SauceLabs',
-  //   browserName: 'internet explorer',
-  //   platform: 'Windows 8.1',
-  //   version: '11'
-  // },
+  sl_ie_10: {
+    base: 'SauceLabs',
+    browserName: 'internet explorer',
+    version: '10'
+  },
+  sl_ie_11: {
+    base: 'SauceLabs',
+    browserName: 'internet explorer',
+    platform: 'Windows 8.1',
+    version: '11'
+  },
   sl_edge: {
     base: 'SauceLabs',
     browserName: 'microsoftedge',
     platform: 'Windows 10',
     version: '15'
   },
-  sl_safari: {
+  sl_safari_old: {
+    base: 'SauceLabs',
+    browserName: 'safari',
+    version: '9'
+  },
+  sl_safari_latest: {
     base: 'SauceLabs',
     browserName: 'safari',
     version: 'latest'
   },
-  // sl_iphone_old: {
-  //   base: 'SauceLabs',
-  //   browserName: 'iphone',
-  //   version: '8.1',
-  //   deviceName: 'iPhone 6 Plus',
-  //   deviceOrientation: 'portrait'
-  // },
+  sl_iphone_old: {
+    base: 'SauceLabs',
+    browserName: 'iphone',
+    version: '8.1',
+    deviceName: 'iPhone 6 Plus',
+    deviceOrientation: 'portrait'
+  },
   sl_iphone_latest: {
     base: 'SauceLabs',
     browserName: 'iphone',
@@ -194,11 +203,19 @@ var customLaunchers = {
     deviceName: 'iPhone 7 Plus',
     deviceOrientation: 'portrait'
   },
+  sl_android_old: {
+    base: 'SauceLabs',
+    browserName: 'android',
+    version: '4.4',
+    deviceName: 'Android Emulator',
+    deviceType: 'phone',
+    deviceOrientation: 'portrait'
+  },
   sl_android_latest: {
     base: 'SauceLabs',
     browserName: 'android',
-    version: 'latest',
-    deviceName: 'Android Emulator',
+    version: '7.1',
+    deviceName: 'Android GoogleAPI Emulator',
     deviceType: 'phone',
     deviceOrientation: 'portrait'
   }

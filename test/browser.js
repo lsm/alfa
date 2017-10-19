@@ -1,3 +1,6 @@
+require('core-js/es6/map')
+require('core-js/es6/set')
+
 require('./action.test')
 require('./app.test')
 require('./index.test')
