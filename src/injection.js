@@ -113,78 +113,76 @@ function createAlfaProvidedComponent(store, WrappedComponent, keys, output, type
 
 
 function createAlfaSubscribedComponent(store, WrappedComponent, keys, output) {
-  class AlfaSubscribedComponent extends Component {
+  var classHolder = {
     // Keep the name of the orginal component which makes debugging logs easier
     // to understand.
-    static get name() {
-      return WrappedComponent.name
-    }
-
-    static contextTypes = {
-      alfaStore: PropTypes.object
-    }
-
-    constructor(props, context, updater) {
-      // Call the original constructor.
-      super(props, context, updater)
-
-      // Inject all keys as state.
-      const contextStore = context && context.alfaStore
-      const state = getInjectedProps(keys, store, contextStore)
-      const _props = {
-        ...props,
-        ...state
+    [WrappedComponent.name]: class AlfaSubscribedComponent extends Component {
+      static contextTypes = {
+        alfaStore: PropTypes.object
       }
 
-      // Get dynamic props.
-      const dynamicProps = getDynamicProps(WrappedComponent.keys, _props,
-        output, store, context && context.alfaStore)
+      constructor(props, context, updater) {
+        // Call the original constructor.
+        super(props, context, updater)
 
-      // var maps
-      if (dynamicProps) {
-        this.subKeys = [...keys, ...dynamicProps.keys]
-        this.subMaps = dynamicProps.maps
-        if (_props.set)
-          state.set = _props.set
-        this.state = {
-          ...state,
-          ...dynamicProps.props
+        // Inject all keys as state.
+        const contextStore = context && context.alfaStore
+        const state = getInjectedProps(keys, store, contextStore)
+        const _props = {
+          ...props,
+          ...state
         }
-      } else {
-        this.subKeys = keys
-        if (_props.set)
-          state.set = _props.set
-        this.state = state
+
+        // Get dynamic props.
+        const dynamicProps = getDynamicProps(WrappedComponent.keys, _props,
+          output, store, context && context.alfaStore)
+
+        // var maps
+        if (dynamicProps) {
+          this.subKeys = [...keys, ...dynamicProps.keys]
+          this.subMaps = dynamicProps.maps
+          if (_props.set)
+            state.set = _props.set
+          this.state = {
+            ...state,
+            ...dynamicProps.props
+          }
+        } else {
+          this.subKeys = keys
+          if (_props.set)
+            state.set = _props.set
+          this.state = state
+        }
+
+        // Use the correct store for subscribe/unsubscribe.
+        this.store = contextStore || store
+        this.subFunc = this.setState.bind(this)
       }
 
-      // Use the correct store for subscribe/unsubscribe.
-      this.store = contextStore || store
-      this.subFunc = this.setState.bind(this)
-    }
-
-    componentDidMount() {
-      // Call `setState` when subscribed keys changed.
-      this.store.subscribe(this.subKeys, this.subFunc, this.subMaps)
-    }
-
-    componentWillUnmount() {
-      'function' === typeof this.subFunc && this.store.unsubscribe(this.subFunc)
-    }
-
-    render() {
-      const props = {
-        ...this.props,
-        ...this.state
+      componentDidMount() {
+        // Call `setState` when subscribed keys changed.
+        this.store.subscribe(this.subKeys, this.subFunc, this.subMaps)
       }
-      // State and props are merged and passed to wrapped component as props.
-      return createElement(WrappedComponent, props)
+
+      componentWillUnmount() {
+        'function' === typeof this.subFunc && this.store.unsubscribe(this.subFunc)
+      }
+
+      render() {
+        const props = {
+          ...this.props,
+          ...this.state
+        }
+        // State and props are merged and passed to wrapped component as props.
+        return createElement(WrappedComponent, props)
+      }
     }
   }
 
   if (WrappedComponent.keys)
-    AlfaSubscribedComponent.keys = WrappedComponent.keys
+    classHolder[WrappedComponent.name].keys = WrappedComponent.keys
 
-  return AlfaSubscribedComponent
+  return classHolder[WrappedComponent.name]
 }
 
 function getInjectedProps(keys, store, contextStore) {
