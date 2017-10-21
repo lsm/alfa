@@ -119,7 +119,7 @@ module.exports = function(config) {
     // },
     // public: 'public'
     },
-    captureTimeout: 180 * 1000,
+    captureTimeout: 360 * 1000,
     browserNoActivityTimeout: 600 * 1000,
     browserDisconnectTimeout: 60 * 1000,
     browserDisconnectTolerance: 3,
@@ -140,10 +140,25 @@ module.exports = function(config) {
 // Browsers to run on Sauce Labs
 // Check out https://saucelabs.com/platforms for all browser/OS combos
 var customLaunchers = {
-  sl_chrome_old: {
+  sl_chrome_26: {
     base: 'SauceLabs',
     browserName: 'chrome',
     version: '26'
+  },
+  sl_chrome_30: {
+    base: 'SauceLabs',
+    browserName: 'chrome',
+    version: '30'
+  },
+  sl_chrome_40: {
+    base: 'SauceLabs',
+    browserName: 'chrome',
+    version: '40'
+  },
+  sl_chrome_50: {
+    base: 'SauceLabs',
+    browserName: 'chrome',
+    version: '50'
   },
   sl_chrome_latest: {
     base: 'SauceLabs',
@@ -151,11 +166,25 @@ var customLaunchers = {
     platform: 'OS X 10.12',
     version: 'latest'
   },
-  sl_firefox_old: {
+  sl_firefox_18: {
     base: 'SauceLabs',
     browserName: 'firefox',
-    // platform: 'Windows 8.1',
     version: '18'
+  },
+  sl_firefox_30: {
+    base: 'SauceLabs',
+    browserName: 'firefox',
+    version: '30'
+  },
+  sl_firefox_40: {
+    base: 'SauceLabs',
+    browserName: 'firefox',
+    version: '40'
+  },
+  sl_firefox_50: {
+    base: 'SauceLabs',
+    browserName: 'firefox',
+    version: '50'
   },
   sl_firefox_latest: {
     base: 'SauceLabs',
@@ -173,37 +202,78 @@ var customLaunchers = {
     platform: 'Windows 8.1',
     version: '11'
   },
-  sl_edge: {
+  sl_edge_13: {
+    base: 'SauceLabs',
+    browserName: 'microsoftedge',
+    platform: 'Windows 10',
+    version: '13'
+  },
+  sl_edge_14: {
+    base: 'SauceLabs',
+    browserName: 'microsoftedge',
+    platform: 'Windows 10',
+    version: '14'
+  },
+  sl_edge_15: {
     base: 'SauceLabs',
     browserName: 'microsoftedge',
     platform: 'Windows 10',
     version: '15'
   },
-  sl_safari_old: {
+  sl_safari_7: {
+    base: 'SauceLabs',
+    browserName: 'safari',
+    version: '7'
+  },
+  sl_safari_8: {
+    base: 'SauceLabs',
+    browserName: 'safari',
+    version: '8'
+  },
+  sl_safari_9: {
     base: 'SauceLabs',
     browserName: 'safari',
     version: '9'
+  },
+  sl_safari_10: {
+    base: 'SauceLabs',
+    browserName: 'safari',
+    version: '10'
   },
   sl_safari_latest: {
     base: 'SauceLabs',
     browserName: 'safari',
     version: 'latest'
   },
-  sl_iphone_old: {
+  sl_iphone_84: {
     base: 'SauceLabs',
     browserName: 'iphone',
-    version: '8.1',
+    version: '8.4',
     deviceName: 'iPhone 6 Plus',
     deviceOrientation: 'portrait'
   },
-  sl_iphone_latest: {
+  sl_iphone_93: {
     base: 'SauceLabs',
     browserName: 'iphone',
-    version: 'latest',
-    deviceName: 'iPhone 7 Plus',
+    version: '9.3',
+    deviceName: 'iPhone 6s Simulator',
     deviceOrientation: 'portrait'
   },
-  sl_android_old: {
+  sl_iphone_103: {
+    base: 'SauceLabs',
+    browserName: 'ipad',
+    version: '10.3',
+    deviceName: 'iPad Pro (12.9 inch) Simulator',
+    deviceOrientation: 'portrait'
+  },
+  sl_iphone_110: {
+    base: 'SauceLabs',
+    browserName: 'iphone',
+    version: '11.0',
+    deviceName: 'iPhone 8 Plus',
+    deviceOrientation: 'portrait'
+  },
+  sl_android_44: {
     base: 'SauceLabs',
     browserName: 'android',
     version: '4.4',
@@ -211,7 +281,23 @@ var customLaunchers = {
     deviceType: 'phone',
     deviceOrientation: 'portrait'
   },
-  sl_android_latest: {
+  sl_android_51: {
+    base: 'SauceLabs',
+    browserName: 'android',
+    version: '5.1',
+    deviceName: 'Android GoogleAPI Emulator',
+    deviceType: 'phone',
+    deviceOrientation: 'portrait'
+  },
+  sl_android_60: {
+    base: 'SauceLabs',
+    browserName: 'android',
+    version: '6.0',
+    deviceName: 'Android GoogleAPI Emulator',
+    deviceType: 'phone',
+    deviceOrientation: 'portrait'
+  },
+  sl_android_71: {
     base: 'SauceLabs',
     browserName: 'android',
     version: '7.1',
