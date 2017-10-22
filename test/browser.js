@@ -1,5 +1,6 @@
 require('core-js/es6/map')
 require('core-js/es6/set')
+require('core-js/es6/typed')
 
 require('./action.test')
 require('./app.test')

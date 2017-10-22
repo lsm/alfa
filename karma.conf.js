@@ -148,16 +148,19 @@ var customLaunchers = {
   sl_chrome_30: {
     base: 'SauceLabs',
     browserName: 'chrome',
+    platform: 'Linux',
     version: '30'
   },
   sl_chrome_40: {
     base: 'SauceLabs',
     browserName: 'chrome',
+    platform: 'Windows 8.1',
     version: '40'
   },
   sl_chrome_50: {
     base: 'SauceLabs',
     browserName: 'chrome',
+    platform: 'Windows 10',
     version: '50'
   },
   sl_chrome_latest: {
@@ -174,22 +177,31 @@ var customLaunchers = {
   sl_firefox_30: {
     base: 'SauceLabs',
     browserName: 'firefox',
+    platform: 'Linux',
     version: '30'
   },
   sl_firefox_40: {
     base: 'SauceLabs',
     browserName: 'firefox',
+    platform: 'Windows 8.1',
     version: '40'
   },
   sl_firefox_50: {
     base: 'SauceLabs',
     browserName: 'firefox',
+    platform: 'Windows 10',
     version: '50'
   },
   sl_firefox_latest: {
     base: 'SauceLabs',
     browserName: 'firefox',
+    platform: 'OS X 10.12',
     version: 'latest'
+  },
+  sl_ie_9: {
+    base: 'SauceLabs',
+    browserName: 'internet explorer',
+    version: '9'
   },
   sl_ie_10: {
     base: 'SauceLabs',
@@ -261,9 +273,9 @@ var customLaunchers = {
   },
   sl_iphone_103: {
     base: 'SauceLabs',
-    browserName: 'ipad',
+    browserName: 'iphone',
     version: '10.3',
-    deviceName: 'iPad Pro (12.9 inch) Simulator',
+    deviceName: 'iPhone 7 Plus Simulator',
     deviceOrientation: 'portrait'
   },
   sl_iphone_110: {
@@ -271,6 +283,34 @@ var customLaunchers = {
     browserName: 'iphone',
     version: '11.0',
     deviceName: 'iPhone 8 Plus',
+    deviceOrientation: 'portrait'
+  },
+  sl_ipad_84: {
+    base: 'SauceLabs',
+    browserName: 'ipad',
+    version: '8.4',
+    deviceName: 'iPad Simulator',
+    deviceOrientation: 'portrait'
+  },
+  sl_ipad_93: {
+    base: 'SauceLabs',
+    browserName: 'ipad',
+    version: '9.3',
+    deviceName: 'iPad Air Simulator',
+    deviceOrientation: 'portrait'
+  },
+  sl_ipad_103: {
+    base: 'SauceLabs',
+    browserName: 'ipad',
+    version: '10.3',
+    deviceName: 'iPad Pro (12.9 inch) Simulator',
+    deviceOrientation: 'portrait'
+  },
+  sl_ipad_110: {
+    base: 'SauceLabs',
+    browserName: 'iphone',
+    version: '11.0',
+    deviceName: 'iPad Pro (9.7 inch) Simulator',
     deviceOrientation: 'portrait'
   },
   sl_android_44: {
