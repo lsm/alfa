@@ -15,14 +15,15 @@
         ],
         "semi": [
             2,
-            "never"
+            "never",
+            {"beforeStatementContinuationChars": "always"}
         ],
-        "yoda": [2, "always", { "onlyEquality": true }],
         "curly": [
             2,
             "multi-or-nest",
             "consistent"
-        ]
+        ],
+        "jsx-a11y/href-no-hash": "off"
     },
     "env": {
         "es6": true,
