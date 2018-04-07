@@ -62,5 +62,6 @@
     "react-test-renderer": "16.0.0",
     "tape": "4.8.0",
     "webpack": "3.7.1"
+    "prettier": "1.11.1",
   }
 }
