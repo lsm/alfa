@@ -1,7 +1,5 @@
 require('./setup')
-require('./action.test')
 require('./app.test')
 require('./index.test')
 require('./injection.test')
-require('./pipeline.test')
 require('./store.test')
