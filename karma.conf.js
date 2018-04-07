@@ -20,34 +20,34 @@ module.exports = function(config) {
   }
 
   config.set({
-
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
-
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
     frameworks: ['tap'],
 
-
     // list of files / patterns to load in the browser
-    files: [
-      'src/*.js',
-      'test/browser.js'
-    ],
+    files: ['src/*.js', 'test/browser.js'],
 
-    webpack: { // kind of a copy of your webpack config
+    webpack: {
+      // kind of a copy of your webpack config
       devtool: 'inline-source-map', // just do inline source maps instead of the default
       module: {
-        loaders: [{
-          test: /(\.js|\.jsx)$/,
-          exclude: /\/node_modules\//,
-          loader: 'babel-loader',
-          query: {
-            presets: ['env', 'react'],
-            plugins: ['transform-object-rest-spread', 'transform-class-properties'],
-          },
-        }],
+        rules: [
+          {
+            test: /(\.js|\.jsx)$/,
+            exclude: /\/node_modules\//,
+            loader: 'babel-loader',
+            query: {
+              presets: ['env', 'react'],
+              plugins: [
+                'transform-object-rest-spread',
+                'transform-class-properties'
+              ]
+            }
+          }
+        ]
       },
       node: {
         fs: 'empty',
@@ -68,7 +68,6 @@ module.exports = function(config) {
     // list of files to exclude
     exclude: [],
 
-
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
@@ -77,7 +76,6 @@ module.exports = function(config) {
       'test/*.js': ['webpack', 'sourcemap']
     },
 
-
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
@@ -85,26 +83,22 @@ module.exports = function(config) {
 
     // reporters: ['tap-pretty'],
     // tapReporter: {
-    //   prettify: require('faucet'), // default 'standard TAP' output 
+    //   prettify: require('faucet'), // default 'standard TAP' output
     //   separator: '****************************'
     // },
 
     // web server port
     port: 9876,
 
-
     // enable / disable colors in the output (reporters and logs)
     colors: true,
-
 
     // level of logging
     // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
     logLevel: config.LOG_INFO,
 
-
     // enable / disable watching file and executing tests whenever any file changes
     autoWatch: true,
-
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
@@ -112,12 +106,12 @@ module.exports = function(config) {
     sauceLabs: {
       testName: 'Alfa browser tests',
       recordVideo: true,
-      recordScreenshots: true,
-    // connectOptions: {
-    //   port: 5757,
-    //   logfile: 'sauce_connect.log'
-    // },
-    // public: 'public'
+      recordScreenshots: true
+      // connectOptions: {
+      //   port: 5757,
+      //   logfile: 'sauce_connect.log'
+      // },
+      // public: 'public'
     },
     captureTimeout: 360 * 1000,
     browserNoActivityTimeout: 600 * 1000,
@@ -125,7 +119,6 @@ module.exports = function(config) {
     browserDisconnectTolerance: 3,
     browsers: browsers,
     customLaunchers: !local && customLaunchers,
-
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
