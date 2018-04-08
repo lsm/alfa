@@ -5,9 +5,7 @@ import { subscribe } from 'alfa'
 class HelloMessage extends React.Component {
   render() {
     const message = `Hello ${this.props.name}!`
-    return <div>
-             { message }
-           </div>
+    return <div>{message}</div>
   }
 }
 

@@ -11,8 +11,13 @@ export function createProvide(store) {
       const componentName = WrappedComponent.name
       keys = normalizeKeys(componentName, keys, WrappedComponent.keys)
       checkOutput(componentName, keys, output)
-      return createAlfaProvidedComponent(store, WrappedComponent, keys, output,
-        isReactComponent(WrappedComponent) && 'component')
+      return createAlfaProvidedComponent(
+        store,
+        WrappedComponent,
+        keys,
+        output,
+        isReactComponent(WrappedComponent) && 'component'
+      )
     } else {
       throw new TypeError('alfa.provide only accepts function or class.')
     }
@@ -25,13 +30,17 @@ export function createSubscribe(store) {
       const componentName = WrappedComponent.name
       keys = normalizeKeys(componentName, keys, WrappedComponent.keys)
       checkOutput(componentName, keys, output)
-      return createAlfaSubscribedComponent(store, WrappedComponent, keys, output)
+      return createAlfaSubscribedComponent(
+        store,
+        WrappedComponent,
+        keys,
+        output
+      )
     } else {
       throw new TypeError('alfa.subscribe only accepts function or class.')
     }
   }
 }
-
 
 /**
  * Private functions
@@ -53,29 +62,38 @@ function normalizeKeys(name, keys, dynamicKeys) {
 
 function checkOutput(name, keys, output) {
   if (Array.isArray(keys)) {
-    if (keys.indexOf('set') > -1
-      && (!Array.isArray(output) || 0 === output.length)) {
+    if (
+      keys.indexOf('set') > -1 &&
+      (!Array.isArray(output) || 0 === output.length)
+    ) {
       throw new Error(`${name}: array of output keys should be provided as 3rd
 argument of function "provide/subscribe" when "set" is provided/subscribed.`)
     }
   }
 }
 
-
 function isReactComponent(Component) {
   return Component.prototype && Component.prototype.isReactComponent
 }
 
-
-function createAlfaProvidedComponent(store, WrappedComponent, keys, output, type) {
+function createAlfaProvidedComponent(
+  store,
+  WrappedComponent,
+  keys,
+  output,
+  type
+) {
   // Keep the name of the orginal component which makes debugging logs easier
   // to understand.
   var componentName = WrappedComponent.name || 'AlfaProvidedComponent'
 
   var wrapper = {
     [componentName]: function(props, context, updater) {
-      const injectedProps = getInjectedProps(keys, store,
-        context && context.alfaStore)
+      const injectedProps = getInjectedProps(
+        keys,
+        store,
+        context && context.alfaStore
+      )
       // Props passed in directly to constructor has lower priority than keys
       // injected from the store.
       var _props = {
@@ -83,8 +101,13 @@ function createAlfaProvidedComponent(store, WrappedComponent, keys, output, type
         ...injectedProps
       }
 
-      const dynamicProps = getDynamicProps(WrappedComponent.keys, _props,
-        output, store, context && context.alfaStore)
+      const dynamicProps = getDynamicProps(
+        WrappedComponent.keys,
+        _props,
+        output,
+        store,
+        context && context.alfaStore
+      )
       if (dynamicProps) {
         _props = {
           ..._props,
@@ -105,12 +128,10 @@ function createAlfaProvidedComponent(store, WrappedComponent, keys, output, type
     alfaStore: PropTypes.object
   }
 
-  if (WrappedComponent.keys)
-    wrapper[componentName].keys = WrappedComponent.keys
+  if (WrappedComponent.keys) wrapper[componentName].keys = WrappedComponent.keys
 
   return wrapper[componentName]
 }
-
 
 function createAlfaSubscribedComponent(store, WrappedComponent, keys, output) {
   var classHolder = {
@@ -134,23 +155,26 @@ function createAlfaSubscribedComponent(store, WrappedComponent, keys, output) {
         }
 
         // Get dynamic props.
-        const dynamicProps = getDynamicProps(WrappedComponent.keys, _props,
-          output, store, context && context.alfaStore)
+        const dynamicProps = getDynamicProps(
+          WrappedComponent.keys,
+          _props,
+          output,
+          store,
+          context && context.alfaStore
+        )
 
         // var maps
         if (dynamicProps) {
           this.subKeys = [...keys, ...dynamicProps.keys]
           this.subMaps = dynamicProps.maps
-          if (_props.set)
-            state.set = _props.set
+          if (_props.set) state.set = _props.set
           this.state = {
             ...state,
             ...dynamicProps.props
           }
         } else {
           this.subKeys = keys
-          if (_props.set)
-            state.set = _props.set
+          if (_props.set) state.set = _props.set
           this.state = state
         }
 
@@ -165,7 +189,8 @@ function createAlfaSubscribedComponent(store, WrappedComponent, keys, output) {
       }
 
       componentWillUnmount() {
-        'function' === typeof this.subFunc && this.store.unsubscribe(this.subFunc)
+        'function' === typeof this.subFunc &&
+          this.store.unsubscribe(this.subFunc)
       }
 
       render() {
@@ -193,8 +218,7 @@ function getInjectedProps(keys, store, contextStore) {
   }
 
   // Need to inject set.
-  if (keys.indexOf('set') > -1)
-    injectedProps.set = (contextStore || store).set
+  if (keys.indexOf('set') > -1) injectedProps.set = (contextStore || store).set
 
   Object.keys(injectedProps).forEach(function(key) {
     const prop = injectedProps[key]

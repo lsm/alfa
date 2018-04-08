@@ -1,9 +1,12 @@
 import { action } from 'alfa'
-import { createTodo, updateTodo, removeTodoByID, toggleTodoComplete } from './pipes'
-
+import {
+  createTodo,
+  updateTodo,
+  removeTodoByID,
+  toggleTodoComplete
+} from './pipes'
 
 // Set all pipes to the store.
-
 
 action('addToDo')
   .pipe('input', ['newTodoText'])
@@ -25,21 +28,29 @@ action('editTodo')
   .pipe(updateTodo, ['todoId', 'todoText', 'todos'], 'todos')
   .output('todos')
 
+action(
+  'completeAll',
+  todos => {
+    return {
+      todos: todos.map(todo => ({
+        ...todo,
+        completed: !todo.completed
+      }))
+    }
+  },
+  'todos',
+  'todos'
+)
 
-action('completeAll', todos => {
-  return {
-    todos: todos.map(todo => ({
-      ...todo,
-      completed: !todo.completed
-    }))
-  }
-}, 'todos', 'todos')
-
-
-action('clearCompleted', function(todos) {
-  return {
-    todos: todos.filter(function(todo) {
-      return false === todo.completed
-    })
-  }
-}, 'todos', 'todos')
+action(
+  'clearCompleted',
+  function(todos) {
+    return {
+      todos: todos.filter(function(todo) {
+        return false === todo.completed
+      })
+    }
+  },
+  'todos',
+  'todos'
+)

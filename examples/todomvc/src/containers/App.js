@@ -4,7 +4,7 @@ import MainSection from '../components/MainSection'
 
 const App = () => (
   <div>
-    <Header/>
+    <Header />
     <MainSection />
   </div>
 )

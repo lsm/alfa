@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames'
 
-
 export default class TodoTextInput extends Component {
   static propTypes = {
     onSave: PropTypes.func.isRequired,
@@ -13,7 +12,7 @@ export default class TodoTextInput extends Component {
   }
 
   state = {
-    text: (this.props.text) || ''
+    text: this.props.text || ''
   }
 
   handleSubmit = e => {
@@ -35,8 +34,7 @@ export default class TodoTextInput extends Component {
   }
 
   handleBlur = e => {
-    if (!this.props.newTodo)
-      this.props.onSave(e.target.value)
+    if (!this.props.newTodo) this.props.onSave(e.target.value)
   }
 
   render() {
@@ -45,14 +43,16 @@ export default class TodoTextInput extends Component {
       'new-todo': this.props.newTodo
     })
     return (
-      <input className={ css }
-             type="text"
-             placeholder={ this.props.placeholder }
-             autoFocus="true"
-             value={ this.state.text }
-             onBlur={ this.handleBlur }
-             onChange={ this.handleChange }
-             onKeyDown={ this.handleSubmit } />
+      <input
+        className={css}
+        type="text"
+        placeholder={this.props.placeholder}
+        autoFocus="true"
+        value={this.state.text}
+        onBlur={this.handleBlur}
+        onChange={this.handleChange}
+        onKeyDown={this.handleSubmit}
+      />
     )
   }
 }

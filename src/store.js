@@ -1,8 +1,6 @@
-
-
 /**
  * Create a key value store with simple subscription support.
- * 
+ *
  * @return {Store}
  */
 export default function createStore(data) {
@@ -24,7 +22,6 @@ export default function createStore(data) {
    * The Store class.
    */
   class Store {
-
     /**
      * @type {Boolean}
      */
@@ -32,7 +29,7 @@ export default function createStore(data) {
 
     /**
      * Get value from store by key.
-     * 
+     *
      * @param  {String|undefined} key Name of the value to get.
      * @return {Any}        Value.
      */
@@ -45,25 +42,28 @@ export default function createStore(data) {
         const results = {}
         key.forEach(function(k) {
           if ('string' === typeof k) {
-            if (_store.hasOwnProperty(k))
-              results[k] = _store[k]
+            if (_store.hasOwnProperty(k)) results[k] = _store[k]
           } else {
-            throw new TypeError('Type of `key` must be string, array of strings or undefined.')
+            throw new TypeError(
+              'Type of `key` must be string, array of strings or undefined.'
+            )
           }
         })
         return results
       } else if ('undefined' === keyType) {
         return this.clone()
       } else {
-        throw new TypeError('Type of `key` must be string, array of strings or undefined.')
+        throw new TypeError(
+          'Type of `key` must be string, array of strings or undefined.'
+        )
       }
     }
 
     /**
      * Save the `value` in store with name `key`.
-     * 
+     *
      * @param {String|Object}   key   Name of the value in store.  Or object of
-     * key/value pairs to merge into the store. 
+     * key/value pairs to merge into the store.
      * @param {Any}             value Value to save.
      */
     set(key, value) {
@@ -82,13 +82,13 @@ export default function createStore(data) {
 
     clone() {
       const cloned = {}
-      Object.keys(_store).forEach(key => cloned[key] = _store[key])
+      Object.keys(_store).forEach(key => (cloned[key] = _store[key]))
       return cloned
     }
 
     /**
      * Call listening function when `set` was called on any of the `keys`.
-     * 
+     *
      * @param {Array}   keys  Array of keys the function will be subscribing to.
      * @param {Function} fn   Subscribing function.
      * @param {Object} [maps] Optional injection key to real key mapping.
@@ -97,40 +97,38 @@ export default function createStore(data) {
       if ('function' !== typeof fn)
         throw new TypeError('`fn` must be a function')
 
-      if (maps)
-        fn.maps = maps
+      if (maps) fn.maps = maps
 
-      Array.isArray(keys) && keys.forEach(function(key) {
-        const subs = _subscriptions[key]
-        if (Array.isArray(subs)) {
-          -1 === subs.indexOf(key) && subs.push(fn)
-        } else {
-          _subscriptions[key] = [fn]
-          return
-        }
-      })
+      Array.isArray(keys) &&
+        keys.forEach(function(key) {
+          const subs = _subscriptions[key]
+          if (Array.isArray(subs)) {
+            ;-1 === subs.indexOf(key) && subs.push(fn)
+          } else {
+            _subscriptions[key] = [fn]
+            return
+          }
+        })
     }
 
     /**
      * Unsubscribe function from all keys it's listening to.
-     * 
+     *
      * @param  {Function} fn The function to unsubcribe.
      */
     unsubscribe(fn) {
       Object.keys(_subscriptions).forEach(function(key) {
         const subs = _subscriptions[key]
-        subs && (_subscriptions[key] = subs.filter((f) => f !== fn))
+        subs && (_subscriptions[key] = subs.filter(f => f !== fn))
       })
     }
   }
-
 
   /**
    * Return a new instance of Store
    */
   return new Store()
 }
-
 
 export function isPlainObject(obj) {
   return obj && 'object' === typeof obj && !Array.isArray(obj)
@@ -168,8 +166,7 @@ function setSingle(store, subscriptions, key, value) {
       // `setState` calls could trigger unmount component which later `setState`
       // belongs to.
       var _subs = subscriptions[key]
-      if (subs && -1 === _subs.indexOf(subFn))
-        return
+      if (subs && -1 === _subs.indexOf(subFn)) return
 
       if (subFn.maps) {
         var maps = subFn.maps
@@ -188,4 +185,3 @@ function setSingle(store, subscriptions, key, value) {
     })
   }
 }
-

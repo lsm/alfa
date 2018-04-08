@@ -5,12 +5,11 @@ import { render } from 'react-dom'
 import ChangeName from './change.js'
 import HelloMessage from './hello.js'
 
-
 // Define the root app which renders HelloMessage as child.
 const App = () => (
   <div>
-    <HelloMessage/>
-    <ChangeName/>
+    <HelloMessage />
+    <ChangeName />
   </div>
 )
 
