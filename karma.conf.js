@@ -77,15 +77,8 @@ module.exports = function(config) {
     },
 
     // test results reporter to use
-    // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
     reporters: reporters,
-
-    // reporters: ['tap-pretty'],
-    // tapReporter: {
-    //   prettify: require('faucet'), // default 'standard TAP' output
-    //   separator: '****************************'
-    // },
 
     // web server port
     port: 9876,
@@ -104,14 +97,12 @@ module.exports = function(config) {
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
     // browsers: ['Chrome'],
     sauceLabs: {
+      public: 'public',
       testName: 'Alfa browser tests',
+      idleTimeout: 600,
+      commandTimeout: 600,
       recordVideo: true,
       recordScreenshots: true
-      // connectOptions: {
-      //   port: 5757,
-      //   logfile: 'sauce_connect.log'
-      // },
-      // public: 'public'
     },
     captureTimeout: 360 * 1000,
     browserNoActivityTimeout: 600 * 1000,
@@ -191,11 +182,11 @@ var customLaunchers = {
     platform: 'OS X 10.12',
     version: 'latest'
   },
-  sl_ie_9: {
-    base: 'SauceLabs',
-    browserName: 'internet explorer',
-    version: '9'
-  },
+  // sl_ie_9: {
+  //   base: 'SauceLabs',
+  //   browserName: 'internet explorer',
+  //   version: '9'
+  // },
   sl_ie_10: {
     base: 'SauceLabs',
     browserName: 'internet explorer',
@@ -268,7 +259,7 @@ var customLaunchers = {
     base: 'SauceLabs',
     browserName: 'iphone',
     version: '11.2',
-    deviceName: 'iPhone 8 Plus',
+    deviceName: 'iPhone X Simulator',
     deviceOrientation: 'portrait'
   },
   sl_ipad_93: {
@@ -288,7 +279,7 @@ var customLaunchers = {
   sl_ipad_112: {
     base: 'SauceLabs',
     browserName: 'iphone',
-    version: '11.1',
+    version: '11.2',
     deviceName: 'iPad Pro (9.7 inch) Simulator',
     deviceOrientation: 'portrait'
   },
