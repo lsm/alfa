@@ -38,14 +38,7 @@ module.exports = function(config) {
           {
             test: /(\.js|\.jsx)$/,
             exclude: /\/node_modules\//,
-            loader: 'babel-loader',
-            query: {
-              presets: ['env', 'react'],
-              plugins: [
-                'transform-object-rest-spread',
-                'transform-class-properties'
-              ]
-            }
+            loader: 'babel-loader'
           }
         ]
       },
@@ -99,8 +92,8 @@ module.exports = function(config) {
     sauceLabs: {
       public: 'public',
       testName: 'Alfa browser tests',
-      idleTimeout: 600,
-      commandTimeout: 600,
+      idleTimeout: 180,
+      commandTimeout: 180,
       recordVideo: true,
       recordScreenshots: true
     },
@@ -182,11 +175,6 @@ var customLaunchers = {
     platform: 'OS X 10.12',
     version: 'latest'
   },
-  // sl_ie_9: {
-  //   base: 'SauceLabs',
-  //   browserName: 'internet explorer',
-  //   version: '9'
-  // },
   sl_ie_10: {
     base: 'SauceLabs',
     browserName: 'internet explorer',
