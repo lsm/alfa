@@ -36,7 +36,7 @@ test('injection.createInjector(store, "provide")', t => {
    */
 
   function FnComponent(props) {
-    return <h2>{ props.title }</h2>
+    return <h2>{props.title}</h2>
   }
 
   const ProvidedFnComponent = provide(FnComponent, 'title')
@@ -45,7 +45,7 @@ test('injection.createInjector(store, "provide")', t => {
   // const tree1 = render.create(<App1/>).toJSON()
   // t.snapshot(tree1)
 
-  const wrapper1 = mount(<App1/>)
+  const wrapper1 = mount(<App1 />)
   t.is(wrapper1.contains(<h2>value</h2>), true)
 
   /**
@@ -58,7 +58,7 @@ test('injection.createInjector(store, "provide")', t => {
     }
 
     render() {
-      return <h1>{ this.props.title }</h1>
+      return <h1>{this.props.title}</h1>
     }
   }
 
@@ -68,9 +68,8 @@ test('injection.createInjector(store, "provide")', t => {
   // const tree2 = render.create(<App2 />).toJSON()
   // t.snapshot(tree2)
 
-  const wrapper2 = mount(<App2/>)
+  const wrapper2 = mount(<App2 />)
   t.is(wrapper2.contains(<h1>value</h1>), true)
-
 
   t.throws(() => {
     provide(ReactComponent, 123)
@@ -109,13 +108,13 @@ test('injection.createInjector(store, "subscribe")', t => {
     // This will be called twice.
     // 4,5
     t.is(props.title, store.get('title'))
-    return <h1>{ props.title }</h1>
+    return <h1>{props.title}</h1>
   }
 
   const SubscribedFnComponent = subscribe(FnComponent, 'title')
   const App1 = app(SubscribedFnComponent, store)
 
-  const wrapper1 = mount(<App1/>)
+  const wrapper1 = mount(<App1 />)
   // 6
   t.is(wrapper1.contains(<h1>Old Title</h1>), true)
 
@@ -132,24 +131,23 @@ test('injection.createInjector(store, "subscribe")', t => {
       // This will be called 3 times.
       // 7,8,9
       t.is(this.props.title, store.get('title'))
-      return <h3>{ this.props.title }</h3>
+      return <h3>{this.props.title}</h3>
     }
   }
 
   const SubscribedReactComponent = subscribe(ReactComponent, ['title'])
   const App2 = app(SubscribedReactComponent, store)
 
-  const wrapper2 = mount(<App2/>)
+  const wrapper2 = mount(<App2 />)
   // 10
   t.is(wrapper2.contains(<h3>Old Title</h3>), true, 'Old title matches')
 
   store.set('title', 'New Title')
 
-  const wrapper3 = mount(<App2/>)
+  const wrapper3 = mount(<App2 />)
   // 11
   t.ok(wrapper3.contains(<h3>New Title</h3>), 'New title matches')
 })
-
 
 test('provide and use set', t => {
   t.plan(3)
@@ -162,18 +160,17 @@ test('provide and use set', t => {
   function FnComponent(props) {
     t.is(props.title, 'value')
     props.set('title', 'new title')
-    return <h4>{ props.title }</h4>
+    return <h4>{props.title}</h4>
   }
 
   const ProvidedFnComponent = provide(FnComponent, ['set', 'title'], ['title'])
   const App = app(ProvidedFnComponent, store)
 
-  const wrapper = mount(<App/>)
+  const wrapper = mount(<App />)
   t.ok(wrapper.contains(<h4>value</h4>), 'Title matches')
 
   t.is(store.get('title'), 'new title')
 })
-
 
 test('provide with dynamic injection', t => {
   t.plan(4)
@@ -190,7 +187,7 @@ test('provide with dynamic injection', t => {
       subTitle: PropTypes.string.isRequired
     }
 
-    static keys = function(props) {
+    static inputs = function(props) {
       t.is(props.title, 'The title')
       return ['subTitle']
     }
@@ -198,23 +195,29 @@ test('provide with dynamic injection', t => {
     render() {
       t.is(this.props.title, store.get('title'))
       t.is(this.props.subTitle, store.get('subTitle'))
-      return (<div>
-                <h1>{ this.props.title }</h1>
-                <h3>{ this.props.subTitle }</h3>
-              </div>)
+      return (
+        <div>
+          <h1>{this.props.title}</h1>
+          <h3>{this.props.subTitle}</h3>
+        </div>
+      )
     }
   }
 
   const ProvidedReactComponent = provide(ReactComponent, ['title'])
   const App = app(ProvidedReactComponent, store)
 
-  const wrapper = mount(<App/>)
-  t.is(wrapper.contains(<div>
-                          <h1>The title</h1>
-                          <h3>The sub title</h3>
-                        </div>), true)
+  const wrapper = mount(<App />)
+  t.is(
+    wrapper.contains(
+      <div>
+        <h1>The title</h1>
+        <h3>The sub title</h3>
+      </div>
+    ),
+    true
+  )
 })
-
 
 test('subscribe with dynamic injection', t => {
   t.plan(10)
@@ -231,54 +234,63 @@ test('subscribe with dynamic injection', t => {
       subTitle: PropTypes.string.isRequired
     }
 
-    static keys = function(props) {
+    static inputs = function(props) {
       t.is(props.title, 'The title', 'static keys, props.title')
       return {
-        'subTitle': props.title + ' key'
+        subTitle: props.title + ' key'
       }
     }
 
     render() {
       t.is(this.props.title, store.get('title'), 'props.title')
       t.is(this.props.subTitle, store.get('The title key'), 'props.subTitle')
-      return (<div>
-                <h2>{ this.props.title }</h2>
-                <h5>{ this.props.subTitle }</h5>
-              </div>)
+      return (
+        <div>
+          <h2>{this.props.title}</h2>
+          <h5>{this.props.subTitle}</h5>
+        </div>
+      )
     }
   }
 
   const SubscribedReactComponent = subscribe(ReactComponent, ['title'])
   const App = app(SubscribedReactComponent, store)
 
-  const wrapper1 = mount(<App/>)
-  t.ok(wrapper1.contains(<div>
-                           <h2>The title</h2>
-                           <h5>The sub title</h5>
-                         </div>), 'render result 1')
+  const wrapper1 = mount(<App />)
+  t.ok(
+    wrapper1.contains(
+      <div>
+        <h2>The title</h2>
+        <h5>The sub title</h5>
+      </div>
+    ),
+    'render result 1'
+  )
 
   store.set('The title key', 'New sub title')
 
-  const wrapper2 = mount(<App/>)
-  t.ok(wrapper2.contains(<div>
-                           <h2>The title</h2>
-                           <h5>New sub title</h5>
-                         </div>), 'render result 2')
-
+  const wrapper2 = mount(<App />)
+  t.ok(
+    wrapper2.contains(
+      <div>
+        <h2>The title</h2>
+        <h5>New sub title</h5>
+      </div>
+    ),
+    'render result 2'
+  )
 })
 
-
-test('subscribe/provide with only `keys`', t => {
+test('subscribe/provide with only `inputs`', t => {
   t.plan(10)
 
   const store = createStore()
   const provide = createInjector(store, 'provide')
   const subscribe = createInjector(store, 'subscribe')
 
-  function FnComponent() {
-  }
+  function FnComponent() {}
 
-  FnComponent.keys = function(props) {
+  FnComponent.inputs = function(props) {
     return {
       theKey: props.theValueOfKey
     }
@@ -301,9 +313,7 @@ test('subscribe/provide with only `keys`', t => {
     t.pass()
   })
 
-  class ReactComponent extends Component {
-
-  }
+  class ReactComponent extends Component {}
 
   t.throws(() => {
     provide(ReactComponent)
@@ -313,8 +323,7 @@ test('subscribe/provide with only `keys`', t => {
     subscribe(ReactComponent)
   })
 
-  function NoKeysComponent() {
-  }
+  function NoKeysComponent() {}
 
   t.throws(() => {
     provide(NoKeysComponent)
@@ -325,15 +334,13 @@ test('subscribe/provide with only `keys`', t => {
   })
 })
 
-
 test('provide or subscribe set without output keys should throw', t => {
   t.plan(2)
   const store = createStore()
   const provide = createInjector(store, 'provide')
   const subscribe = createInjector(store, 'subscribe')
 
-  function FnComponent() {
-  }
+  function FnComponent() {}
 
   t.throws(() => {
     provide(FnComponent, ['set'])
@@ -344,9 +351,8 @@ test('provide or subscribe set without output keys should throw', t => {
   }, 'subscribe "set" without output key')
 })
 
-
-// The falling test will fail in some env until 
-// https://github.com/facebook/react/issues/11098 
+// The falling test will fail in some env until
+// https://github.com/facebook/react/issues/11098
 // gets resolved.
 // test('Call set without predefined output should throw', t => {
 //   t.plan(4)
@@ -394,14 +400,13 @@ test('provide or subscribe set without output keys should throw', t => {
 //   t.is(store.get('predefinedOutput'), 'new value')
 // })
 
-
 test('Should set dynamic key correctly', t => {
   t.plan(2)
   const store = createStore()
   const provide = createInjector(store, 'provide')
 
   class ReactComponent extends Component {
-    static keys(props) {
+    static inputs(props) {
       return {
         theDynamicKey: props.target,
         anotherDynamicKey: props.anotherTarget
@@ -416,15 +421,18 @@ test('Should set dynamic key correctly', t => {
     }
 
     render() {
-      return <div></div>
+      return <div />
     }
   }
 
-  const ProvidedReactComponent = provide(ReactComponent, ['set'], ['theDynamicKey'])
+  const ProvidedReactComponent = provide(
+    ReactComponent,
+    ['set'],
+    ['theDynamicKey']
+  )
   const App = app(ProvidedReactComponent, store)
 
-  mount(<App target='theTargetKey'
-             anotherTarget="anotherTargetKey" />)
+  mount(<App target="theTargetKey" anotherTarget="anotherTargetKey" />)
 
   t.is(store.get('theTargetKey'), 'the value which does matter')
   t.is(store.get('anotherTargetKey'), 'another value does matter')
