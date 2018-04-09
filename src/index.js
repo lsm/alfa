@@ -1,5 +1,5 @@
 import createStore from './store'
-import { createProvide, createSubscribe } from './injection'
+import { createInjector } from './injection'
 
 /**
  * Export function for creating a new alfa instance.
@@ -9,8 +9,8 @@ export function createAlfa() {
   const alfa = {}
   const store = createStore()
 
-  alfa.provide = createProvide(store)
-  alfa.subscribe = createSubscribe(store)
+  alfa.provide = createInjector(store, 'provide')
+  alfa.subscribe = createInjector(store, 'subscribe')
 
   return alfa
 }

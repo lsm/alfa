@@ -4,20 +4,18 @@ import Adapter from 'enzyme-adapter-react-16'
 import PropTypes from 'prop-types'
 import { app, createStore } from '../src'
 import { mount, configure } from 'enzyme'
-import { createProvide, createSubscribe } from '../src/injection'
-
+import { createInjector } from '../src/injection'
 
 configure({
   adapter: new Adapter()
 })
 
-
-test('injection.createProvide()', t => {
+test('injection.createInjector(store, "provide")', t => {
   t.plan(6)
 
   const store = createStore()
   store.set('title', 'value')
-  const provide = createProvide(store)
+  const provide = createInjector(store, 'provide')
 
   t.is(typeof provide, 'function')
 
@@ -79,13 +77,12 @@ test('injection.createProvide()', t => {
   }, TypeError)
 })
 
-
-test('injection.createSubscribe()', t => {
+test('injection.createInjector(store, "subscribe")', t => {
   t.plan(11)
 
   const store = createStore()
   store.set('title', 'Old Title')
-  const subscribe = createSubscribe(store)
+  const subscribe = createInjector(store, 'subscribe')
 
   // 1
   t.is(typeof subscribe, 'function')
@@ -160,7 +157,7 @@ test('provide and use set', t => {
   const store = createStore({
     title: 'value'
   })
-  const provide = createProvide(store)
+  const provide = createInjector(store, 'provide')
 
   function FnComponent(props) {
     t.is(props.title, 'value')
@@ -185,7 +182,7 @@ test('provide with dynamic injection', t => {
     title: 'The title',
     subTitle: 'The sub title'
   })
-  const provide = createProvide(store)
+  const provide = createInjector(store, 'provide')
 
   class ReactComponent extends Component {
     static propTypes = {
@@ -226,7 +223,7 @@ test('subscribe with dynamic injection', t => {
     title: 'The title',
     'The title key': 'The sub title'
   })
-  const subscribe = createSubscribe(store)
+  const subscribe = createInjector(store, 'subscribe')
 
   class ReactComponent extends Component {
     static propTypes = {
@@ -275,8 +272,8 @@ test('subscribe/provide with only `keys`', t => {
   t.plan(10)
 
   const store = createStore()
-  const provide = createProvide(store)
-  const subscribe = createSubscribe(store)
+  const provide = createInjector(store, 'provide')
+  const subscribe = createInjector(store, 'subscribe')
 
   function FnComponent() {
   }
@@ -332,8 +329,8 @@ test('subscribe/provide with only `keys`', t => {
 test('provide or subscribe set without output keys should throw', t => {
   t.plan(2)
   const store = createStore()
-  const provide = createProvide(store)
-  const subscribe = createSubscribe(store)
+  const provide = createInjector(store, 'provide')
+  const subscribe = createInjector(store, 'subscribe')
 
   function FnComponent() {
   }
@@ -354,7 +351,7 @@ test('provide or subscribe set without output keys should throw', t => {
 // test('Call set without predefined output should throw', t => {
 //   t.plan(4)
 //   const store = createStore()
-//   const subscribe = createSubscribe(store)
+//   const subscribe = createInjector(store, 'subscribe')
 
 //   class ReactComponent extends Component {
 //     componentWillMount() {
@@ -401,7 +398,7 @@ test('provide or subscribe set without output keys should throw', t => {
 test('Should set dynamic key correctly', t => {
   t.plan(2)
   const store = createStore()
-  const provide = createProvide(store)
+  const provide = createInjector(store, 'provide')
 
   class ReactComponent extends Component {
     static keys(props) {

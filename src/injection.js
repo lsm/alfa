@@ -5,41 +5,37 @@ import { Component, createElement } from 'react'
  * Public API
  */
 
-export function createProvide(store) {
-  return function provide(WrappedComponent, keys, output) {
-    if ('function' === typeof WrappedComponent) {
-      const componentName = WrappedComponent.name
-      keys = normalizeKeys(componentName, keys, WrappedComponent.keys)
-      checkOutput(componentName, keys, output)
-      return createAlfaProvidedComponent(
-        store,
-        WrappedComponent,
-        keys,
-        output,
-        isReactComponent(WrappedComponent) && 'component'
-      )
-    } else {
-      throw new TypeError('alfa.provide only accepts function or class.')
+export function createInjector(store, type) {
+  const wrapper = {
+    [type]: function(WrappedComponent, inputs, outputs) {
+      const typeofComponent = typeof WrappedComponent
+      if (typeofComponent === 'function') {
+        const componentName = WrappedComponent.name
+        inputs = normalizeInputs(componentName, inputs, WrappedComponent.inputs)
+        checkOutput(componentName, inputs, outputs)
+        const creator =
+          type === 'provide'
+            ? createAlfaProvidedComponent
+            : createAlfaSubscribedComponent
+        return creator(
+          store,
+          WrappedComponent,
+          inputs,
+          outputs,
+          WrappedComponent.prototype &&
+            WrappedComponent.prototype.isReactComponent &&
+            'component'
+        )
+      } else {
+        throw new TypeError(
+          `alfa.${type} only accepts function or class. 
+          Got "${typeofComponent}".`
+        )
+      }
     }
   }
-}
 
-export function createSubscribe(store) {
-  return function subscribe(WrappedComponent, keys, output) {
-    if ('function' === typeof WrappedComponent) {
-      const componentName = WrappedComponent.name
-      keys = normalizeKeys(componentName, keys, WrappedComponent.keys)
-      checkOutput(componentName, keys, output)
-      return createAlfaSubscribedComponent(
-        store,
-        WrappedComponent,
-        keys,
-        output
-      )
-    } else {
-      throw new TypeError('alfa.subscribe only accepts function or class.')
-    }
-  }
+  return wrapper[type]
 }
 
 /**
