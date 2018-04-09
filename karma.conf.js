@@ -196,27 +196,27 @@ var customLaunchers = {
     platform: 'OS X 10.12',
     version: 'latest'
   },
-  sl_ipad_93: {
-    base: 'SauceLabs',
-    browserName: 'ipad',
-    version: '9.3',
-    deviceName: 'iPad Air Simulator',
-    deviceOrientation: 'portrait'
-  },
-  sl_ipad_103: {
-    base: 'SauceLabs',
-    browserName: 'ipad',
-    version: '10.3',
-    deviceName: 'iPad Pro (9.7 inch) Simulator',
-    deviceOrientation: 'portrait'
-  },
-  sl_ipad_112: {
-    base: 'SauceLabs',
-    browserName: 'iphone',
-    version: '11.2',
-    deviceName: 'iPad Pro (12.9 inch) (2nd generation) Simulator',
-    deviceOrientation: 'portrait'
-  },
+  // sl_ipad_93: {
+  //   base: 'SauceLabs',
+  //   browserName: 'ipad',
+  //   version: '9.3',
+  //   deviceName: 'iPad Air Simulator',
+  //   deviceOrientation: 'portrait'
+  // },
+  // sl_ipad_103: {
+  //   base: 'SauceLabs',
+  //   browserName: 'ipad',
+  //   version: '10.3',
+  //   deviceName: 'iPad Pro (9.7 inch) Simulator',
+  //   deviceOrientation: 'portrait'
+  // },
+  // sl_ipad_112: {
+  //   base: 'SauceLabs',
+  //   browserName: 'ipad',
+  //   version: '11.2',
+  //   deviceName: 'iPad Pro (12.9 inch) (2nd generation) Simulator',
+  //   deviceOrientation: 'portrait'
+  // },
   sl_ie_10: {
     base: 'SauceLabs',
     browserName: 'internet explorer',
