@@ -5,7 +5,14 @@ import { PureComponent, createElement } from 'react'
  * Public API
  */
 
-export function createInjector(store, type) {
+export const provide = createInjector('provide')
+export const subscribe = createInjector('subscribe')
+
+/**
+ * Private functions
+ */
+
+function createInjector(type) {
   const wrapper = {
     [type]: function(WrappedComponent, inputs, outputs) {
       const typeofComponent = typeof WrappedComponent
@@ -18,7 +25,6 @@ export function createInjector(store, type) {
             ? createAlfaProvidedComponent
             : createAlfaSubscribedComponent
         return creator(
-          store,
           WrappedComponent,
           inputs,
           outputs,
@@ -38,16 +44,15 @@ export function createInjector(store, type) {
   return wrapper[type]
 }
 
-/**
- * Private functions
- */
-
-function normalizeInputs(name, inputs, dynamicKeys) {
-  if ('string' === typeof inputs) {
+function normalizeInputs(name, inputs, dynamicInputs) {
+  if (
+    'string' === typeof inputs ||
+    (typeof inputs === 'function' && inputs.isAlfaAction === true)
+  ) {
     return [inputs]
   } else if (Array.isArray(inputs)) {
     return inputs
-  } else if ('function' === typeof dynamicKeys) {
+  } else if ('function' === typeof dynamicInputs) {
     return []
   } else {
     throw new TypeError(`${name}: provide/subscribe only accepts string or array
@@ -70,24 +75,14 @@ function checkOutput(name, inputs, outputs) {
   }
 }
 
-function createAlfaProvidedComponent(
-  store,
-  WrappedComponent,
-  inputs,
-  outputs,
-  type
-) {
+function createAlfaProvidedComponent(WrappedComponent, inputs, outputs, type) {
   // Keep the name of the orginal component which makes debugging logs easier
   // to understand.
   var componentName = WrappedComponent.name || 'AlfaProvidedComponent'
 
   var wrapper = {
     [componentName]: function(props, context, updater) {
-      const injectedProps = getInjectedProps(
-        inputs,
-        store,
-        context && context.alfaStore
-      )
+      const injectedProps = getInjectedProps(inputs, context.alfaStore)
       // Props passed in directly to constructor has lower priority than inputs
       // injected from the store.
       var _props = {
@@ -99,7 +94,6 @@ function createAlfaProvidedComponent(
         WrappedComponent.inputs,
         _props,
         outputs,
-        store,
         context && context.alfaStore
       )
 
@@ -130,12 +124,7 @@ function createAlfaProvidedComponent(
   return wrapper[componentName]
 }
 
-function createAlfaSubscribedComponent(
-  store,
-  WrappedComponent,
-  inputs,
-  outputs
-) {
+function createAlfaSubscribedComponent(WrappedComponent, inputs, outputs) {
   var classHolder = {
     // Keep the name of the orginal component which makes debugging logs easier
     // to understand.
@@ -150,7 +139,7 @@ function createAlfaSubscribedComponent(
 
         // Inject all inputs as state.
         const contextStore = context && context.alfaStore
-        const state = getInjectedProps(inputs, store, contextStore)
+        const state = getInjectedProps(inputs, contextStore)
         const _props = {
           ...props,
           ...state
@@ -161,7 +150,6 @@ function createAlfaSubscribedComponent(
           WrappedComponent.inputs,
           _props,
           outputs,
-          store,
           context && context.alfaStore
         )
 
@@ -180,8 +168,8 @@ function createAlfaSubscribedComponent(
           this.state = state
         }
 
-        // Use the correct store for subscribe/unsubscribe.
-        this.store = contextStore || store
+        // Save the store for subscribe/unsubscribe.
+        this.store = contextStore
         this.subFunc = this.setState.bind(this)
       }
 
@@ -212,40 +200,38 @@ function createAlfaSubscribedComponent(
   return classHolder[WrappedComponent.name]
 }
 
-function getInjectedProps(keys, store, contextStore) {
+function getInjectedProps(inputs, contextStore) {
   const injectedProps = {
-    ...store.get(keys),
-    // See if we have an alternative alfa store to use.
-    ...(contextStore ? contextStore.get(keys) : undefined)
+    ...contextStore.get(inputs)
   }
 
   // Need to inject set.
-  if (keys.indexOf('set') > -1) injectedProps.set = (contextStore || store).set
+  if (inputs.indexOf('set') > -1) injectedProps.set = contextStore.set
 
   Object.keys(injectedProps).forEach(function(key) {
     const prop = injectedProps[key]
     if ('function' === typeof prop && true === prop.isAlfaPipeline)
-      injectedProps[key] = prop(contextStore || store)
+      injectedProps[key] = prop(contextStore)
   })
 
   return injectedProps
 }
 
-function getDynamicProps(inputs, props, output, store, contextStore) {
+function getDynamicProps(inputs, props, outputs, contextStore) {
   var result
   if (inputs && 'function' === typeof inputs) {
     const _keys = inputs(props)
     if (Array.isArray(_keys)) {
       result = {
         inputs: _keys,
-        props: getInjectedProps(_keys, store, contextStore)
+        props: getInjectedProps(_keys, contextStore)
       }
     } else if (_keys && 'object' === typeof _keys) {
       const injectionKeys = Object.keys(_keys)
       const realInputs = injectionKeys.map(function(key) {
         return _keys[key]
       })
-      const _props = getInjectedProps(realInputs, store, contextStore)
+      const _props = getInjectedProps(realInputs, contextStore)
       const mappedProps = {}
 
       injectionKeys.forEach(function(key) {
@@ -261,8 +247,8 @@ function getDynamicProps(inputs, props, output, store, contextStore) {
     }
   }
 
-  // Map and check output
-  if (output && 'function' === typeof props.set) {
+  // Map and check outputs
+  if (outputs && 'function' === typeof props.set) {
     const _set = props.set
     const maps = result && result.maps
     props.set = function(key, value) {
@@ -272,13 +258,13 @@ function getDynamicProps(inputs, props, output, store, contextStore) {
         })
         return
       }
-      // The output key is a dynamic key.  Set with its real key.
+      // The outputs key is a dynamic key.  Set with its real key.
       if (maps && maps[key]) {
         key = maps[key]
-      } else if (-1 === output.indexOf(key)) {
+      } else if (-1 === outputs.indexOf(key)) {
         // Check if the output key is allowed.
         throw new Error(`Output key "${key}" is not allowed.  You need to
-              defined it as an output when calling provide/subscribe.`)
+              define it as an output when calling provide/subscribe.`)
       }
 
       _set(key, value)

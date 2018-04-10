@@ -103,7 +103,7 @@ export default function createStore(data) {
         keys.forEach(function(key) {
           const subs = _subscriptions[key]
           if (Array.isArray(subs)) {
-            ;-1 === subs.indexOf(key) && subs.push(fn)
+            subs.indexOf(key) === -1 && subs.push(fn)
           } else {
             _subscriptions[key] = [fn]
             return
