@@ -18,9 +18,9 @@
   },
   "author": "Marc Liu <m@liu.pm> (https://github.com/lsm)",
   "license": "MIT",
-  "dependencies": {
-    "prop-types": "15.6.0",
-    "react": "16.0.0"
+  "peerDependencies": {
+    "react": "^0.14.0 || ^15.0.0-0 || ^16.0.0-0",
+    "prop-types": "^15.6.0"
   },
   "devDependencies": {
     "babel-cli": "6.26.0",
@@ -60,5 +60,9 @@
     "react-test-renderer": "16.0.0",
     "tape": "4.8.0",
     "webpack": "3.7.1"
+  },
+  "dependencies": {
+    "prop-types": "^15.6.1",
+    "react": "^16.3.2"
   }
 }
