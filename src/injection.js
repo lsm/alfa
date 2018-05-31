@@ -236,6 +236,11 @@ function getInjectedProps(inputs, outputs, contextStore) {
     }
   })
 
+  // Need to inject set.
+  if (inputs.indexOf('set') > -1) {
+    injectedProps.set = contextStore.setWithOutputs(outputs)
+  }
+
   return injectedProps
 }
 
