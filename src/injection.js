@@ -270,7 +270,7 @@ function getDynamicProps(inputs, props, outputs, contextStore) {
       // dependencies directly from the store.
       result = {
         inputs: _keys,
-        props: getInjectedProps(_keys, contextStore)
+        props: getInjectedProps(_keys, outputs, contextStore)
       }
     } else if (_keys && 'object' === typeof _keys) {
       // Object of mappings between injection keys and real input keys.
@@ -278,7 +278,7 @@ function getDynamicProps(inputs, props, outputs, contextStore) {
       const realInputs = injectionKeys.map(function(key) {
         return _keys[key]
       })
-      const _props = getInjectedProps(realInputs, contextStore)
+      const _props = getInjectedProps(realInputs, outputs, contextStore)
       const mappedProps = {}
 
       injectionKeys.forEach(function(key) {
