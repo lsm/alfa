@@ -219,8 +219,9 @@ function createAlfaSubscribedComponent(WrappedComponent, inputs, outputs) {
 }
 
 function getInjectedProps(inputs, outputs, contextStore) {
+  const stringInputs = inputs.filter(input => typeof input === 'string')
   const injectedProps = {
-    ...contextStore.get(inputs)
+    ...contextStore.get(stringInputs)
   }
 
   // Need to inject set.
