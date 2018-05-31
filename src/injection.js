@@ -159,14 +159,14 @@ function createAlfaSubscribedComponent(WrappedComponent, inputs, outputs) {
       constructor(props, context, updater) {
         // Call the original constructor.
         super(props, context, updater)
-
-        // Inject all inputs as state.
         const contextStore = context && context.alfaStore
-        const state = getInjectedProps(inputs, outputs, contextStore)
-        // Merge state and props which state has higher priority.
+
+        // Get injected props which eventually will become state of the component.
+        const injectedProps = getInjectedProps(inputs, outputs, contextStore)
+        // Merge injected props with props where the first one has higher priority.
         const _props = {
           ...props,
-          ...state
+          ...injectedProps
         }
 
         // Get dynamic props.
