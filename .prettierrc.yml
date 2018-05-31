@@ -8,7 +8,7 @@ singleQuote: true
 arrowParens: avoid
 trailingComma: none
 
-tabs: false
+useTabs: false
 tabWidth: 2
 bracketSpacing: true
 
