@@ -187,8 +187,12 @@ function setSingle(store, subscriptions, key, value) {
       // all subscribing functions are actually `setStat`.  And previous
       // `setState` calls could trigger unmount component which later `setState`
       // belongs to.
-      var _subs = subscriptions[key]
-      if (subs && -1 === _subs.indexOf(subFn)) return
+
+      // Need to make the below code reproducible by test.
+      // var _subs = subscriptions[key]
+      // if (_subs.indexOf(subFn) === -1) {
+      //   return
+      // }
 
       if (subFn.maps) {
         var maps = subFn.maps
