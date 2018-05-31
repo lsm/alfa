@@ -163,6 +163,7 @@ function createAlfaSubscribedComponent(WrappedComponent, inputs, outputs) {
         // Inject all inputs as state.
         const contextStore = context && context.alfaStore
         const state = getInjectedProps(inputs, outputs, contextStore)
+        // Merge state and props which state has higher priority.
         const _props = {
           ...props,
           ...state
@@ -173,22 +174,20 @@ function createAlfaSubscribedComponent(WrappedComponent, inputs, outputs) {
           WrappedComponent.keys,
           _props,
           outputs,
-          context && context.alfaStore
+          contextStore
         )
 
         // var maps
         if (dynamicProps) {
           this.subKeys = [...inputs, ...dynamicProps.inputs]
           this.subMaps = dynamicProps.maps
-          if (_props.set) state.set = _props.set
           this.state = {
-            ...state,
+            ..._props,
             ...dynamicProps.props
           }
         } else {
           this.subKeys = inputs
-          if (_props.set) state.set = _props.set
-          this.state = state
+          this.state = _props
         }
 
         // Save the store for subscribe/unsubscribe.
@@ -207,12 +206,7 @@ function createAlfaSubscribedComponent(WrappedComponent, inputs, outputs) {
       }
 
       render() {
-        const props = {
-          ...this.props,
-          ...this.state
-        }
-        // State and props are merged and passed to wrapped component as props.
-        return createElement(WrappedComponent, props)
+        return createElement(WrappedComponent, this.state)
       }
     }
   }
