@@ -294,10 +294,15 @@ function getDynamicProps(inputs, props, outputs, contextStore) {
     }
   }
 
-  // Map and check outputs
+  // Map outputs
   if (outputs && 'function' === typeof props.set) {
-    const _set = props.set
+    // Original `set` function of the store which does not validate keys.
+    const _set = contextStore.set
+    // The `set` of `props` which is obtained from calling
+    // `contextStore.setWithOutputs(outputs)`
+    const _setWithOutputs = props.set
     const maps = result && result.maps
+
     props.set = function(key, value) {
       if ('object' === typeof key) {
         Object.keys(key).forEach(function(_key) {
@@ -308,13 +313,11 @@ function getDynamicProps(inputs, props, outputs, contextStore) {
       // The outputs key is a dynamic key.  Set with its real key.
       if (maps && maps[key]) {
         key = maps[key]
-      } else if (-1 === outputs.indexOf(key)) {
-        // Check if the output key is allowed.
-        throw new Error(`Output key "${key}" is not allowed.  You need to
-              define it as an output when calling provide/subscribe.`)
+        // Call the original set function.
+        _set(key, value)
+      } else {
+        _setWithOutputs(key, value)
       }
-
-      _set(key, value)
     }
   }
 
