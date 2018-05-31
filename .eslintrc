@@ -19,9 +19,8 @@
             {"beforeStatementContinuationChars": "always"}
         ],
         "curly": [
-            2,
-            "multi-or-nest",
-            "consistent"
+            "error",
+            "all"
         ],
         "jsx-a11y/href-no-hash": "off"
     },
