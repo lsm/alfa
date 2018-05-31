@@ -244,16 +244,36 @@ function getInjectedProps(inputs, outputs, contextStore) {
   return injectedProps
 }
 
+/**
+ * Load dependencies with the result of calling `keys` function of the component.
+ *
+ * This gives people the ability to load dynamic dependencies based on the props
+ * of the component at runtime.
+ * It makes a map between the dynamic names of the dependencies and the names
+ * of the properties injected in `state` of the component.
+ * That helps maintaining a simple naming system in the application code.
+ *
+ * @param  {Function} keys
+ * @param  {Object} props
+ * @param  {Array} outputs
+ * @param  {Object} contextStore
+ * @return {Object}
+ */
 function getDynamicProps(inputs, props, outputs, contextStore) {
   var result
+
   if (inputs && 'function' === typeof inputs) {
     const _keys = inputs(props)
     if (Array.isArray(_keys)) {
+      // Array of input keys.  There's no mapping in this case.  Item in the
+      // array is the name of the input key.  We use this array to get
+      // dependencies directly from the store.
       result = {
         inputs: _keys,
         props: getInjectedProps(_keys, contextStore)
       }
     } else if (_keys && 'object' === typeof _keys) {
+      // Object of mappings between injection keys and real input keys.
       const injectionKeys = Object.keys(_keys)
       const realInputs = injectionKeys.map(function(key) {
         return _keys[key]
