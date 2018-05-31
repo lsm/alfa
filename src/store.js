@@ -82,19 +82,25 @@ export default function createStore(data) {
 
     setWithOutputs = outputs => {
       const { set } = this
-      return function checkOutputAndSet(key, value) {
+      return function checkOutputAndSet(key, value, maps) {
         if (isPlainObject(key)) {
           Object.keys(key).forEach(function(_key) {
-            checkOutputAndSet(_key, key[_key])
+            checkOutputAndSet(_key, key[_key], maps)
           })
           return
         }
+
         if (outputs && outputs.indexOf(key) === -1) {
           // Throw exception if the output key is not allowed.
           throw new Error(
             `Output key "${key}" is not allowed. You need to define it as an output when calling provide/subscribe.`
           )
         }
+
+        if (maps && maps[key]) {
+          key = maps[key]
+        }
+
         set(key, value)
       }
     }
