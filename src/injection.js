@@ -103,7 +103,7 @@ function createAlfaProvidedComponent(WrappedComponent, inputs, outputs, type) {
 
   var wrapper = {
     [componentName]: function(props, context, updater) {
-      const injectedProps = getInjectedProps(inputs, context.alfaStore)
+      const injectedProps = getInjectedProps(inputs, outputs, context.alfaStore)
       // Props passed in directly to constructor has lower priority than inputs
       // injected from the store.
       var _props = {
@@ -162,7 +162,7 @@ function createAlfaSubscribedComponent(WrappedComponent, inputs, outputs) {
 
         // Inject all inputs as state.
         const contextStore = context && context.alfaStore
-        const state = getInjectedProps(inputs, contextStore)
+        const state = getInjectedProps(inputs, outputs, contextStore)
         const _props = {
           ...props,
           ...state
@@ -224,7 +224,7 @@ function createAlfaSubscribedComponent(WrappedComponent, inputs, outputs) {
   return classHolder[WrappedComponent.name]
 }
 
-function getInjectedProps(inputs, contextStore) {
+function getInjectedProps(inputs, outputs, contextStore) {
   const injectedProps = {
     ...contextStore.get(inputs)
   }
