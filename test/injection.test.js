@@ -183,7 +183,7 @@ test('provide with dynamic injection', t => {
       subTitle: PropTypes.string.isRequired
     }
 
-    static inputs = function(props) {
+    static keys = function(props) {
       t.is(props.title, 'The title')
       return ['subTitle']
     }
@@ -229,7 +229,7 @@ test('subscribe with dynamic injection', t => {
       subTitle: PropTypes.string.isRequired
     }
 
-    static inputs = function(props) {
+    static keys = function(props) {
       t.is(props.title, 'The title', 'static keys, props.title')
       return {
         subTitle: props.title + ' key'
@@ -276,12 +276,12 @@ test('subscribe with dynamic injection', t => {
   )
 })
 
-test('subscribe/provide with only `inputs`', t => {
-  t.plan(10)
+test('subscribe/provide with only `keys`', t => {
+  t.plan(7)
 
   function FnComponent() {}
 
-  FnComponent.inputs = function(props) {
+  FnComponent.keys = function(props) {
     return {
       theKey: props.theValueOfKey
     }

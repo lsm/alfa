@@ -18,8 +18,8 @@ function createInjector(type) {
       const typeofComponent = typeof WrappedComponent
       if (typeofComponent === 'function') {
         const componentName = WrappedComponent.name
-        inputs = normalizeInputs(componentName, inputs, WrappedComponent.inputs)
-        checkOutput(componentName, inputs, outputs)
+        inputs = normalizeInputs(componentName, inputs, WrappedComponent.keys)
+        outputs = normalizeOutputs(componentName, inputs, outputs)
         const creator =
           type === 'provide'
             ? createAlfaProvidedComponent
@@ -91,7 +91,7 @@ function createAlfaProvidedComponent(WrappedComponent, inputs, outputs, type) {
       }
 
       const dynamicProps = getDynamicProps(
-        WrappedComponent.inputs,
+        WrappedComponent.keys,
         _props,
         outputs,
         context && context.alfaStore
@@ -118,8 +118,9 @@ function createAlfaProvidedComponent(WrappedComponent, inputs, outputs, type) {
     alfaStore: PropTypes.object
   }
 
-  if (WrappedComponent.inputs)
-    wrapper[componentName].inputs = WrappedComponent.inputs
+  if (WrappedComponent.keys) {
+    wrapper[componentName].keys = WrappedComponent.keys
+  }
 
   return wrapper[componentName]
 }
@@ -147,7 +148,7 @@ function createAlfaSubscribedComponent(WrappedComponent, inputs, outputs) {
 
         // Get dynamic props.
         const dynamicProps = getDynamicProps(
-          WrappedComponent.inputs,
+          WrappedComponent.keys,
           _props,
           outputs,
           context && context.alfaStore
@@ -194,8 +195,9 @@ function createAlfaSubscribedComponent(WrappedComponent, inputs, outputs) {
     }
   }
 
-  if (WrappedComponent.inputs)
-    classHolder[WrappedComponent.name].inputs = WrappedComponent.inputs
+  if (WrappedComponent.keys) {
+    classHolder[WrappedComponent.name].keys = WrappedComponent.keys
+  }
 
   return classHolder[WrappedComponent.name]
 }
