@@ -4,6 +4,7 @@ require('core-js/es6/typed')
 require('raf/polyfill')
 
 require('./app.test')
+require('./action.test')
 require('./index.test')
 require('./injection.test')
 require('./store.test')
