@@ -224,13 +224,16 @@ function getInjectedProps(inputs, outputs, contextStore) {
     ...contextStore.get(stringInputs)
   }
 
-  // Need to inject set.
-  if (inputs.indexOf('set') > -1) injectedProps.set = contextStore.set
-
-  Object.keys(injectedProps).forEach(function(key) {
-    const prop = injectedProps[key]
-    if ('function' === typeof prop && true === prop.isAlfaPipeline)
-      injectedProps[key] = prop(contextStore)
+  inputs.forEach(input => {
+    if (
+      input &&
+      typeof input === 'object' &&
+      typeof input.alfaAction === 'function'
+    ) {
+      // Generate the final action function which can be called inside the
+      // component.
+      injectedProps[input.name] = input.alfaAction(contextStore)
+    }
   })
 
   return injectedProps
