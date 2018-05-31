@@ -163,9 +163,7 @@ export function isPlainObject(obj) {
 }
 
 export function setRawStore(rawStore, key, value) {
-  var keyType = typeof key
-
-  if ('string' === keyType && key) {
+  if (key && 'string' === typeof key) {
     rawStore[key] = value
   } else if (isPlainObject(key)) {
     Object.keys(key).forEach(function(_key) {
