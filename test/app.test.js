@@ -5,16 +5,14 @@ import React, { Component } from 'react'
 import { app, provide } from '../src'
 import { mount, configure } from 'enzyme'
 
-
 configure({
   adapter: new Adapter()
 })
 
-
 test('app(Component, data): with initial data', t => {
   t.plan(1)
   function FnComponent(props) {
-    return <h1>{ props.title }</h1>
+    return <h1>{props.title}</h1>
   }
 
   const ProvidedFnComponent = provide(FnComponent, ['title'])
@@ -23,10 +21,9 @@ test('app(Component, data): with initial data', t => {
     title: 'App test initial data'
   })
 
-  const wrapper = mount(<App/>)
+  const wrapper = mount(<App />)
   t.is(wrapper.contains(<h1>App test initial data</h1>), true)
 })
-
 
 test('app(Component): with internal store', t => {
   t.plan(1)
@@ -37,16 +34,21 @@ test('app(Component): with internal store', t => {
     }
 
     render() {
-      if (!this.props.title)
+      if (!this.props.title) {
         this.props.set('title', 'App test internal store')
-      return <h1>{ this.props.title }</h1>
+      }
+      return <h1>{this.props.title}</h1>
     }
   }
 
-  const ProvidedReactComponent = provide(ReactComponent, ['set', 'title'], ['title'])
+  const ProvidedReactComponent = provide(
+    ReactComponent,
+    ['set', 'title'],
+    ['title']
+  )
   const App = app(ProvidedReactComponent)
 
-  mount(<App/>)
-  const wrapper = mount(<App/>)
+  mount(<App />)
+  const wrapper = mount(<App />)
   t.is(wrapper.contains(<h1>App test internal store</h1>), true)
 })

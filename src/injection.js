@@ -34,7 +34,7 @@ function createInjector(type) {
         )
       } else {
         throw new TypeError(
-          `alfa.${type} only accepts function or class. 
+          `alfa.${type} only accepts function or class.
           Got "${typeofComponent}".`
         )
       }
@@ -126,12 +126,13 @@ function createAlfaProvidedComponent(WrappedComponent, inputs, outputs, type) {
         }
       }
 
-      if ('component' === type)
+      if ('component' === type) {
         // Create an element if it's react component.
         return createElement(WrappedComponent, _props)
-      else
+      } else {
         // Otherwise, call the original function.
         return WrappedComponent(_props, context, updater)
+      }
     }
   }
 

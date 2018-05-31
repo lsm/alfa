@@ -42,7 +42,9 @@ export default function createStore(data) {
         const results = {}
         key.forEach(function(k) {
           if ('string' === typeof k) {
-            if (_store.hasOwnProperty(k)) results[k] = _store[k]
+            if (_store.hasOwnProperty(k)) {
+              results[k] = _store[k]
+            }
           } else {
             throw new TypeError(
               'Type of `key` must be string, array of strings or undefined.'
@@ -67,9 +69,7 @@ export default function createStore(data) {
      * @param {Any}             value Value to save.
      */
     set(key, value) {
-      var keyType = typeof key
-
-      if ('string' === keyType) {
+      if ('string' === typeof key) {
         setSingle(_store, _subscriptions, key, value)
       } else if (isPlainObject(key)) {
         Object.keys(key).forEach(function(_key) {
@@ -94,10 +94,13 @@ export default function createStore(data) {
      * @param {Object} [maps] Optional injection key to real key mapping.
      */
     subscribe(keys, fn, maps) {
-      if ('function' !== typeof fn)
+      if ('function' !== typeof fn) {
         throw new TypeError('`fn` must be a function')
+      }
 
-      if (maps) fn.maps = maps
+      if (maps) {
+        fn.maps = maps
+      }
 
       Array.isArray(keys) &&
         keys.forEach(function(key) {

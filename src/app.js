@@ -16,8 +16,11 @@ export default function app(WrappedComponent, store) {
   var _store
 
   if (store) {
-    if (true === store.isAlfaStore) _store = store
-    else _store = createStore(store)
+    if (true === store.isAlfaStore) {
+      _store = store
+    } else {
+      _store = createStore(store)
+    }
   } else {
     _store = createStore()
   }
