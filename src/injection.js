@@ -291,25 +291,21 @@ function getDynamicProps(keys, props, outputs, contextStore) {
         mappedProps[key] = _props[realKey]
       })
 
+      // Map outputs
+      if (outputs && 'function' === typeof props.set) {
+        // The `set` of `props` which is obtained from calling
+        // `contextStore.setWithOutputs(outputs)`
+        const _setWithOutputs = props.set
+        // Call `_setWithOutputs` with maps if
+        props.set = function(key, value) {
+          _setWithOutputs(key, value, _keys)
+        }
+      }
+
       result = {
         maps: _keys,
         props: mappedProps,
         inputs: realInputs
-      }
-    }
-  }
-
-  // Map outputs
-  if (outputs && 'function' === typeof props.set) {
-    // The `set` of `props` which is obtained from calling
-    // `contextStore.setWithOutputs(outputs)`
-    const _setWithOutputs = props.set
-    const maps = result && result.maps
-
-    if (maps) {
-      // Call `_setWithOutputs` with maps if
-      props.set = function(key, value) {
-        _setWithOutputs(key, value, maps)
       }
     }
   }

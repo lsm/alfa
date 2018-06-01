@@ -405,6 +405,28 @@ test('subscribe/provide with only `keys`', t => {
   })
 })
 
+test('subscribe/provide with `keys` returns nothing', t => {
+  t.plan(1)
+  const store = createStore()
+
+  class ReactComponent extends Component {
+    static keys = function(props) {
+      return 1
+    }
+
+    render() {
+      return null
+    }
+  }
+
+  t.doesNotThrow(() => {
+    const SubscribedComponent = subscribe(ReactComponent, ['abc'])
+    const App = app(SubscribedComponent, store)
+    const wrapper1 = mount(<App />)
+    wrapper1.unmount()
+  })
+})
+
 test('provide or subscribe set without output keys should throw', t => {
   t.plan(2)
 
