@@ -1,6 +1,5 @@
 import test from 'tape'
 import { createStore } from '../src'
-import { setRawStore } from '../src/store'
 
 const data = {
   a: 1,
@@ -152,23 +151,4 @@ test('store.unsubscribe()', t => {
   store.set('key', 'value')
   store.unsubscribe(sub)
   store.set('key', 'changed value')
-})
-
-test('store private function setRawStore()', t => {
-  t.plan(3)
-  const store = {}
-
-  setRawStore(store, 'key', 'value')
-
-  t.is(store.key, 'value')
-
-  setRawStore(store, {
-    key: 'new value'
-  })
-
-  t.is(store.key, 'new value')
-
-  t.throws(() => {
-    setRawStore(store, [])
-  }, 'Type of `key` must be string or plain object.')
 })
