@@ -61,7 +61,7 @@ export function normalizeInputs(name, inputs, dynamicInputs) {
     return []
   } else {
     throw new TypeError(`${name}: provide/subscribe only accepts string or array
-     of strings as second parameter (inputs) when static property 'inputs' of 
+     of strings as second parameter (inputs) when static property 'keys' of 
      component does not exist.`)
   }
 }
@@ -264,11 +264,11 @@ function getInjectedProps(inputs, outputs, contextStore) {
  * @param  {Object} contextStore
  * @return {Object}
  */
-function getDynamicProps(inputs, props, outputs, contextStore) {
+function getDynamicProps(keys, props, outputs, contextStore) {
   var result
 
-  if (inputs && 'function' === typeof inputs) {
-    const _keys = inputs(props)
+  if (keys && 'function' === typeof keys) {
+    const _keys = keys(props)
     if (Array.isArray(_keys)) {
       // Array of input keys.  There's no mapping in this case.  Item in the
       // array is the name of the input key.  We use this array to get
