@@ -25,6 +25,7 @@ export default function app(WrappedComponent, store) {
     _store = createStore()
   }
 
+  /* istanbul ignore next */
   class App extends Component {
     static childContextTypes = {
       alfaStore: PropTypes.object

@@ -15,6 +15,7 @@ export const subscribe = createInjector('subscribe')
 function createInjector(type) {
   const wrapper = {
     [type]: function(WrappedComponent, inputs, outputs) {
+      /* istanbul ignore next */
       const typeofComponent = typeof WrappedComponent
       if (typeofComponent === 'function') {
         const componentName = WrappedComponent.name
@@ -48,7 +49,9 @@ export function normalizeInputs(name, inputs, dynamicInputs) {
   if (
     inputs &&
     ('string' === typeof inputs ||
-      (typeof inputs === 'object' && typeof inputs.alfaAction === 'function'))
+      (isobject(inputs) &&
+        /* istanbul ignore next */
+        typeof inputs.alfaAction === 'function'))
   ) {
     return [inputs]
   } else if (Array.isArray(inputs)) {
@@ -159,6 +162,7 @@ function createAlfaSubscribedComponent(WrappedComponent, inputs, outputs) {
       constructor(props, context, updater) {
         // Call the original constructor.
         super(props, context, updater)
+        /* istanbul ignore next */
         const contextStore = context && context.alfaStore
 
         // Get injected props which eventually will become state of the component.
@@ -226,8 +230,8 @@ function getInjectedProps(inputs, outputs, contextStore) {
 
   inputs.forEach(input => {
     if (
-      input &&
-      typeof input === 'object' &&
+      isobject(input) &&
+      /* istanbul ignore next */
       typeof input.alfaAction === 'function'
     ) {
       // Generate the final action function which can be called inside the
