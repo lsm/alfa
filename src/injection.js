@@ -1,6 +1,6 @@
 import isobject from 'isobject'
 import PropTypes from 'prop-types'
-import { PureComponent, createElement } from 'react'
+import { Component, createElement } from 'react'
 
 /**
  * Public API
@@ -155,7 +155,7 @@ function createAlfaSubscribedComponent(WrappedComponent, inputs, outputs) {
   var classHolder = {
     // Keep the name of the orginal component which makes debugging logs easier
     // to understand.
-    [WrappedComponent.name]: class AlfaSubscribedComponent extends PureComponent {
+    [WrappedComponent.name]: class AlfaSubscribedComponent extends Component {
       static contextTypes = {
         alfaStore: PropTypes.object
       }
