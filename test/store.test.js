@@ -30,7 +30,7 @@ test('store.set(plainObject)', t => {
 })
 
 test('store.set with invalidate key', t => {
-  t.plan(2)
+  t.plan(3)
   const store = createStore()
 
   t.throws(() => {
@@ -39,6 +39,10 @@ test('store.set with invalidate key', t => {
 
   t.throws(() => {
     store.set(null)
+  }, 'Type of `key` must be string or plain object.')
+
+  t.throws(() => {
+    store.set(function() {})
   }, 'Type of `key` must be string or plain object.')
 })
 
@@ -116,11 +120,13 @@ test('store.subscribe()', t => {
   store.set('a', 2)
 
   store.subscribe(['b', 'd'], function(changed) {
-    if (changed.b)
+    if (changed.b) {
       t.is(changed.b, b)
+    }
 
-    if (changed.d)
+    if (changed.d) {
       t.is(changed.d, 'false')
+    }
   })
 
   const b = {
