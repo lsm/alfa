@@ -207,7 +207,7 @@ You can find the finished version of the above example in the folder [examples/h
 [npm-url]: https://npmjs.org/package/alfa
 [travis-img]: https://travis-ci.org/lsm/alfa.svg?branch=master
 [travis-url]: http://travis-ci.org/lsm/alfa
-[coverage-img]: https://coveralls.io/repos/lsm/alfa/badge.svg?branch=master&service=github
+[coverage-img]: https://coveralls.io/repos/github/lsm/alfa/badge.svg?branch=master
 [coverage-url]: https://coveralls.io/github/lsm/alfa?branch=master
 [climate-img]: https://codeclimate.com/github/lsm/alfa/badges/gpa.svg
 [climate-url]: https://codeclimate.com/github/lsm/alfa
