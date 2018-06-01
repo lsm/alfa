@@ -1,3 +1,5 @@
+import isobject from 'isobject'
+
 /**
  * Create a key value store with simple subscription support.
  *
@@ -71,7 +73,7 @@ export default function createStore(data) {
     set(key, value) {
       if ('string' === typeof key) {
         setSingle(_store, _subscriptions, key, value)
-      } else if (isPlainObject(key)) {
+      } else if (isobject(key)) {
         Object.keys(key).forEach(function(_key) {
           setSingle(_store, _subscriptions, _key, key[_key])
         })
@@ -83,7 +85,7 @@ export default function createStore(data) {
     setWithOutputs = outputs => {
       const { set } = this
       return function checkOutputAndSet(key, value, maps) {
-        if (isPlainObject(key)) {
+        if (isobject(key)) {
           Object.keys(key).forEach(function(_key) {
             checkOutputAndSet(_key, key[_key], maps)
           })
@@ -158,14 +160,10 @@ export default function createStore(data) {
   return new Store()
 }
 
-export function isPlainObject(obj) {
-  return obj && 'object' === typeof obj && !Array.isArray(obj)
-}
-
 export function setRawStore(rawStore, key, value) {
   if (key && 'string' === typeof key) {
     rawStore[key] = value
-  } else if (isPlainObject(key)) {
+  } else if (isobject(key)) {
     Object.keys(key).forEach(function(_key) {
       rawStore[_key] = key[_key]
     })

@@ -1,3 +1,4 @@
+import isobject from 'isobject'
 import { normalizeInputs, normalizeOutputs } from './injection'
 
 export default function action(func, inputs, outputs) {
@@ -11,8 +12,9 @@ export default function action(func, inputs, outputs) {
         if (outputs) {
           input.set = store.setWithOutputs(outputs)
         }
+
         const result = func({ ...input, ...args })
-        if (result && typeof result === 'object') {
+        if (isobject(result)) {
           store.set(result)
         }
       }

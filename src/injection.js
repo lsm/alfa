@@ -1,3 +1,4 @@
+import isobject from 'isobject'
 import PropTypes from 'prop-types'
 import { PureComponent, createElement } from 'react'
 
@@ -276,7 +277,7 @@ function getDynamicProps(inputs, props, outputs, contextStore) {
         inputs: _keys,
         props: getInjectedProps(_keys, outputs, contextStore)
       }
-    } else if (_keys && 'object' === typeof _keys) {
+    } else if (isobject(_keys)) {
       // Object of mappings between injection keys and real input keys.
       const injectionKeys = Object.keys(_keys)
       const realInputs = injectionKeys.map(function(key) {

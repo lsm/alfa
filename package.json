@@ -20,6 +20,7 @@
   "author": "Marc Liu <m@liu.pm> (https://github.com/lsm)",
   "license": "MIT",
   "dependencies": {
+    "isobject": "^3.0.1",
     "prop-types": "^15.6.1"
   },
   "peerDependencies": {
