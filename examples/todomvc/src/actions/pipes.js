@@ -1,16 +1,16 @@
-
-
 export function createTodo(todos, newTodoText) {
   var resultTodos
 
   if (!newTodoText) {
     resultTodos = todos
   } else {
-    resultTodos = todos.concat([{
-      id: Math.random(),
-      text: newTodoText,
-      completed: false
-    }])
+    resultTodos = todos.concat([
+      {
+        id: Math.random(),
+        text: newTodoText,
+        completed: false
+      }
+    ])
   }
 
   return {
@@ -18,11 +18,9 @@ export function createTodo(todos, newTodoText) {
   }
 }
 
-
 export function updateTodo(todoID, todoText, todos) {
   var resultTodos = todos.map(function(todo) {
-    if (todoID === todo.id)
-      todo.text = todoText
+    if (todoID === todo.id) todo.text = todoText
     return todo
   })
 
@@ -30,7 +28,6 @@ export function updateTodo(todoID, todoText, todos) {
     todos: resultTodos
   }
 }
-
 
 export function removeTodoByID(todoID, todos, next) {
   var resultTodos = todos.filter(function(todo) {
@@ -44,7 +41,6 @@ export function removeTodoByID(todoID, todos, next) {
     })
   }, 100)
 }
-
 
 export function toggleTodoComplete(todos, todoID) {
   var resultTodos = todos.map(function(todo) {

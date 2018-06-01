@@ -1,10 +1,10 @@
 require('core-js/es6/map')
 require('core-js/es6/set')
 require('core-js/es6/typed')
+require('raf/polyfill')
 
-require('./action.test')
 require('./app.test')
+require('./action.test')
 require('./index.test')
 require('./injection.test')
-require('./pipeline.test')
 require('./store.test')

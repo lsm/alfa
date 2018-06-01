@@ -4,20 +4,17 @@ import Adapter from 'enzyme-adapter-react-16'
 import PropTypes from 'prop-types'
 import { app, createStore } from '../src'
 import { mount, configure } from 'enzyme'
-import { createProvide, createSubscribe } from '../src/injection'
-
+import { provide, subscribe } from '../src/injection'
 
 configure({
   adapter: new Adapter()
 })
 
-
-test('injection.createProvide()', t => {
-  t.plan(6)
+test('injection.createInjector(store, "provide")', t => {
+  t.plan(8)
 
   const store = createStore()
   store.set('title', 'value')
-  const provide = createProvide(store)
 
   t.is(typeof provide, 'function')
 
@@ -33,12 +30,20 @@ test('injection.createProvide()', t => {
     provide(123)
   }, TypeError)
 
+  t.throws(() => {
+    provide(function() {}, 123)
+  }, TypeError)
+
+  t.throws(() => {
+    provide(function() {}, ['title'], 123)
+  }, TypeError)
+
   /**
    * Test function component
    */
 
   function FnComponent(props) {
-    return <h2>{ props.title }</h2>
+    return <h2>{props.title}</h2>
   }
 
   const ProvidedFnComponent = provide(FnComponent, 'title')
@@ -47,7 +52,7 @@ test('injection.createProvide()', t => {
   // const tree1 = render.create(<App1/>).toJSON()
   // t.snapshot(tree1)
 
-  const wrapper1 = mount(<App1/>)
+  const wrapper1 = mount(<App1 />)
   t.is(wrapper1.contains(<h2>value</h2>), true)
 
   /**
@@ -60,32 +65,26 @@ test('injection.createProvide()', t => {
     }
 
     render() {
-      return <h1>{ this.props.title }</h1>
+      return <h1>{this.props.title}</h1>
     }
   }
 
   const ProvidedReactComponent = provide(ReactComponent, ['title'])
   const App2 = app(ProvidedReactComponent, store)
 
-  // const tree2 = render.create(<App2 />).toJSON()
-  // t.snapshot(tree2)
-
-  const wrapper2 = mount(<App2/>)
+  const wrapper2 = mount(<App2 />)
   t.is(wrapper2.contains(<h1>value</h1>), true)
-
 
   t.throws(() => {
     provide(ReactComponent, 123)
   }, TypeError)
 })
 
-
-test('injection.createSubscribe()', t => {
+test('injection.createInjector(store, "subscribe")', t => {
   t.plan(11)
 
   const store = createStore()
   store.set('title', 'Old Title')
-  const subscribe = createSubscribe(store)
 
   // 1
   t.is(typeof subscribe, 'function')
@@ -112,13 +111,13 @@ test('injection.createSubscribe()', t => {
     // This will be called twice.
     // 4,5
     t.is(props.title, store.get('title'))
-    return <h1>{ props.title }</h1>
+    return <h1>{props.title}</h1>
   }
 
   const SubscribedFnComponent = subscribe(FnComponent, 'title')
   const App1 = app(SubscribedFnComponent, store)
 
-  const wrapper1 = mount(<App1/>)
+  const wrapper1 = mount(<App1 />)
   // 6
   t.is(wrapper1.contains(<h1>Old Title</h1>), true)
 
@@ -135,24 +134,28 @@ test('injection.createSubscribe()', t => {
       // This will be called 3 times.
       // 7,8,9
       t.is(this.props.title, store.get('title'))
-      return <h3>{ this.props.title }</h3>
+      return <h3>{this.props.title}</h3>
     }
   }
 
   const SubscribedReactComponent = subscribe(ReactComponent, ['title'])
   const App2 = app(SubscribedReactComponent, store)
 
-  const wrapper2 = mount(<App2/>)
+  const wrapper2 = mount(<App2 />)
   // 10
   t.is(wrapper2.contains(<h3>Old Title</h3>), true, 'Old title matches')
 
   store.set('title', 'New Title')
 
-  const wrapper3 = mount(<App2/>)
+  const wrapper3 = mount(<App2 />)
   // 11
   t.ok(wrapper3.contains(<h3>New Title</h3>), 'New title matches')
-})
 
+  // Unmount all components
+  wrapper1.unmount()
+  wrapper2.unmount()
+  wrapper3.unmount()
+})
 
 test('provide and use set', t => {
   t.plan(3)
@@ -160,23 +163,91 @@ test('provide and use set', t => {
   const store = createStore({
     title: 'value'
   })
-  const provide = createProvide(store)
 
   function FnComponent(props) {
     t.is(props.title, 'value')
     props.set('title', 'new title')
-    return <h4>{ props.title }</h4>
+    return <h4>{props.title}</h4>
   }
 
   const ProvidedFnComponent = provide(FnComponent, ['set', 'title'], ['title'])
   const App = app(ProvidedFnComponent, store)
 
-  const wrapper = mount(<App/>)
+  const wrapper = mount(<App />)
   t.ok(wrapper.contains(<h4>value</h4>), 'Title matches')
 
   t.is(store.get('title'), 'new title')
+
+  wrapper.unmount()
 })
 
+test('subscribe and use set', t => {
+  t.plan(3)
+
+  const store = createStore({
+    title: 'value'
+  })
+
+  class ReactComponent extends Component {
+    onButtonClick = () => {
+      this.props.set('title', 'new title')
+    }
+
+    render() {
+      return (
+        <div>
+          <h1>{this.props.title}</h1>
+          <button onClick={this.onButtonClick} />
+        </div>
+      )
+    }
+  }
+
+  const SubscribedComponent = subscribe(
+    ReactComponent,
+    ['set', 'title'],
+    ['title']
+  )
+  const App = app(SubscribedComponent, store)
+
+  const wrapper = mount(<App />)
+  t.ok(wrapper.contains(<h1>value</h1>), 'Title matches')
+
+  // Click button and trigger title change.
+  wrapper.find('button').simulate('click')
+  t.is(store.get('title'), 'new title')
+  t.ok(wrapper.contains(<h1>new title</h1>), 'Title changed')
+
+  wrapper.unmount()
+})
+
+test('throw when output key is not defined', t => {
+  t.plan(3)
+
+  const store = createStore({
+    title: 'value'
+  })
+
+  function FnComponent(props) {
+    props.set({ title: 'new title' })
+    t.throws(() => {
+      props.set('keyNotAllowed', 'value')
+    }, Error)
+    return null
+  }
+
+  const SubscribedComponent = subscribe(
+    FnComponent,
+    ['set', 'title'],
+    ['title']
+  )
+
+  const App = app(SubscribedComponent, store)
+  mount(<App />)
+
+  t.is(store.get('title'), 'new title')
+  t.is(store.get('keyNotAllowed'), undefined)
+})
 
 test('provide with dynamic injection', t => {
   t.plan(4)
@@ -185,7 +256,6 @@ test('provide with dynamic injection', t => {
     title: 'The title',
     subTitle: 'The sub title'
   })
-  const provide = createProvide(store)
 
   class ReactComponent extends Component {
     static propTypes = {
@@ -201,23 +271,31 @@ test('provide with dynamic injection', t => {
     render() {
       t.is(this.props.title, store.get('title'))
       t.is(this.props.subTitle, store.get('subTitle'))
-      return (<div>
-                <h1>{ this.props.title }</h1>
-                <h3>{ this.props.subTitle }</h3>
-              </div>)
+      return (
+        <div>
+          <h1>{this.props.title}</h1>
+          <h3>{this.props.subTitle}</h3>
+        </div>
+      )
     }
   }
 
   const ProvidedReactComponent = provide(ReactComponent, ['title'])
   const App = app(ProvidedReactComponent, store)
 
-  const wrapper = mount(<App/>)
-  t.is(wrapper.contains(<div>
-                          <h1>The title</h1>
-                          <h3>The sub title</h3>
-                        </div>), true)
-})
+  const wrapper = mount(<App />)
+  t.is(
+    wrapper.contains(
+      <div>
+        <h1>The title</h1>
+        <h3>The sub title</h3>
+      </div>
+    ),
+    true
+  )
 
+  wrapper.unmount()
+})
 
 test('subscribe with dynamic injection', t => {
   t.plan(10)
@@ -226,7 +304,6 @@ test('subscribe with dynamic injection', t => {
     title: 'The title',
     'The title key': 'The sub title'
   })
-  const subscribe = createSubscribe(store)
 
   class ReactComponent extends Component {
     static propTypes = {
@@ -237,49 +314,55 @@ test('subscribe with dynamic injection', t => {
     static keys = function(props) {
       t.is(props.title, 'The title', 'static keys, props.title')
       return {
-        'subTitle': props.title + ' key'
+        otherKey: 'other key which will be never used',
+        subTitle: props.title + ' key'
       }
     }
 
     render() {
       t.is(this.props.title, store.get('title'), 'props.title')
       t.is(this.props.subTitle, store.get('The title key'), 'props.subTitle')
-      return (<div>
-                <h2>{ this.props.title }</h2>
-                <h5>{ this.props.subTitle }</h5>
-              </div>)
+      return (
+        <div>
+          <h2>{this.props.title}</h2>
+          <h5>{this.props.subTitle}</h5>
+        </div>
+      )
     }
   }
 
   const SubscribedReactComponent = subscribe(ReactComponent, ['title'])
   const App = app(SubscribedReactComponent, store)
 
-  const wrapper1 = mount(<App/>)
-  t.ok(wrapper1.contains(<div>
-                           <h2>The title</h2>
-                           <h5>The sub title</h5>
-                         </div>), 'render result 1')
+  const wrapper1 = mount(<App />)
+  t.ok(
+    wrapper1.contains(
+      <div>
+        <h2>The title</h2>
+        <h5>The sub title</h5>
+      </div>
+    ),
+    'render result 1'
+  )
 
   store.set('The title key', 'New sub title')
 
-  const wrapper2 = mount(<App/>)
-  t.ok(wrapper2.contains(<div>
-                           <h2>The title</h2>
-                           <h5>New sub title</h5>
-                         </div>), 'render result 2')
-
+  const wrapper2 = mount(<App />)
+  t.ok(
+    wrapper2.contains(
+      <div>
+        <h2>The title</h2>
+        <h5>New sub title</h5>
+      </div>
+    ),
+    'render result 2'
+  )
 })
 
-
 test('subscribe/provide with only `keys`', t => {
-  t.plan(10)
+  t.plan(7)
 
-  const store = createStore()
-  const provide = createProvide(store)
-  const subscribe = createSubscribe(store)
-
-  function FnComponent() {
-  }
+  function FnComponent() {}
 
   FnComponent.keys = function(props) {
     return {
@@ -290,23 +373,18 @@ test('subscribe/provide with only `keys`', t => {
   var SubscribedFnComponent
   t.doesNotThrow(() => {
     SubscribedFnComponent = subscribe(FnComponent)
-    t.pass()
   })
 
   var ProvidedFnComponent
   t.doesNotThrow(() => {
     ProvidedFnComponent = provide(SubscribedFnComponent)
-    t.pass()
   })
 
   t.doesNotThrow(() => {
     subscribe(ProvidedFnComponent)
-    t.pass()
   })
 
-  class ReactComponent extends Component {
-
-  }
+  class ReactComponent extends Component {}
 
   t.throws(() => {
     provide(ReactComponent)
@@ -316,8 +394,7 @@ test('subscribe/provide with only `keys`', t => {
     subscribe(ReactComponent)
   })
 
-  function NoKeysComponent() {
-  }
+  function NoKeysComponent() {}
 
   t.throws(() => {
     provide(NoKeysComponent)
@@ -328,15 +405,32 @@ test('subscribe/provide with only `keys`', t => {
   })
 })
 
+test('subscribe/provide with `keys` returns nothing', t => {
+  t.plan(1)
+  const store = createStore()
+
+  class ReactComponent extends Component {
+    static keys = function(props) {
+      return 1
+    }
+
+    render() {
+      return null
+    }
+  }
+
+  t.doesNotThrow(() => {
+    const SubscribedComponent = subscribe(ReactComponent, ['abc'])
+    const App = app(SubscribedComponent, store)
+    const wrapper1 = mount(<App />)
+    wrapper1.unmount()
+  })
+})
 
 test('provide or subscribe set without output keys should throw', t => {
   t.plan(2)
-  const store = createStore()
-  const provide = createProvide(store)
-  const subscribe = createSubscribe(store)
 
-  function FnComponent() {
-  }
+  function FnComponent() {}
 
   t.throws(() => {
     provide(FnComponent, ['set'])
@@ -347,61 +441,68 @@ test('provide or subscribe set without output keys should throw', t => {
   }, 'subscribe "set" without output key')
 })
 
+test('Call set without predefined output should throw', t => {
+  t.plan(4)
+  const store = createStore()
 
-// The falling test will fail in some env until 
-// https://github.com/facebook/react/issues/11098 
-// gets resolved.
-// test('Call set without predefined output should throw', t => {
-//   t.plan(4)
-//   const store = createStore()
-//   const subscribe = createSubscribe(store)
+  class ReactComponent extends Component {
+    componentDidMount() {
+      this.props.set('predefinedOutput', 'the value')
 
-//   class ReactComponent extends Component {
-//     componentWillMount() {
-//       this.props.set('predefinedOutput', 'the value')
-//       this.props.set('invaildOutput', 'the value which does not matter')
-//     }
+      t.throws(() => {
+        this.props.set('invaildOutput', 'the value which does not matter')
+      }, 'Output key "invaildOutput" is not allowed')
+    }
 
-//     render() {
-//       return <div></div>
-//     }
-//   }
+    render() {
+      return <div />
+    }
+  }
 
-//   const SubscribedReactComponent = subscribe(ReactComponent, ['set'], ['predefinedOutput'])
-//   const App = app(SubscribedReactComponent, store)
+  const SubscribedReactComponent = subscribe(
+    ReactComponent,
+    ['set'],
+    ['predefinedOutput']
+  )
+  const App = app(SubscribedReactComponent, store)
+  const wrapper1 = mount(<App />)
+  t.is(store.get('predefinedOutput'), 'the value', 'Value set correctly')
 
-//   t.throws(() => {
-//     mount(<App />)
-//   }, 'Output key "invaildOutput" is not allowed')
-//   t.is(store.get('predefinedOutput'), 'the value')
+  class NewComponent extends Component {
+    componentDidMount() {
+      t.throws(() => {
+        this.props.set({
+          predefinedOutput: 'new value',
+          someInvaildOutput: 'the value which does not matter'
+        })
+      }, 'Output key "someInvaildOutput" is not allowed')
+    }
 
-//   class NewComponent extends Component {
-//     componentWillMount() {
-//       this.props.set({
-//         'predefinedOutput': 'new value',
-//         'someInvaildOutput': 'the value which does not matter'
-//       })
-//     }
+    render() {
+      return <div />
+    }
+  }
 
-//     render() {
-//       return <div></div>
-//     }
-//   }
+  const SubscribedNewComponent = subscribe(
+    NewComponent,
+    ['set'],
+    ['predefinedOutput']
+  )
+  const NewApp = app(SubscribedNewComponent, store)
+  const wrapper2 = mount(<NewApp />)
+  t.is(
+    store.get('predefinedOutput'),
+    'new value',
+    'Value set correctly even the function throws'
+  )
 
-//   const SubscribedNewComponent = subscribe(NewComponent, ['set'], ['predefinedOutput'])
-//   const NewApp = app(SubscribedNewComponent, store)
-
-//   t.throws(() => {
-//     mount(<NewApp />)
-//   }, 'Output key "someInvaildOutput" is not allowed')
-//   t.is(store.get('predefinedOutput'), 'new value')
-// })
-
+  wrapper1.unmount()
+  wrapper2.unmount()
+})
 
 test('Should set dynamic key correctly', t => {
-  t.plan(2)
+  t.plan(3)
   const store = createStore()
-  const provide = createProvide(store)
 
   class ReactComponent extends Component {
     static keys(props) {
@@ -411,24 +512,84 @@ test('Should set dynamic key correctly', t => {
       }
     }
 
-    componentWillMount() {
+    componentDidMount() {
       this.props.set('theDynamicKey', 'the value which does matter')
-      this.props.set({
-        anotherDynamicKey: 'another value does matter'
-      })
+      t.throws(() => {
+        this.props.set({
+          anotherDynamicKey: 'another value does not matter'
+        })
+      }, 'Output key "anotherDynamicKey" is not allowed')
     }
 
     render() {
-      return <div></div>
+      return <div />
     }
   }
 
-  const ProvidedReactComponent = provide(ReactComponent, ['set'], ['theDynamicKey'])
+  const ProvidedReactComponent = provide(
+    ReactComponent,
+    ['set'],
+    ['theDynamicKey']
+  )
   const App = app(ProvidedReactComponent, store)
 
-  mount(<App target='theTargetKey'
-             anotherTarget="anotherTargetKey" />)
+  mount(<App target="theTargetKey" anotherTarget="anotherTargetKey" />)
 
   t.is(store.get('theTargetKey'), 'the value which does matter')
-  t.is(store.get('anotherTargetKey'), 'another value does matter')
+  t.is(store.get('anotherTargetKey'), undefined)
+})
+
+test('Avoid calling subscription functions when the component has been removed in previous subscription function', t => {
+  t.plan(3)
+
+  const store = createStore({
+    title: 'value'
+  })
+
+  class TitleComponent extends Component {
+    render() {
+      return (
+        <div>
+          <h1>{this.props.title}</h1>
+        </div>
+      )
+    }
+  }
+
+  const SubscribedTitleComponent = subscribe(
+    TitleComponent,
+    ['set', 'title'],
+    ['title']
+  )
+
+  class ReactComponent extends Component {
+    onButtonClick = () => {
+      this.props.set('title', 'new title')
+    }
+
+    render() {
+      return (
+        <div>
+          {this.props.title === 'value' && <SubscribedTitleComponent />}
+          <button onClick={this.onButtonClick} />
+        </div>
+      )
+    }
+  }
+
+  const SubscribedComponent = subscribe(
+    ReactComponent,
+    ['set', 'title'],
+    ['title']
+  )
+
+  const App = app(SubscribedComponent, store)
+
+  const wrapper = mount(<App />)
+  t.ok(wrapper.contains(<h1>value</h1>), 'Title matches')
+  // Click button and trigger title change.
+  wrapper.find('button').simulate('click')
+  t.is(store.get('title'), 'new title', 'Title changed')
+  t.notOk(wrapper.contains(<h1>new title</h1>), 'Title removed')
+  wrapper.unmount()
 })

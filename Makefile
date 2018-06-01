@@ -28,6 +28,9 @@ report:
 	npm run nyc
 	npm run report
 
+watch-report:
+	npm run watch-report
+
 # Run test and report coverage reports to coveralls.
 coveralls:
 	npm run nyc

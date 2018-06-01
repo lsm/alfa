@@ -1,0 +1,16 @@
+# .prettierrc.yml
+
+parser: flow
+
+semi: false
+
+singleQuote: true
+arrowParens: avoid
+trailingComma: none
+
+useTabs: false
+tabWidth: 2
+bracketSpacing: true
+
+printWidth: 80
+jsxBracketSameLine: false

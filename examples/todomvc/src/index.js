@@ -7,7 +7,6 @@ import * as TODO_FILTERS from './constants/TodoFilters'
 import './actions'
 import 'todomvc-app-css/index.css'
 
-
 /**
  * Set initial state of applicaiton and bind it with alfa.
  */
