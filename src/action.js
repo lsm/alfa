@@ -1,11 +1,11 @@
 import isobject from 'isobject'
 import { normalizeInputs, normalizeOutputs } from './injection'
 
-export default function action(func, inputs, outputs) {
-  inputs = normalizeInputs(func.name, inputs)
-  outputs = normalizeOutputs(func.name, inputs, outputs)
+export default function action(name, func, inputs, outputs) {
+  inputs = normalizeInputs(name, inputs)
+  outputs = normalizeOutputs(name, inputs, outputs)
   return {
-    name: func.name,
+    name: name,
     alfaAction: function(store) {
       return function(args) {
         const input = store.get(inputs)

@@ -18,7 +18,8 @@ tape('action()', test => {
   const store1 = createStore(data)
 
   const getAndChangeTitle = action(
-    function getAndChangeTitle({ title }) {
+    'getAndChangeTitle',
+    function({ title }) {
       test.is(title, 'value of title')
       return {
         title: 'new value of title'
@@ -28,6 +29,8 @@ tape('action()', test => {
     'title'
   )
 
+  const actionDoesNothing = action('actionDoesNothing', function() {}, 'title')
+
   /**
    * Test provide.
    */
@@ -35,10 +38,11 @@ tape('action()', test => {
   const ComponentOne = provide(
     function(props) {
       props.getAndChangeTitle({ title: props.title })
-      test.is(props.content, 'value of content')
+      props.actionDoesNothing()
+      test.is(props.content, 'value of content', 'ComponentOne content matches')
       return <h1>{props.title}</h1>
     },
-    [getAndChangeTitle, 'title', 'content']
+    [actionDoesNothing, getAndChangeTitle, 'title', 'content']
   )
 
   const App1 = app(ComponentOne, store1)
