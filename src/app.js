@@ -25,8 +25,13 @@ export default function app(WrappedComponent, store) {
     _store = createStore()
   }
 
-  /* istanbul ignore next */
   class App extends Component {
+    // eslint-disable-next-line
+    constructor(props) {
+      /* istanbul ignore next */
+      super(props)
+    }
+
     static childContextTypes = {
       alfaStore: PropTypes.object
     }
