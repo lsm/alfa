@@ -243,16 +243,10 @@ function getDynamicProps(keys, props, outputs, contextStore) {
     } else if (isobject(_keys)) {
       // Object of mappings between injection keys and real input keys.
       const injectionKeys = Object.keys(_keys)
-      const realInputs = injectionKeys.map(function(key) {
-        return _keys[key]
-      })
+      const realInputs = injectionKeys.map(key => _keys[key])
       const _props = getInjectedProps(realInputs, outputs, contextStore)
       const mappedProps = {}
-
-      injectionKeys.forEach(function(key) {
-        const realKey = _keys[key]
-        mappedProps[key] = _props[realKey]
-      })
+      injectionKeys.forEach(key => (mappedProps[key] = _props[_keys[key]]))
 
       // Map outputs
       if (outputs && 'function' === typeof props.set) {
@@ -265,11 +259,7 @@ function getDynamicProps(keys, props, outputs, contextStore) {
         }
       }
 
-      result = {
-        maps: _keys,
-        props: mappedProps,
-        inputs: realInputs
-      }
+      result = { maps: _keys, props: mappedProps, inputs: realInputs }
     }
   }
 
