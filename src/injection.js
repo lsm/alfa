@@ -100,126 +100,90 @@ export function normalizeOutputs(name, inputs, outputs) {
 }
 
 function createAlfaProvidedComponent(WrappedComponent, inputs, outputs, type) {
-  // Keep the name of the orginal component which makes debugging logs easier
-  // to understand.
-  var componentName = WrappedComponent.name || 'AlfaProvidedComponent'
+  const keys = WrappedComponent.keys
 
-  var wrapper = {
-    [componentName]: function(props, context, updater) {
-      const injectedProps = getInjectedProps(inputs, outputs, context.alfaStore)
-      // Props passed in directly to constructor has lower priority than inputs
-      // injected from the store.
-      var _props = {
-        ...props,
-        ...injectedProps
-      }
+  function AlfaProvidedComponent(props, context, updater) {
+    const alfaStore = context && context.alfaStore
+    const injectedProps = getInjectedProps(inputs, outputs, alfaStore)
+    // Props passed in directly to constructor has lower priority than inputs
+    // injected from the store.
+    var _props = { ...props, ...injectedProps }
+    const dynamicProps = getDynamicProps(keys, _props, outputs, alfaStore)
+    // Dynamic props has higher priority than static props.
+    if (dynamicProps) {
+      _props = { ..._props, ...dynamicProps.props }
+    }
 
-      const dynamicProps = getDynamicProps(
-        WrappedComponent.keys,
-        _props,
-        outputs,
-        context && context.alfaStore
-      )
-
-      // Dynamic props have higher priority than static props.
-      if (dynamicProps) {
-        _props = {
-          ..._props,
-          ...dynamicProps.props
-        }
-      }
-
-      if ('component' === type) {
-        // Create an element if it's react component.
-        return createElement(WrappedComponent, _props)
-      } else {
-        // Otherwise, call the original function.
-        return WrappedComponent(_props, context, updater)
-      }
+    if ('component' === type) {
+      // Create an element if it's react component.
+      return createElement(WrappedComponent, _props)
+    } else {
+      // Otherwise, call the original function.
+      return WrappedComponent(_props, context, updater)
     }
   }
 
-  wrapper[componentName].contextTypes = {
+  AlfaProvidedComponent.keys = keys
+  AlfaProvidedComponent.contextTypes = {
     alfaStore: PropTypes.object
   }
 
-  if (WrappedComponent.keys) {
-    wrapper[componentName].keys = WrappedComponent.keys
-  }
-
-  return wrapper[componentName]
+  return AlfaProvidedComponent
 }
 
 function createAlfaSubscribedComponent(WrappedComponent, inputs, outputs) {
-  var classHolder = {
-    // Keep the name of the orginal component which makes debugging logs easier
-    // to understand.
-    [WrappedComponent.name]: class AlfaSubscribedComponent extends Component {
-      static contextTypes = {
-        alfaStore: PropTypes.object
+  const keys = WrappedComponent.keys
+
+  class AlfaSubscribedComponent extends Component {
+    static contextTypes = {
+      alfaStore: PropTypes.object
+    }
+
+    constructor(props, context, updater) {
+      // Call the original constructor.
+      super(props, context, updater)
+      /* istanbul ignore next */
+      const contextStore = context && context.alfaStore
+
+      // Get injected props which eventually will become state of the component.
+      const injectedProps = getInjectedProps(inputs, outputs, contextStore)
+      // Merge injected props with props where the first one has higher priority.
+      const _props = { ...props, ...injectedProps }
+      // Get dynamic props.
+      const dynamicProps = getDynamicProps(keys, _props, outputs, contextStore)
+
+      // var maps
+      if (dynamicProps) {
+        this.subKeys = [...inputs, ...dynamicProps.inputs]
+        this.subMaps = dynamicProps.maps
+        this.state = { ..._props, ...dynamicProps.props }
+      } else {
+        this.subKeys = inputs
+        this.state = _props
       }
 
-      constructor(props, context, updater) {
-        // Call the original constructor.
-        super(props, context, updater)
-        /* istanbul ignore next */
-        const contextStore = context && context.alfaStore
+      // Save the store for subscribe/unsubscribe.
+      this.store = contextStore
+      this.subFunc = this.setState.bind(this)
+    }
 
-        // Get injected props which eventually will become state of the component.
-        const injectedProps = getInjectedProps(inputs, outputs, contextStore)
-        // Merge injected props with props where the first one has higher priority.
-        const _props = {
-          ...props,
-          ...injectedProps
-        }
+    componentDidMount() {
+      // Call `setState` when subscribed keys changed.
+      this.store.subscribe(this.subKeys, this.subFunc, this.subMaps)
+    }
 
-        // Get dynamic props.
-        const dynamicProps = getDynamicProps(
-          WrappedComponent.keys,
-          _props,
-          outputs,
-          contextStore
-        )
+    componentWillUnmount() {
+      'function' === typeof this.subFunc && this.store.unsubscribe(this.subFunc)
+    }
 
-        // var maps
-        if (dynamicProps) {
-          this.subKeys = [...inputs, ...dynamicProps.inputs]
-          this.subMaps = dynamicProps.maps
-          this.state = {
-            ..._props,
-            ...dynamicProps.props
-          }
-        } else {
-          this.subKeys = inputs
-          this.state = _props
-        }
-
-        // Save the store for subscribe/unsubscribe.
-        this.store = contextStore
-        this.subFunc = this.setState.bind(this)
-      }
-
-      componentDidMount() {
-        // Call `setState` when subscribed keys changed.
-        this.store.subscribe(this.subKeys, this.subFunc, this.subMaps)
-      }
-
-      componentWillUnmount() {
-        'function' === typeof this.subFunc &&
-          this.store.unsubscribe(this.subFunc)
-      }
-
-      render() {
-        return createElement(WrappedComponent, this.state)
-      }
+    render() {
+      return createElement(WrappedComponent, this.state)
     }
   }
 
-  if (WrappedComponent.keys) {
-    classHolder[WrappedComponent.name].keys = WrappedComponent.keys
-  }
+  AlfaSubscribedComponent.keys = keys
 
-  return classHolder[WrappedComponent.name]
+  return AlfaSubscribedComponent
 }
 
 function getInjectedProps(inputs, outputs, contextStore) {
