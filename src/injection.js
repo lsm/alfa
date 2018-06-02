@@ -6,14 +6,17 @@ import { Component, createElement } from 'react'
  * Public API
  */
 
-export const provide = createInjector('provide')
-export const subscribe = createInjector('subscribe')
+export const provide = createInjector('provide', createAlfaProvidedComponent)
+export const subscribe = createInjector(
+  'subscribe',
+  createAlfaSubscribedComponent
+)
 
 /**
  * Private functions
  */
 
-function createInjector(type) {
+function createInjector(type, creator) {
   const wrapper = {
     [type]: function(WrappedComponent, inputs, outputs) {
       /* istanbul ignore next */
@@ -22,10 +25,6 @@ function createInjector(type) {
         const componentName = WrappedComponent.name
         inputs = normalizeInputs(componentName, inputs, WrappedComponent.keys)
         outputs = normalizeOutputs(componentName, inputs, outputs)
-        const creator =
-          type === 'provide'
-            ? createAlfaProvidedComponent
-            : createAlfaSubscribedComponent
         return creator(
           WrappedComponent,
           inputs,
