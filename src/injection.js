@@ -143,16 +143,15 @@ function createAlfaSubscribedComponent(WrappedComponent, inputs, outputs) {
       // Call the original constructor.
       super(props, context, updater)
       /* istanbul ignore next */
-      const contextStore = context && context.alfaStore
-
+      const alfaStore = context && context.alfaStore
       // Get injected props which eventually will become state of the component.
-      const injectedProps = getInjectedProps(inputs, outputs, contextStore)
+      const injectedProps = getInjectedProps(inputs, outputs, alfaStore)
       // Merge injected props with props where the first one has higher priority.
       const _props = { ...props, ...injectedProps }
       // Get dynamic props.
-      const dynamicProps = getDynamicProps(keys, _props, outputs, contextStore)
+      const dynamicProps = getDynamicProps(keys, _props, outputs, alfaStore)
 
-      // var maps
+      // Handle dymanic props.
       if (dynamicProps) {
         this.subKeys = [...inputs, ...dynamicProps.inputs]
         this.subMaps = dynamicProps.maps
@@ -163,7 +162,7 @@ function createAlfaSubscribedComponent(WrappedComponent, inputs, outputs) {
       }
 
       // Save the store for subscribe/unsubscribe.
-      this.store = contextStore
+      this.store = alfaStore
       this.subFunc = this.setState.bind(this)
     }
 
@@ -186,10 +185,10 @@ function createAlfaSubscribedComponent(WrappedComponent, inputs, outputs) {
   return AlfaSubscribedComponent
 }
 
-function getInjectedProps(inputs, outputs, contextStore) {
+function getInjectedProps(inputs, outputs, alfaStore) {
   const stringInputs = inputs.filter(input => typeof input === 'string')
   const injectedProps = {
-    ...contextStore.get(stringInputs)
+    ...alfaStore.get(stringInputs)
   }
 
   inputs.forEach(input => {
@@ -200,13 +199,13 @@ function getInjectedProps(inputs, outputs, contextStore) {
     ) {
       // Generate the final action function which can be called inside the
       // component.
-      injectedProps[input.name] = input.alfaAction(contextStore)
+      injectedProps[input.name] = input.alfaAction(alfaStore)
     }
   })
 
   // Need to inject set.
   if (inputs.indexOf('set') > -1) {
-    injectedProps.set = contextStore.setWithOutputs(outputs)
+    injectedProps.set = alfaStore.setWithOutputs(outputs)
   }
 
   return injectedProps
@@ -224,10 +223,10 @@ function getInjectedProps(inputs, outputs, contextStore) {
  * @param  {Function} keys
  * @param  {Object} props
  * @param  {Array} outputs
- * @param  {Object} contextStore
+ * @param  {Object} alfaStore
  * @return {Object}
  */
-function getDynamicProps(keys, props, outputs, contextStore) {
+function getDynamicProps(keys, props, outputs, alfaStore) {
   var result
 
   if (keys && 'function' === typeof keys) {
@@ -238,20 +237,20 @@ function getDynamicProps(keys, props, outputs, contextStore) {
       // dependencies directly from the store.
       result = {
         inputs: _keys,
-        props: getInjectedProps(_keys, outputs, contextStore)
+        props: getInjectedProps(_keys, outputs, alfaStore)
       }
     } else if (isobject(_keys)) {
       // Object of mappings between injection keys and real input keys.
       const injectionKeys = Object.keys(_keys)
       const realInputs = injectionKeys.map(key => _keys[key])
-      const _props = getInjectedProps(realInputs, outputs, contextStore)
+      const _props = getInjectedProps(realInputs, outputs, alfaStore)
       const mappedProps = {}
       injectionKeys.forEach(key => (mappedProps[key] = _props[_keys[key]]))
 
       // Map outputs
       if (outputs && 'function' === typeof props.set) {
         // The `set` of `props` which is obtained from calling
-        // `contextStore.setWithOutputs(outputs)`
+        // `alfaStore.setWithOutputs(outputs)`
         const _setWithOutputs = props.set
         // Call `_setWithOutputs` with maps if
         props.set = function(key, value) {
