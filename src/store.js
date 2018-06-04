@@ -1,21 +1,9 @@
 import isobject from 'isobject'
 
 /**
- * Create a key value store with simple subscription support.
- *
- * @return {Store}
+ * The Store class. It's a key value store with simple subscription support.
  */
-export default function createStore(data) {
-  /**
-   * Return a new instance of Store
-   */
-  return new Store(data)
-}
-
-/**
- * The Store class.
- */
-class Store {
+export default class Store {
   /**
    * Constructor
    */

@@ -8,6 +8,10 @@ configure({
   adapter: new Adapter()
 })
 
+function createStore(data) {
+  return new Store(data)
+}
+
 tape('action()', test => {
   test.plan(8)
 

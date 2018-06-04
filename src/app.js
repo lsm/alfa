@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types'
-import createStore from './store'
 import { createElement, Component } from 'react'
+
+import Store from './store'
 
 /**
  * Wrap an component with alfa store.

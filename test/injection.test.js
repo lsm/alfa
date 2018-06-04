@@ -2,7 +2,7 @@ import test from 'tape'
 import React, { Component } from 'react'
 import Adapter from 'enzyme-adapter-react-16'
 import PropTypes from 'prop-types'
-import { app, createStore } from '../src'
+import { app, Store } from '../src'
 import { mount, configure } from 'enzyme'
 import { inject, subscribe } from '../src/injection'
 
@@ -10,6 +10,9 @@ configure({
   adapter: new Adapter()
 })
 
+function createStore(data) {
+  return new Store(data)
+}
 
 test('injection.createInjector(store, "inject")', t => {
   t.plan(8)

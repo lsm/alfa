@@ -1,5 +1,9 @@
 import test from 'tape'
-import { createStore } from '../src'
+import { Store } from '../src'
+
+function createStore(data) {
+  return new Store(data)
+}
 
 const data = {
   a: 1,
