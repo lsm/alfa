@@ -17,32 +17,19 @@ export const subscribe = createInjector(
  */
 
 function createInjector(type, creator) {
-  const wrapper = {
-    [type]: function(WrappedComponent, inputs, outputs) {
-      /* istanbul ignore next */
-      const typeofComponent = typeof WrappedComponent
-      if (typeofComponent === 'function') {
-        const componentName = WrappedComponent.name
-        inputs = normalizeInputs(componentName, inputs, WrappedComponent.keys)
-        outputs = normalizeOutputs(componentName, inputs, outputs)
-        return creator(
-          WrappedComponent,
-          inputs,
-          outputs,
-          WrappedComponent.prototype &&
-            WrappedComponent.prototype.isReactComponent &&
-            'component'
-        )
-      } else {
-        throw new TypeError(
-          `alfa.${type} only accepts function or class.
-          Got "${typeofComponent}".`
-        )
-      }
+  return function(WrappedComponent, inputs, outputs) {
+    /* istanbul ignore next */
+    if (typeof WrappedComponent === 'function') {
+      const componentName = WrappedComponent.name
+      inputs = normalizeInputs(componentName, inputs, WrappedComponent.keys)
+      outputs = normalizeOutputs(componentName, inputs, outputs)
+      return creator(WrappedComponent, inputs, outputs)
+    } else {
+      throw new TypeError(
+        `alfa.${type} only accepts function or class. Got "${typeof WrappedComponent}".`
+      )
     }
   }
-
-  return wrapper[type]
 }
 
 export function normalizeInputs(name, inputs, dynamicInputs) {
@@ -99,7 +86,7 @@ export function normalizeOutputs(name, inputs, outputs) {
   }
 }
 
-function createAlfaProvidedComponent(WrappedComponent, inputs, outputs, type) {
+function createAlfaProvidedComponent(WrappedComponent, inputs, outputs) {
   const keys = WrappedComponent.keys
 
   function AlfaProvidedComponent(props, context, updater) {
@@ -114,7 +101,7 @@ function createAlfaProvidedComponent(WrappedComponent, inputs, outputs, type) {
       _props = { ..._props, ...dynamicProps.props }
     }
 
-    if ('component' === type) {
+    if (WrappedComponent.prototype.isReactComponent) {
       // Create an element if it's react component.
       return createElement(WrappedComponent, _props)
     } else {
@@ -163,19 +150,21 @@ function createAlfaSubscribedComponent(WrappedComponent, inputs, outputs) {
 
       // Save the store for subscribe/unsubscribe.
       this.store = alfaStore
-      this.subFunc = this.setState.bind(this)
+      this.setState = this.setState.bind(this)
     }
 
     componentDidMount() {
       // Call `setState` when subscribed keys changed.
-      this.store.subscribe(this.subKeys, this.subFunc, this.subMaps)
+      this.store.subscribe(this.subKeys, this.setState, this.subMaps)
     }
 
     componentWillUnmount() {
-      'function' === typeof this.subFunc && this.store.unsubscribe(this.subFunc)
+      // Unsubcribe `setState` when component is about to unmount.
+      this.store.unsubscribe(this.setState)
     }
 
     render() {
+      // Render the original component with state as its props.
       return createElement(WrappedComponent, this.state)
     }
   }
