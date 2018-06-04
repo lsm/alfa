@@ -2,7 +2,7 @@ import test from 'tape'
 import Adapter from 'enzyme-adapter-react-16'
 import PropTypes from 'prop-types'
 import React, { Component } from 'react'
-import { app, provide } from '../src'
+import { app, inject } from '../src'
 import { mount, configure } from 'enzyme'
 
 configure({
@@ -15,7 +15,7 @@ test('app(Component, data): with initial data', t => {
     return <h1>{props.title}</h1>
   }
 
-  const ProvidedFnComponent = provide(FnComponent, ['title'])
+  const ProvidedFnComponent = inject(FnComponent, ['title'])
 
   const App = app(ProvidedFnComponent, {
     title: 'App test initial data'
@@ -41,7 +41,7 @@ test('app(Component): with internal store', t => {
     }
   }
 
-  const ProvidedReactComponent = provide(
+  const ProvidedReactComponent = inject(
     ReactComponent,
     ['set', 'title'],
     ['title']

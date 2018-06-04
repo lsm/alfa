@@ -2,7 +2,7 @@ import tape from 'tape'
 import Adapter from 'enzyme-adapter-react-16'
 import React, { Component } from 'react'
 import { mount, configure } from 'enzyme'
-import { app, action, provide, subscribe, createStore } from '../src'
+import { app, Store, action, inject, subscribe } from '../src'
 
 configure({
   adapter: new Adapter()
@@ -32,10 +32,10 @@ tape('action()', test => {
   const actionDoesNothing = action('actionDoesNothing', function() {}, 'title')
 
   /**
-   * Test provide.
+   * Test inject.
    */
 
-  const ComponentOne = provide(
+  const ComponentOne = inject(
     function(props) {
       props.getAndChangeTitle({ title: props.title })
       props.actionDoesNothing()

@@ -4,38 +4,39 @@ import Adapter from 'enzyme-adapter-react-16'
 import PropTypes from 'prop-types'
 import { app, createStore } from '../src'
 import { mount, configure } from 'enzyme'
-import { provide, subscribe } from '../src/injection'
+import { inject, subscribe } from '../src/injection'
 
 configure({
   adapter: new Adapter()
 })
 
-test('injection.createInjector(store, "provide")', t => {
+
+test('injection.createInjector(store, "inject")', t => {
   t.plan(8)
 
   const store = createStore()
   store.set('title', 'value')
 
-  t.is(typeof provide, 'function')
+  t.is(typeof inject, 'function')
 
   /**
    * Test invalidate input
    */
 
   t.throws(() => {
-    provide({})
+    inject({})
   }, TypeError)
 
   t.throws(() => {
-    provide(123)
+    inject(123)
   }, TypeError)
 
   t.throws(() => {
-    provide(function() {}, 123)
+    inject(function() {}, 123)
   }, TypeError)
 
   t.throws(() => {
-    provide(function() {}, ['title'], 123)
+    inject(function() {}, ['title'], 123)
   }, TypeError)
 
   /**
@@ -46,7 +47,7 @@ test('injection.createInjector(store, "provide")', t => {
     return <h2>{props.title}</h2>
   }
 
-  const ProvidedFnComponent = provide(FnComponent, 'title')
+  const ProvidedFnComponent = inject(FnComponent, 'title')
   const App1 = app(ProvidedFnComponent, store)
 
   // const tree1 = render.create(<App1/>).toJSON()
@@ -69,14 +70,14 @@ test('injection.createInjector(store, "provide")', t => {
     }
   }
 
-  const ProvidedReactComponent = provide(ReactComponent, ['title'])
+  const ProvidedReactComponent = inject(ReactComponent, ['title'])
   const App2 = app(ProvidedReactComponent, store)
 
   const wrapper2 = mount(<App2 />)
   t.is(wrapper2.contains(<h1>value</h1>), true)
 
   t.throws(() => {
-    provide(ReactComponent, 123)
+    inject(ReactComponent, 123)
   }, TypeError)
 })
 
@@ -157,7 +158,7 @@ test('injection.createInjector(store, "subscribe")', t => {
   wrapper3.unmount()
 })
 
-test('provide and use set', t => {
+test('inject and use set', t => {
   t.plan(3)
 
   const store = createStore({
@@ -170,7 +171,7 @@ test('provide and use set', t => {
     return <h4>{props.title}</h4>
   }
 
-  const ProvidedFnComponent = provide(FnComponent, ['set', 'title'], ['title'])
+  const ProvidedFnComponent = inject(FnComponent, ['set', 'title'], ['title'])
   const App = app(ProvidedFnComponent, store)
 
   const wrapper = mount(<App />)
@@ -249,7 +250,7 @@ test('throw when output key is not defined', t => {
   t.is(store.get('keyNotAllowed'), undefined)
 })
 
-test('provide with dynamic injection', t => {
+test('inject with dynamic keys', t => {
   t.plan(4)
 
   const store = createStore({
@@ -280,7 +281,7 @@ test('provide with dynamic injection', t => {
     }
   }
 
-  const ProvidedReactComponent = provide(ReactComponent, ['title'])
+  const ProvidedReactComponent = inject(ReactComponent, ['title'])
   const App = app(ProvidedReactComponent, store)
 
   const wrapper = mount(<App />)
@@ -297,7 +298,7 @@ test('provide with dynamic injection', t => {
   wrapper.unmount()
 })
 
-test('subscribe with dynamic injection', t => {
+test('subscribe with dynamic keys', t => {
   t.plan(10)
 
   const store = createStore({
@@ -359,7 +360,7 @@ test('subscribe with dynamic injection', t => {
   )
 })
 
-test('subscribe/provide with only `keys`', t => {
+test('subscribe/inject with only `keys`', t => {
   t.plan(7)
 
   function FnComponent() {}
@@ -377,7 +378,7 @@ test('subscribe/provide with only `keys`', t => {
 
   var ProvidedFnComponent
   t.doesNotThrow(() => {
-    ProvidedFnComponent = provide(SubscribedFnComponent)
+    ProvidedFnComponent = inject(SubscribedFnComponent)
   })
 
   t.doesNotThrow(() => {
@@ -387,7 +388,7 @@ test('subscribe/provide with only `keys`', t => {
   class ReactComponent extends Component {}
 
   t.throws(() => {
-    provide(ReactComponent)
+    inject(ReactComponent)
   })
 
   t.throws(() => {
@@ -397,7 +398,7 @@ test('subscribe/provide with only `keys`', t => {
   function NoKeysComponent() {}
 
   t.throws(() => {
-    provide(NoKeysComponent)
+    inject(NoKeysComponent)
   })
 
   t.throws(() => {
@@ -405,7 +406,7 @@ test('subscribe/provide with only `keys`', t => {
   })
 })
 
-test('subscribe/provide with `keys` returns nothing', t => {
+test('subscribe/inject with `keys` which returns invalid data', t => {
   t.plan(1)
   const store = createStore()
 
@@ -427,14 +428,14 @@ test('subscribe/provide with `keys` returns nothing', t => {
   })
 })
 
-test('provide or subscribe set without output keys should throw', t => {
+test('inject or subscribe set without output keys should throw', t => {
   t.plan(2)
 
   function FnComponent() {}
 
   t.throws(() => {
-    provide(FnComponent, ['set'])
-  }, 'provide "set" without output key')
+    inject(FnComponent, ['set'])
+  }, 'inject "set" without output key')
 
   t.throws(() => {
     subscribe(FnComponent, ['set'])
@@ -526,7 +527,7 @@ test('Should set dynamic key correctly', t => {
     }
   }
 
-  const ProvidedReactComponent = provide(
+  const ProvidedReactComponent = inject(
     ReactComponent,
     ['set'],
     ['theDynamicKey']

@@ -6,7 +6,7 @@ import { Component, createElement } from 'react'
  * Public API
  */
 
-export const provide = createInjector('provide', createAlfaProvidedComponent)
+export const inject = createInjector('inject', createAlfaProvidedComponent)
 export const subscribe = createInjector(
   'subscribe',
   createAlfaSubscribedComponent
@@ -59,9 +59,9 @@ export function normalizeInputs(name, inputs, dynamicInputs) {
   } else if ('function' === typeof dynamicInputs) {
     return []
   } else {
-    throw new TypeError(`${name}: provide/subscribe only accepts string or array
-     of strings as second parameter (inputs) when static property 'keys' of 
-     component does not exist.`)
+    throw new TypeError(
+      `${name}: inject/subscribe only accepts string or array of strings as second parameter (inputs) when static property 'keys' of component does not exist.`
+    )
   }
 }
 
@@ -73,8 +73,7 @@ export function normalizeOutputs(name, inputs, outputs) {
     (!Array.isArray(outputs) || 0 === outputs.length)
   ) {
     throw new Error(
-      `${name}: outputs are required as 3rd argument of function 
-"provide/subscribe" when "set" is provided/subscribed.`
+      `${name}: outputs are required as 3rd argument of function "inject/subscribe" when "set" is provided/subscribed.`
     )
   }
 
@@ -94,8 +93,9 @@ export function normalizeOutputs(name, inputs, outputs) {
     }
 
     // Throw exception if any key of the outputs is not supported.
-    throw new TypeError(`${name}: provide/subscribe only accepts string or array
-     of strings as 3rd parameter (outputs).`)
+    throw new TypeError(
+      `${name}: inject/subscribe only accepts string or array of strings as 3rd parameter (outputs).`
+    )
   }
 }
 
