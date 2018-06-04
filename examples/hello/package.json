@@ -4,17 +4,15 @@
   "private": true,
   "devDependencies": {
     "babel-plugin-transform-class-properties": "6.24.1",
-    "babel-plugin-transform-object-rest-spread": "6.23.0",
-    "enzyme": "2.9.1",
-    "react-addons-test-utils": "15.6.0",
-    "react-scripts": "1.0.10"
+    "babel-plugin-transform-object-rest-spread": "6.26.0",
+    "react-scripts": "1.1.4"
   },
   "dependencies": {
     "alfa": "0.5.x",
     "classnames": "2.2.5",
-    "prop-types": "15.5.10",
-    "react": "15.6.1",
-    "react-dom": "15.6.1"
+    "prop-types": "15.6.1",
+    "react": "16.4.0",
+    "react-dom": "16.4.0"
   },
   "scripts": {
     "start": "react-scripts start",
