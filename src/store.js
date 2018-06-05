@@ -12,7 +12,7 @@ export default class Store {
      * Internal object which holds the key/value map.
      * @type {Object}
      */
-    this._store = { ...data }
+    this._store = {}
 
     /**
      * Internal object which holds all the subscription functions.
@@ -21,6 +21,9 @@ export default class Store {
     this._subscriptions = {}
 
     this.set = this.set.bind(this)
+
+    // Initial store if we have data.
+    data && this.set(data)
   }
 
   /**
@@ -71,13 +74,13 @@ export default class Store {
    * @param {Any}             value Value to save.
    */
   set(key, value) {
-    const { _store, _subscriptions } = this
+    const store = this
 
     if ('string' === typeof key) {
-      setSingle(_store, _subscriptions, key, value)
+      setSingle(store, key, value)
     } else if (isobject(key)) {
       Object.keys(key).forEach(function(_key) {
-        setSingle(_store, _subscriptions, _key, key[_key])
+        setSingle(store, _key, key[_key])
       })
     } else {
       throw new TypeError('Type of `key` must be string or plain object.')
@@ -94,10 +97,10 @@ export default class Store {
         return
       }
 
-      if (outputs && outputs.indexOf(key) === -1) {
+      if (Array.isArray(outputs) && outputs.indexOf(key) === -1) {
         // Throw exception if the output key is not allowed.
         throw new Error(
-          `Output key "${key}" is not allowed. You need to define it as an output when calling provide/subscribe.`
+          `Output key "${key}" is not allowed. You need to define it as an output when calling inject/subscribe.`
         )
       }
 
@@ -163,11 +166,18 @@ export default class Store {
 /**
  * Set a single value to an object.
  */
-function setSingle(store, subscriptions, key, value) {
-  store[key] = value
+function setSingle(store, key, value) {
+  const { _store, _subscriptions } = store
+
+  // Uncurry alfa action functions
+  if (value && value.isAlfaAction === true) {
+    value = value(store)
+  }
+
+  _store[key] = value
 
   // Call subscribed functions if we have.
-  const subs = subscriptions[key]
+  const subs = _subscriptions[key]
   if (subs) {
     var changed = {
       [key]: value

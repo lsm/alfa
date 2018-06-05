@@ -16,7 +16,7 @@ Alfa is a library for React state management. Its simple design allows you to ad
 
 * **Easy** - Only 4 functions/APIs to learn.
 * **Fast** - Alfa wraps your components with a thin layer. It introduces a little or no performance impacts.
-* **Small** - ~200LOC & 3KB minified + gzipped.
+* **Small** - ~ 190LOC & 3KB minified + gzipped.
 * **Async** - Alfa supports asynchronous operation natively without additional packages.
 * **Explicit** - Alfa lets you know what a component requires (input) and what changes it makes (output).
 * **Transparent** - You can use and unit test your components as it is without Alfa. Users of your lib/component could but don't have to use Alfa at all.

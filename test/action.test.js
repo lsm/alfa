@@ -12,17 +12,10 @@ function createStore(data) {
   return new Store(data)
 }
 
-tape('action()', test => {
+tape('action(func, inputs, outputs)', test => {
   test.plan(8)
 
-  const data = {
-    title: 'value of title',
-    content: 'value of content'
-  }
-  const store1 = createStore(data)
-
   const getAndChangeTitle = action(
-    'getAndChangeTitle',
     function({ title }) {
       test.is(title, 'value of title')
       return {
@@ -33,7 +26,13 @@ tape('action()', test => {
     'title'
   )
 
-  const actionDoesNothing = action('actionDoesNothing', function() {}, 'title')
+  const data = {
+    title: 'value of title',
+    content: 'value of content',
+    getAndChangeTitle,
+    actionDoesNothing: action(function() {}, 'title')
+  }
+  const store1 = createStore(data)
 
   /**
    * Test inject.
@@ -46,7 +45,7 @@ tape('action()', test => {
       test.is(props.content, 'value of content', 'ComponentOne content matches')
       return <h1>{props.title}</h1>
     },
-    [actionDoesNothing, getAndChangeTitle, 'title', 'content']
+    ['title', 'content', 'getAndChangeTitle', 'actionDoesNothing']
   )
 
   const App1 = app(ComponentOne, store1)
@@ -75,7 +74,7 @@ tape('action()', test => {
     }
   }
 
-  const SubscribedCom = subscribe(ComponentTwo, ['title', getAndChangeTitle])
+  const SubscribedCom = subscribe(ComponentTwo, ['title', 'getAndChangeTitle'])
 
   const store2 = createStore(data)
   const App2 = app(SubscribedCom, store2)

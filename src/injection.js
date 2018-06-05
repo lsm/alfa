@@ -180,18 +180,6 @@ function getInjectedProps(inputs, outputs, alfaStore) {
     ...alfaStore.get(stringInputs)
   }
 
-  inputs.forEach(input => {
-    if (
-      isobject(input) &&
-      /* istanbul ignore next */
-      typeof input.alfaAction === 'function'
-    ) {
-      // Generate the final action function which can be called inside the
-      // component.
-      injectedProps[input.name] = input.alfaAction(alfaStore)
-    }
-  })
-
   // Need to inject set.
   if (inputs.indexOf('set') > -1) {
     injectedProps.set = alfaStore.setWithOutputs(outputs)
