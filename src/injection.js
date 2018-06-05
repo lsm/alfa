@@ -6,7 +6,7 @@ import { Component, createElement } from 'react'
  * Public API
  */
 
-export const inject = createInjector('inject', createAlfaProvidedComponent)
+export const inject = createInjector('inject', createAlfaInjectedComponent)
 export const subscribe = createInjector(
   'subscribe',
   createAlfaSubscribedComponent
@@ -86,10 +86,10 @@ export function normalizeOutputs(name, inputs, outputs) {
   }
 }
 
-function createAlfaProvidedComponent(WrappedComponent, inputs, outputs) {
+function createAlfaInjectedComponent(WrappedComponent, inputs, outputs) {
   const keys = WrappedComponent.keys
 
-  function AlfaProvidedComponent(props, context, updater) {
+  function AlfaInjectedComponent(props, context, updater) {
     const alfaStore = context && context.alfaStore
     const injectedProps = getInjectedProps(inputs, outputs, alfaStore)
     // Props passed in directly to constructor has lower priority than inputs
@@ -110,12 +110,12 @@ function createAlfaProvidedComponent(WrappedComponent, inputs, outputs) {
     }
   }
 
-  AlfaProvidedComponent.keys = keys
-  AlfaProvidedComponent.contextTypes = {
+  AlfaInjectedComponent.keys = keys
+  AlfaInjectedComponent.contextTypes = {
     alfaStore: PropTypes.object
   }
 
-  return AlfaProvidedComponent
+  return AlfaInjectedComponent
 }
 
 function createAlfaSubscribedComponent(WrappedComponent, inputs, outputs) {
