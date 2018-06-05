@@ -29,3 +29,8 @@ node_modules
 
 .coveralls.yml
 .nyc_output
+
+# Ignore build files
+es
+lib
+dist
