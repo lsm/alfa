@@ -1,10 +1,43 @@
 import PropTypes from 'prop-types'
-import { createElement, Component } from 'react'
+import React, { Children, Component, createElement } from 'react'
 
 import Store from './store'
 
 /**
- * Wrap an component with alfa store.
+ * Class to make alfa-enabled component.
+ */
+export class App extends Component {
+  constructor(props, context) {
+    super(props, context)
+    /* istanbul ignore next */
+
+    // Handle different type of data.
+    const data = props.data
+    if (data) {
+      this.store = data.isAlfaStore ? data : new Store(data)
+    } else {
+      this.store = new Store()
+    }
+  }
+
+  // Instance of alfa store as a child context.
+  static childContextTypes = {
+    alfaStore: PropTypes.object.isRequired
+  }
+
+  getChildContext() {
+    return {
+      alfaStore: this.store
+    }
+  }
+
+  render() {
+    return Children.only(this.props.children)
+  }
+}
+
+/**
+ * Functional interface for creating alfa-enabled component.
  *
  * @param  {Class|Function}     WrappedComponent The user component which is being wrapped.
  * @param  {Store|Object|null}  data            This could be several types:
@@ -13,38 +46,8 @@ import Store from './store'
  *    3. Nothing.  A private store will be created internally.
  * @return {Class}              The wrapping component.
  */
-export default function app(WrappedComponent, data) {
-  var store
-
-  // Handle different type of data.
-  if (data) {
-    store = data.isAlfaStore ? data : new Store(data)
-  } else {
-    store = new Store()
+export function app(WrappedComponent, data) {
+  return function(props) {
+    return <App data={data}>{createElement(WrappedComponent, props)}</App>
   }
-
-  // Wrap the component with instance of alfa store as a context.
-  class App extends Component {
-    // eslint-disable-next-line
-    constructor(props) {
-      /* istanbul ignore next */
-      super(props)
-    }
-
-    static childContextTypes = {
-      alfaStore: PropTypes.object
-    }
-
-    getChildContext() {
-      return {
-        alfaStore: store
-      }
-    }
-
-    render() {
-      return createElement(WrappedComponent, this.props)
-    }
-  }
-
-  return App
 }
