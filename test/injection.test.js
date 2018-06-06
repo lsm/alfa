@@ -597,3 +597,63 @@ test('Avoid calling subscription functions when the component has been removed i
   t.notOk(wrapper.contains(<h1>new title</h1>), 'Title removed')
   wrapper.unmount()
 })
+
+test('Subscribed component should use updated props to render', t => {
+  t.plan(5)
+
+  const store = createStore({
+    title: 'value',
+    mainCounter: 0
+  })
+
+  class Footer extends Component {
+    constructor(props) {
+      super(props)
+      console.log('footer constructor')
+      t.is(props.counter, 0, 'Footer constructor counter matches')
+    }
+
+    render() {
+      return (
+        <p>
+          "{this.props.title}" Count {this.props.counter}
+        </p>
+      )
+    }
+  }
+
+  const FooterComponent = subscribe(Footer, ['title'])
+
+  class Main extends Component {
+    render() {
+      return (
+        <div>
+          <h1>Main Section</h1>
+          <FooterComponent counter={this.props.mainCounter} />
+        </div>
+      )
+    }
+  }
+
+  const MainComponent = subscribe(Main, ['mainCounter'])
+
+  const App = app(MainComponent, store)
+
+  const wrapper = mount(<App />)
+  t.ok(wrapper.contains(<h1>Main Section</h1>), 'Title matches')
+  t.ok(wrapper.contains(<p>"value" Count 0</p>), 'Footer matches')
+
+  store.set('mainCounter', 1)
+  t.is(
+    wrapper.html(),
+    '<div><h1>Main Section</h1><p>"value" Count 1</p></div>',
+    'Footer matches after counter change'
+  )
+
+  store.set('title', 'new title')
+  t.is(
+    wrapper.html(),
+    '<div><h1>Main Section</h1><p>"new title" Count 1</p></div>',
+    'Footer matches after title change'
+  )
+})

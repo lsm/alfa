@@ -123,8 +123,9 @@ function createAlfaSubscribedComponent(WrappedComponent, inputs, outputs) {
       // Call the original constructor.
       super(props, context, updater)
       /* istanbul ignore next */
+
       const alfaStore = context && context.alfaStore
-      // Get injected props which eventually will become state of the component.
+      // Get injected props which is part of the state of the component.
       const injectedProps = getInjectedProps(inputs, outputs, alfaStore)
       // Merge injected props with props where the first one has higher priority.
       const _props = { ...props, ...injectedProps }
@@ -135,10 +136,10 @@ function createAlfaSubscribedComponent(WrappedComponent, inputs, outputs) {
       if (dynamicProps) {
         this.subKeys = [...inputs, ...dynamicProps.inputs]
         this.subMaps = dynamicProps.maps
-        this.state = { ..._props, ...dynamicProps.props }
+        this.state = { ...injectedProps, ...dynamicProps.props }
       } else {
         this.subKeys = inputs
-        this.state = _props
+        this.state = injectedProps
       }
 
       // Save the store for subscribe/unsubscribe.
@@ -158,7 +159,7 @@ function createAlfaSubscribedComponent(WrappedComponent, inputs, outputs) {
 
     render() {
       // Render the original component with state as its props.
-      return createElement(WrappedComponent, this.state)
+      return createElement(WrappedComponent, { ...this.props, ...this.state })
     }
   }
 
@@ -197,40 +198,38 @@ function getInjectedProps(inputs, outputs, alfaStore) {
  * @return {Object}
  */
 function getDynamicProps(keys, props, outputs, alfaStore) {
-  var result
-
-  if (keys && 'function' === typeof keys) {
-    const _keys = keys(props)
-    if (Array.isArray(_keys)) {
-      // Array of input keys.  There's no mapping in this case.  Item in the
-      // array is the name of the input key.  We use this array to get
-      // dependencies directly from the store.
-      result = {
-        inputs: _keys,
-        props: getInjectedProps(_keys, outputs, alfaStore)
-      }
-    } else if (isobject(_keys)) {
-      // Object of mappings between injection keys and real input keys.
-      const injectionKeys = Object.keys(_keys)
-      const realInputs = injectionKeys.map(key => _keys[key])
-      const _props = getInjectedProps(realInputs, outputs, alfaStore)
-      const mappedProps = {}
-      injectionKeys.forEach(key => (mappedProps[key] = _props[_keys[key]]))
-
-      // Map outputs
-      if (outputs && 'function' === typeof props.set) {
-        // The `set` of `props` which is obtained from calling
-        // `alfaStore.setWithOutputs(outputs)`
-        const _setWithOutputs = props.set
-        // Call `_setWithOutputs` with maps if
-        props.set = function(key, value) {
-          _setWithOutputs(key, value, _keys)
-        }
-      }
-
-      result = { maps: _keys, props: mappedProps, inputs: realInputs }
-    }
+  if (!keys && 'function' !== typeof keys) {
+    return
   }
 
-  return result
+  const _keys = keys(props)
+  if (Array.isArray(_keys)) {
+    // Array of input keys.  There's no mapping in this case.  Item in the
+    // array is the name of the input key.  We use this array to get
+    // dependencies directly from the store.
+    return {
+      inputs: _keys,
+      props: getInjectedProps(_keys, outputs, alfaStore)
+    }
+  } else if (isobject(_keys)) {
+    // Object of mappings between injection keys and real input keys.
+    const injectionKeys = Object.keys(_keys)
+    const realInputs = injectionKeys.map(key => _keys[key])
+    const _props = getInjectedProps(realInputs, outputs, alfaStore)
+    const mappedProps = {}
+    injectionKeys.forEach(key => (mappedProps[key] = _props[_keys[key]]))
+
+    // Map outputs
+    if (outputs && 'function' === typeof props.set) {
+      // The `set` of `props` which is obtained from calling
+      // `alfaStore.setWithOutputs(outputs)`
+      const _setWithOutputs = props.set
+      // Call `_setWithOutputs` with maps if
+      props.set = function(key, value) {
+        _setWithOutputs(key, value, _keys)
+      }
+    }
+
+    return { maps: _keys, props: mappedProps, inputs: realInputs }
+  }
 }
