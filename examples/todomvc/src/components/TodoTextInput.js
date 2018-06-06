@@ -1,14 +1,14 @@
+import { inject } from 'alfa'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames'
 
-export default class TodoTextInput extends Component {
+class TodoTextInput extends Component {
   static propTypes = {
-    onSave: PropTypes.func.isRequired,
     text: PropTypes.string,
-    placeholder: PropTypes.string,
     editing: PropTypes.bool,
-    newTodo: PropTypes.bool
+    newTodo: PropTypes.bool,
+    placeholder: PropTypes.string
   }
 
   state = {
@@ -17,8 +17,10 @@ export default class TodoTextInput extends Component {
 
   handleSubmit = e => {
     const text = e.target.value.trim()
+
     if (13 === e.which) {
-      this.props.onSave(text)
+      this.props.addToDo({ text })
+
       if (this.props.newTodo) {
         this.setState({
           text: ''
@@ -34,7 +36,9 @@ export default class TodoTextInput extends Component {
   }
 
   handleBlur = e => {
-    if (!this.props.newTodo) this.props.onSave(e.target.value)
+    if (!this.props.newTodo) {
+      this.props.onSave(e.target.value)
+    }
   }
 
   render() {
@@ -56,3 +60,5 @@ export default class TodoTextInput extends Component {
     )
   }
 }
+
+export default inject(TodoTextInput, ['addToDo'], ['todos'])

@@ -50,7 +50,7 @@ class Footer extends Component {
     const { completedCount, clearCompleted } = this.props
     if (completedCount > 0) {
       return (
-        <button className="clear-completed" onClick={clearCompleted}>
+        <button className="clear-completed" onClick={() => clearCompleted()}>
           Clear completed
         </button>
       )
@@ -74,6 +74,6 @@ class Footer extends Component {
 
 export default subscribe(
   Footer,
-  ['set', 'filter', 'completeAll', 'clearCompleted'],
-  ['filter']
+  ['set', 'filter', 'clearCompleted'],
+  ['todos', 'filter']
 )

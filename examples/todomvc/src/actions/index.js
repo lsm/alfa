@@ -1,36 +1,81 @@
 import { action } from 'alfa'
-import {
-  createTodo,
-  updateTodo,
-  removeTodoByID,
-  toggleTodoComplete
-} from './pipes'
 
-// Set all pipes to the store.
+export const addToDo = action(
+  function({ text, todos }) {
+    var resultTodos
 
-action('addToDo')
-  .pipe('input', ['newTodoText'])
-  .pipe(createTodo, ['todos', 'newTodoText'], ['todos'])
-  .pipe('output', ['todos'])
+    if (!text) {
+      resultTodos = todos
+    } else {
+      resultTodos = todos.concat([
+        {
+          id: Math.random(),
+          text: text,
+          completed: false
+        }
+      ])
+    }
 
-action('completeTodo')
-  .input('todoID')
-  .pipe(toggleTodoComplete, ['todos', 'todoID'], 'todos')
-  .output(['todos'])
+    return {
+      todos: resultTodos
+    }
+  },
+  ['text', 'todos'],
+  'todos'
+)
 
-action('deleteTodo')
-  .input(['todoId'])
-  .pipe(removeTodoByID, ['todoId', 'todos', 'next'], 'todos')
-  .output('todos')
+export const completeTodo = action(
+  function({ todos, todoID }) {
+    var resultTodos = todos.map(function(todo) {
+      return {
+        id: todo.id,
+        text: todo.text,
+        completed: todoID === todo.id ? !todo.completed : todo.completed
+      }
+    })
 
-action('editTodo')
-  .input(['todoId', 'todoText'])
-  .pipe(updateTodo, ['todoId', 'todoText', 'todos'], 'todos')
-  .output('todos')
+    return {
+      todos: resultTodos
+    }
+  },
+  ['todos', 'todoID'],
+  'todos'
+)
 
-action(
-  'completeAll',
-  todos => {
+export const deleteTodo = action(
+  function({ set, todoID, todos }) {
+    var resultTodos = todos.filter(function(todo) {
+      return todoID !== todo.id
+    })
+
+    // Simulate an async operation.
+    setTimeout(function() {
+      set({
+        todos: resultTodos
+      })
+    }, 100)
+  },
+  ['todoID', 'todos'],
+  'todos'
+)
+
+export const editTodo = action(
+  function({ todoID, todoText, todos }) {
+    var resultTodos = todos.map(function(todo) {
+      if (todoID === todo.id) todo.text = todoText
+      return todo
+    })
+
+    return {
+      todos: resultTodos
+    }
+  },
+  ['todos', 'todoID', 'todoText'],
+  'todos'
+)
+
+export const completeAll = action(
+  function({ todos }) {
     return {
       todos: todos.map(todo => ({
         ...todo,
@@ -42,9 +87,8 @@ action(
   'todos'
 )
 
-action(
-  'clearCompleted',
-  function(todos) {
+export const clearCompleted = action(
+  function({ todos }) {
     return {
       todos: todos.filter(function(todo) {
         return false === todo.completed

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames'
 import TodoTextInput from './TodoTextInput'
-import { provide } from 'alfa'
+import { inject } from 'alfa'
 
 class TodoItem extends Component {
   static propTypes = {
@@ -22,9 +22,9 @@ class TodoItem extends Component {
     })
   }
 
-  handleSave = (id, text) => {
-    if (0 === text.length) this.props.deleteTodo(id)
-    else this.props.editTodo(id, text)
+  handleSave = (todoID, todoText) => {
+    if (0 === todoText.length) this.props.deleteTodo({ todoID })
+    else this.props.editTodo({ todoID, todoText })
     this.setState({
       editing: false
     })
@@ -49,10 +49,13 @@ class TodoItem extends Component {
             className="toggle"
             type="checkbox"
             checked={todo.completed}
-            onChange={() => completeTodo(todo.id)}
+            onChange={() => completeTodo({ todoID: todo.id })}
           />
           <label onDoubleClick={this.handleDoubleClick}>{todo.text}</label>
-          <button className="destroy" onClick={() => deleteTodo(todo.id)} />
+          <button
+            className="destroy"
+            onClick={() => deleteTodo({ todoID: todo.id })}
+          />
         </div>
       )
     }
@@ -65,4 +68,8 @@ class TodoItem extends Component {
   }
 }
 
-export default provide(TodoItem, ['editTodo', 'deleteTodo', 'completeTodo'])
+export default inject(
+  TodoItem,
+  ['editTodo', 'deleteTodo', 'completeTodo'],
+  ['todos']
+)

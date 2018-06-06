@@ -29,7 +29,7 @@ export class MainSection extends Component {
           className="toggle-all-fix"
           type="checkbox"
           checked={completedCount === todos.length}
-          onChange={completeAll}
+          onChange={() => completeAll({ todos })}
         />
       )
     }
@@ -67,4 +67,8 @@ export class MainSection extends Component {
   }
 }
 
-export default subscribe(MainSection, ['todos', 'filter', 'completeAll'])
+export default subscribe(
+  MainSection,
+  ['todos', 'filter', 'completeAll'],
+  ['todos']
+)
