@@ -18,16 +18,15 @@ export const subscribe = createInjector(
 
 function createInjector(type, creator) {
   return function(WrappedComponent, inputs, outputs) {
-    /* istanbul ignore next */
     if (typeof WrappedComponent === 'function') {
       const componentName = WrappedComponent.name
       inputs = normalizeInputs(componentName, inputs, WrappedComponent.keys)
       outputs = normalizeOutputs(componentName, inputs, outputs)
       return creator(WrappedComponent, inputs, outputs)
     } else {
-      throw new TypeError(
-        `alfa.${type} only accepts function or class. Got "${typeof WrappedComponent}".`
-      )
+      // istanbul ignore next
+      const error = `alfa.${type} only accepts function or class. Got "${typeof WrappedComponent}".`
+      throw new TypeError(error)
     }
   }
 }
@@ -54,7 +53,7 @@ export function normalizeOutputs(name, inputs, outputs) {
     (!Array.isArray(outputs) || 0 === outputs.length)
   ) {
     throw new Error(
-      `${name}: outputs are required as 3rd argument of function "inject/subscribe" when "set" is provided/subscribed.`
+      `${name}: outputs are required as 3rd argument of function "inject/subscribe" when "set" is injected/subscribed.`
     )
   }
 
