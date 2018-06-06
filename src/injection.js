@@ -33,13 +33,7 @@ function createInjector(type, creator) {
 }
 
 export function normalizeInputs(name, inputs, dynamicInputs) {
-  if (
-    inputs &&
-    ('string' === typeof inputs ||
-      (isobject(inputs) &&
-        /* istanbul ignore next */
-        typeof inputs.alfaAction === 'function'))
-  ) {
+  if (inputs && 'string' === typeof inputs) {
     return [inputs]
   } else if (Array.isArray(inputs)) {
     return inputs
