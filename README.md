@@ -66,8 +66,8 @@ Now let's see how to use the above component in our root app:
 ```jsx
 // index.js
 import React from 'react'
-import { app } from 'alfa'
 import { render } from 'react-dom'
+import { provide } from 'alfa'
 import HelloMessage from './hello.js'
 
 // Define the root app which renders HelloMessage as a child.
@@ -77,8 +77,8 @@ const App = () => (
   </div>
 )
 
-// Create the root component using `app(Component, data)` with initial data.
-const Root = app(App, {
+// Create the root component using `provide(Component, data)` with initial data.
+const Root = provide(App, {
   name: 'Motoko'
 })
 

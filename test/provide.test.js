@@ -2,14 +2,14 @@ import test from 'tape'
 import Adapter from 'enzyme-adapter-react-16'
 import PropTypes from 'prop-types'
 import React, { Component } from 'react'
-import { app, App, inject, subscribe } from '../src'
+import { provide, Provider, inject, subscribe } from '../src'
 import { mount, configure } from 'enzyme'
 
 configure({
   adapter: new Adapter()
 })
 
-test('app(Component, data): with initial data', t => {
+test('provide(Component, data): with initial data', t => {
   t.plan(1)
   function FnComponent(props) {
     return <h1>{props.title}</h1>
@@ -17,7 +17,7 @@ test('app(Component, data): with initial data', t => {
 
   const InjectedFnComponent = inject(FnComponent, ['title'])
 
-  const App = app(InjectedFnComponent, {
+  const App = provide(InjectedFnComponent, {
     title: 'App test initial data'
   })
 
@@ -25,7 +25,7 @@ test('app(Component, data): with initial data', t => {
   t.is(wrapper.contains(<h1>App test initial data</h1>), true)
 })
 
-test('app(Component): with internal store', t => {
+test('provide(Component): with internal store', t => {
   t.plan(1)
   class ReactComponent extends Component {
     static propTypes = {
@@ -48,13 +48,13 @@ test('app(Component): with internal store', t => {
     ['title']
   )
 
-  const App = app(SubscribedReactComponent)
+  const App = provide(SubscribedReactComponent)
   const wrapper = mount(<App />)
   wrapper.find('h1').simulate('click')
   t.is(wrapper.text(), 'App test internal store', 'Title rendered correctly')
 })
 
-test('Use the class interface <App />', t => {
+test('Use the class interface <Provider />', t => {
   t.plan(1)
   function FnComponent(props) {
     return <h1>{props.title}</h1>
@@ -66,9 +66,9 @@ test('Use the class interface <App />', t => {
   const InjectedFnComponent = inject(FnComponent, ['title'])
 
   const wrapper = mount(
-    <App data={data}>
+    <Provider data={data}>
       <InjectedFnComponent />
-    </App>
+    </Provider>
   )
   t.is(wrapper.contains(<h1>App test initial data</h1>), true)
 })

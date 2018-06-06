@@ -2,7 +2,7 @@ import test from 'tape'
 import React, { Component } from 'react'
 import Adapter from 'enzyme-adapter-react-16'
 import PropTypes from 'prop-types'
-import { app, Store } from '../src'
+import { provide, Store } from '../src'
 import { mount, configure } from 'enzyme'
 import { inject, subscribe } from '../src/injection'
 
@@ -51,7 +51,7 @@ test('injection.createInjector(store, "inject")', t => {
   }
 
   const ProvidedFnComponent = inject(FnComponent, 'title')
-  const App1 = app(ProvidedFnComponent, store)
+  const App1 = provide(ProvidedFnComponent, store)
 
   // const tree1 = render.create(<App1/>).toJSON()
   // t.snapshot(tree1)
@@ -74,7 +74,7 @@ test('injection.createInjector(store, "inject")', t => {
   }
 
   const ProvidedReactComponent = inject(ReactComponent, ['title'])
-  const App2 = app(ProvidedReactComponent, store)
+  const App2 = provide(ProvidedReactComponent, store)
 
   const wrapper2 = mount(<App2 />)
   t.is(wrapper2.contains(<h1>value</h1>), true)
@@ -119,7 +119,7 @@ test('injection.createInjector(store, "subscribe")', t => {
   }
 
   const SubscribedFnComponent = subscribe(FnComponent, 'title')
-  const App1 = app(SubscribedFnComponent, store)
+  const App1 = provide(SubscribedFnComponent, store)
 
   const wrapper1 = mount(<App1 />)
   // 6
@@ -143,7 +143,7 @@ test('injection.createInjector(store, "subscribe")', t => {
   }
 
   const SubscribedReactComponent = subscribe(ReactComponent, ['title'])
-  const App2 = app(SubscribedReactComponent, store)
+  const App2 = provide(SubscribedReactComponent, store)
 
   const wrapper2 = mount(<App2 />)
   // 10
@@ -175,7 +175,7 @@ test('inject and use set', t => {
   }
 
   const ProvidedFnComponent = inject(FnComponent, ['set', 'title'], ['title'])
-  const App = app(ProvidedFnComponent, store)
+  const App = provide(ProvidedFnComponent, store)
 
   const wrapper = mount(<App />)
   t.ok(wrapper.contains(<h4>value</h4>), 'Title matches')
@@ -212,7 +212,7 @@ test('subscribe and use set', t => {
     ['set', 'title'],
     ['title']
   )
-  const App = app(SubscribedComponent, store)
+  const App = provide(SubscribedComponent, store)
 
   const wrapper = mount(<App />)
   t.ok(wrapper.contains(<h1>value</h1>), 'Title matches')
@@ -246,7 +246,7 @@ test('throw when output key is not defined', t => {
     ['title']
   )
 
-  const App = app(SubscribedComponent, store)
+  const App = provide(SubscribedComponent, store)
   mount(<App />)
 
   t.is(store.get('title'), 'new title')
@@ -285,7 +285,7 @@ test('inject with dynamic keys', t => {
   }
 
   const ProvidedReactComponent = inject(ReactComponent, ['title'])
-  const App = app(ProvidedReactComponent, store)
+  const App = provide(ProvidedReactComponent, store)
 
   const wrapper = mount(<App />)
   t.is(
@@ -336,7 +336,7 @@ test('subscribe with dynamic keys', t => {
   }
 
   const SubscribedReactComponent = subscribe(ReactComponent, ['title'])
-  const App = app(SubscribedReactComponent, store)
+  const App = provide(SubscribedReactComponent, store)
 
   const wrapper1 = mount(<App />)
   t.ok(
@@ -425,7 +425,7 @@ test('subscribe/inject with `keys` which returns invalid data', t => {
 
   t.doesNotThrow(() => {
     const SubscribedComponent = subscribe(ReactComponent, ['abc'])
-    const App = app(SubscribedComponent, store)
+    const App = provide(SubscribedComponent, store)
     const wrapper1 = mount(<App />)
     wrapper1.unmount()
   })
@@ -468,7 +468,7 @@ test('Call set without predefined output should throw', t => {
     ['set'],
     ['predefinedOutput']
   )
-  const App = app(SubscribedReactComponent, store)
+  const App = provide(SubscribedReactComponent, store)
   const wrapper1 = mount(<App />)
   t.is(store.get('predefinedOutput'), 'the value', 'Value set correctly')
 
@@ -492,7 +492,7 @@ test('Call set without predefined output should throw', t => {
     ['set'],
     ['predefinedOutput']
   )
-  const NewApp = app(SubscribedNewComponent, store)
+  const NewApp = provide(SubscribedNewComponent, store)
   const wrapper2 = mount(<NewApp />)
   t.is(
     store.get('predefinedOutput'),
@@ -535,7 +535,7 @@ test('Should set dynamic key correctly', t => {
     ['set'],
     ['theDynamicKey']
   )
-  const App = app(ProvidedReactComponent, store)
+  const App = provide(ProvidedReactComponent, store)
 
   mount(<App target="theTargetKey" anotherTarget="anotherTargetKey" />)
 
@@ -587,7 +587,7 @@ test('Avoid calling subscription functions when the component has been removed i
     ['title']
   )
 
-  const App = app(SubscribedComponent, store)
+  const App = provide(SubscribedComponent, store)
 
   const wrapper = mount(<App />)
   t.ok(wrapper.contains(<h1>value</h1>), 'Title matches')
@@ -637,7 +637,7 @@ test('Subscribed component should use updated props to render', t => {
 
   const MainComponent = subscribe(Main, ['mainCounter'])
 
-  const App = app(MainComponent, store)
+  const App = provide(MainComponent, store)
 
   const wrapper = mount(<App />)
   t.ok(wrapper.contains(<h1>Main Section</h1>), 'Title matches')

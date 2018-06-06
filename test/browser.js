@@ -3,7 +3,7 @@ require('core-js/es6/set')
 require('core-js/es6/typed')
 require('raf/polyfill')
 
-require('./app.test')
+require('./provide.test')
 require('./action.test')
 require('./index.test')
 require('./injection.test')

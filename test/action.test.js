@@ -2,7 +2,7 @@ import tape from 'tape'
 import Adapter from 'enzyme-adapter-react-16'
 import React, { Component } from 'react'
 import { mount, configure } from 'enzyme'
-import { app, Store, action, inject, subscribe } from '../src'
+import { provide, Store, action, inject, subscribe } from '../src'
 
 configure({
   adapter: new Adapter()
@@ -48,7 +48,7 @@ tape('action(func, inputs, outputs)', test => {
     ['title', 'content', 'getAndChangeTitle', 'actionDoesNothing']
   )
 
-  const App1 = app(ComponentOne, store1)
+  const App1 = provide(ComponentOne, store1)
 
   test.is(store1.get('title'), 'value of title')
   const wrapper1 = mount(<App1 />)
@@ -77,7 +77,7 @@ tape('action(func, inputs, outputs)', test => {
   const SubscribedCom = subscribe(ComponentTwo, ['title', 'getAndChangeTitle'])
 
   const store2 = createStore(data)
-  const App2 = app(SubscribedCom, store2)
+  const App2 = provide(SubscribedCom, store2)
   const wrapper2 = mount(<App2 />)
   test.is(wrapper2.contains(<h1>value of title</h1>), true)
   wrapper2.find('button').simulate('click')

@@ -1,19 +1,20 @@
-
-if ('unit' === process.env.TEST_ENV)
+if ('unit' === process.env.TEST_ENV) {
   setup()
+}
 
 var initialized = false
 
 function setup() {
-  if (true === initialized)
+  if (initialized) {
     return
+  }
 
   initialized = true
 
-  const {JSDOM} = require('jsdom')
+  const { JSDOM } = require('jsdom')
 
   const jsdom = new JSDOM('<!doctype html><html><body></body></html>')
-  const {window} = jsdom
+  const { window } = jsdom
 
   function copyProps(src, target) {
     const props = Object.getOwnPropertyNames(src)
@@ -25,7 +26,7 @@ function setup() {
   global.window = window
   global.document = window.document
   global.navigator = {
-    userAgent: 'node.js',
+    userAgent: 'node.js'
   }
   copyProps(window, global)
 }

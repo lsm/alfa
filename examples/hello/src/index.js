@@ -1,7 +1,7 @@
 // index.js
 import React from 'react'
-import { app } from 'alfa'
 import { render } from 'react-dom'
+import { provide } from 'alfa'
 import ChangeName from './change.js'
 import HelloMessage from './hello.js'
 
@@ -13,8 +13,8 @@ const App = () => (
   </div>
 )
 
-// Bind App with alfa using `app(Component, data)` with initial data.
-const Root = app(App, {
+// Bind App with alfa using `provide(Component, data)` with initial data.
+const Root = provide(App, {
   name: 'Motoko'
 })
 

@@ -6,7 +6,7 @@ import Store from './store'
 /**
  * Class to make alfa-enabled component.
  */
-export class App extends Component {
+export class Provider extends Component {
   constructor(props, context) {
     super(props, context)
     /* istanbul ignore next */
@@ -46,8 +46,10 @@ export class App extends Component {
  *    3. Nothing.  A private store will be created internally.
  * @return {Class}              The wrapping component.
  */
-export function app(WrappedComponent, data) {
+export function provide(WrappedComponent, data) {
   return function(props) {
-    return <App data={data}>{createElement(WrappedComponent, props)}</App>
+    return (
+      <Provider data={data}>{createElement(WrappedComponent, props)}</Provider>
+    )
   }
 }
