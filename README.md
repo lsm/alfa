@@ -10,7 +10,11 @@
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/alfajs.svg)](https://saucelabs.com/u/alfajs)
 
-Alfa is a library for React state management. Its simple design allows you to adopt it in a matter of minutes while at the same time provides your essential tools to keep your application code easy to change and understand. Here is a list of things why you want to use Alfa today:
+[React](https://facebook.github.io/react/) is a great library for creating interactive and stateful views. However, things become unclear when you need to `share & change data across components`.
+
+Alfa is a **simple and intuitive way** to manage React state. It completely decouples the complex relationships between components and let you focus on making **components that work anywhere**.
+
+Its simple design allows you to adopt it in a matter of minutes while at the same time provides your essential tools to keep your application code easy to change and understand. Here is a list of things why it is the perfect fit for your next React app:
 
 ## Why Alfa?
 
@@ -18,12 +22,17 @@ Alfa is a library for React state management. Its simple design allows you to ad
 * **Fast** - Alfa wraps your components with a thin layer. It introduces a little or no performance impacts.
 * **Small** - ~ 190LOC & 3KB minified + gzipped.
 * **Async** - Alfa supports asynchronous operation natively without additional packages.
-* **Explicit** - Alfa lets you know what a component requires (input) and what changes it makes (output).
+* **Explicit** - Alfa lets you know what a component requires (input) and what it changes (output).
 * **Transparent** - You can use and unit test your components as it is without Alfa. Users of your lib/component could but don't have to use Alfa at all.
+* **React Native** - Support React Native out of the box.
 * **Server Render** - Support isomorphic app out of the box.
 * **Production Ready** - 100% test coverage and being used in productions.
 
-## Add Alfa to Your React Project
+## Links
+
+## Usage
+
+### Add Alfa to Your React Project
 
 Use `npm` to add it to your package.json.
 
@@ -37,13 +46,9 @@ Alternatively, use `yarn` if you prefer:
 yarn add alfa
 ```
 
-## Usage
-
-[React](https://facebook.github.io/react/) is a perfect library for managing interactive and stateful views. However, things become unclear when you need to `share & change data across components` - that is **the only problem** Alfa focuses on solving.
-
 ### Getting the Data for Components
 
-Alfa converts your regular React component into a `dependency injected component` by `injecting` application data from a key/value store. Let Alfa handle the data if you use it in different components of your app:
+Alfa converts your regular React component into a `dependency injected component` by `injecting` application data from a key/value store. Let Alfa handle the data if you use it in different components:
 
 ```jsx
 // hello.js
