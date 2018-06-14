@@ -11,6 +11,9 @@ build-watch:
 browser:
 	TEST_ENV=browser ./node_modules/.bin/karma start karma.conf.js
 
+clean-build:
+	rm -rf ./dist ./es ./lib
+
 # Test on local browsers.
 local-browser:
 	./node_modules/.bin/karma start karma.conf.js
