@@ -34,3 +34,5 @@ node_modules
 es
 lib
 dist
+
+docs/README.md
