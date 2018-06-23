@@ -23,7 +23,7 @@ As you may see `inject` has the same interface as `subscribe`. The only differen
 
 ## Action
 
-### What is an action function?
+### What is an Action Function?
 
 In the [Quick Guide](https://lsm.github.io/alfa/#/?id=changing-data) we learned we could use `set` function to make changes to the store in a component. However, it is common that you want to reuse the same piece of code which uses `set` to change some keys in the store. Then `action` is the function to help you create reusable functions that mutate the store which can be used across components. For a large code base, it also helps you to separate the business logic from you representation code and let you understand what component is doing what. (e.g., if a component needs an action called `addTodo` then it probably can add a new todo). An action function is a function that give you the ability to read from and write to the store.
 
@@ -128,7 +128,7 @@ export const deleteTodo = action(
 
 Since the purpose of the action functions is making changes to the store, so the `set` function is `pre-injected` - you don't have to define it as an input of the action function.
 
-### How to use action functions in the component?
+### How to Use Action in Components?
 
 To use the actions we first need to set them in the store. Alfa then binds the function with the instance of the store, so you don't have to worry about which store it works with when you call the action functions.
 
@@ -195,7 +195,7 @@ export default inject(TodoItem, ['deleteTodo'])
 
 To make changes to the store, `alfa` requires you to define the names of the outputs for both injected/subscribed components or action functions. What if the key you want to change is a dynamic value? For example, a unique id for a chat room? You can not predefine the output key in this case because it is data not code. Luckily, `alfa` supports this use case and it's called `Dynamic Keys`. To use it you need to define a function as the static property `keys` for your component.
 
-### Define Dynamic Keys
+### How to Define Dynamic Keys?
 
 Let's see how it works with a concrete example. Assume you have a chat app which supports multiple chat rooms and threading in a certain room. To control the open or the close of the threads you need to keep track of which thread is currently active in which chat room. We can use the combination of `roomID/activeThreadID` as the key to store the state of the active thread. For example, `{ alfadev/activeThreadID: 'thread23' }` means in chat room `alfadev` the current active thread id is `thread23`.
 
@@ -232,9 +232,9 @@ ChatRoom.keys = props => {
 }
 ```
 
-### Use Dynamic Keys
+### How to Use Dynamic Keys in Components?
 
-The injected props in the component is a static name `activeThreadID`. It helps you write abstract code without worrying about which chat room you are dealing with. Then a function to toggle the show/hide of the thread looks like this:
+The injected props in the component has a static name `activeThreadID`. You can get and set it as a normal dependency. It helps you write abstract code without worrying about how to differentiate the chat rooms. Then a function to toggle the show/hide of the thread looks like this:
 
 ```jsx
 // ...
