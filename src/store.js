@@ -170,10 +170,11 @@ function setSingle(store, key, value) {
   const { _store, _subscriptions } = store
 
   // Uncurry alfa action functions
-  if (value && value.isAlfaAction === true) {
-    value = value(store)
+  if (typeof value === 'function' && value.alfaAction) {
+    value = value.alfaAction(store)
   }
 
+  // Save the value to the store.
   _store[key] = value
 
   // Call subscribed functions if we have.

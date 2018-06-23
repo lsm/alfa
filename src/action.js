@@ -2,10 +2,11 @@ import isobject from 'isobject'
 import { normalizeInputs, normalizeOutputs } from './injection'
 
 export default function action(func, inputs, outputs) {
-  inputs = normalizeInputs('alfa', inputs)
-  outputs = normalizeOutputs('alfa', inputs, outputs)
+  inputs = normalizeInputs('alfaAction', inputs)
+  outputs = normalizeOutputs('alfaAction', inputs, outputs)
 
-  const alfaAction = function(store) {
+  func.alfaAction = function(store) {
+    // const set = store.setWithOutputs(outputs)
     return function(args) {
       const input = store.get(inputs)
       input.set = store.setWithOutputs(outputs)
@@ -17,7 +18,5 @@ export default function action(func, inputs, outputs) {
     }
   }
 
-  alfaAction.isAlfaAction = true
-
-  return alfaAction
+  return func
 }
