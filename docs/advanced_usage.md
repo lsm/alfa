@@ -195,6 +195,8 @@ export default inject(TodoItem, ['deleteTodo'])
 
 To make changes to the store, `alfa` requires you to define the names of the outputs for both injected/subscribed components or action functions. What if the key you want to change is a dynamic value? For example, a unique id for a chat room? You can not predefine the output key in this case because it is data not code. Luckily, `alfa` supports this use case and it's called `Dynamic Keys`. To use it you need to define a function as the static property `keys` for your component.
 
+### Define Dynamic Keys
+
 Let's see how it works with a concrete example. Assume you have a chat app which supports multiple chat rooms and threading in a certain room. To control the open or the close of the threads you need to keep track of which thread is currently active in which chat room. We can use the combination of `roomID/activeThreadID` as the key to store the state of the active thread. For example, `{ alfadev/activeThreadID: 'thread23' }` means in chat room `alfadev` the current active thread id is `thread23`.
 
 ```jsx
@@ -229,6 +231,8 @@ ChatRoom.keys = props => {
   }
 }
 ```
+
+### Use Dynamic Keys
 
 The injected props in the component is a static name `activeThreadID`. It helps you write abstract code without worrying about which chat room you are dealing with. Then a function to toggle the show/hide of the thread looks like this:
 
