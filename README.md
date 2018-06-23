@@ -38,7 +38,7 @@ Its **simple** design allows you to adopt it in a matter of minutes while at the
 
 ## Quick Guide
 
-### Add Alfa to Your React Project
+### Installation
 
 Use `npm` to add it to your package.json.
 
@@ -97,7 +97,7 @@ const Root = provide(App, { name: 'Motoko' })
 render(<Root />, document.getElementById('root'))
 ```
 
-You don't need to pass the variable `name` to `HelloMessage` as alfa gets it from the store and pass it to `HelloMessage` component automatically. It allows us to quickly move the component around without worrying about how to get the data.
+You don't need to pass the variable `name` to `HelloMessage` as alfa gets it from the store and pass it to `HelloMessage` component automatically. It allows us to quickly move the component around without worrying about how to get the data it depends on.
 
 ### Changing Data
 
@@ -158,7 +158,8 @@ const App = () => (
   </div>
 )
 
-// Alternatively, you can use the declarative interface of the provide.
+// Alternatively, you can use Provider - the declarative interface of the
+// provide function.
 render(
   <Provider data={{ name: 'Motoko' }}>
     <App />
@@ -170,6 +171,8 @@ render(
 Now each time you make a change in the input box React will rerender both `HellowMessage` and `ChangeName` components to reflect the change.
 
 You can find the finished version of the above example in the folder [examples/hello](https://github.com/lsm/alfa/tree/master/examples/hello).
+
+Please check documentation for [API](https://lsm.github.io/alfa/#/api) and [advanced usages](https://lsm.github.io/alfa/#/advanced_usage).
 
 ## License
 
