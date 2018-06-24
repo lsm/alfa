@@ -150,7 +150,7 @@ export default class Store {
   }
 
   /**
-   * Unsubscribe function from all keys it's listening to.
+   * Unsubscribe the function from all keys it's listening to.
    *
    * @param  {Function} fn The function to unsubcribe.
    */

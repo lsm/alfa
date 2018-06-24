@@ -1,10 +1,10 @@
 # Advanced Usage
 
-The hello world example we discussed in the [Quick Guide](https://lsm.github.io/alfa/#/?id=quick-guide) introduced 3 functions `set, provide, and subscribe`. In this chapter, we cover more advanced usages which help you writing more performant code and organizing them better.
+The hello world example we discussed in the [Quick Guide](https://lsm.github.io/alfa/#/?id=quick-guide) introduced 3 functions `set`, [`provide`](/api#providecomponent-data), and [`subscribe`](/api#subscribecomponent-input-output). In this chapter, we cover more advanced usages which help you writing more performant code and organizing them better.
 
 ## Inject instead of subscribing
 
-Alfa has another function called `inject` and here's how you can use it:
+Alfa has another function called [`inject`](/api#injectcomponent-input-output) and here's how you can use it:
 
 ```jsx
 Import React from 'react'
@@ -19,17 +19,17 @@ class SomeComponent extends React.Component {
 export default inject(SomeComponent, ['title'])
 ```
 
-As you may see `inject` has the same interface as `subscribe`. The only difference is changing the value of the injected key (`title` in this case) does not trigger the rerender of the component. Which means it's the perfect choice for static components which won't change after the initial render or dummy components which might be changed only through their parents. Using inject in this case makes your code more performant and use less memory since it does not have to monitor changes of its dependencies like the `subscribe` does.
+As you may see [`inject`](/api#injectcomponent-input-output) has the same interface as [`subscribe`](/api#subscribecomponent-input-output). The only difference is changing the value of the injected key (`title` in this case) does not trigger the rerender of the component. Which means it's the perfect choice for static components which won't change after the initial render or dummy components which might be changed only through their parents. Using inject in this case makes your code more performant and use less memory since it does not have to monitor changes of its dependencies like the [`subscribe`](/api#subscribecomponent-input-output) does.
 
 ## Action
 
 ### What is an Action Function?
 
-In the [Quick Guide](https://lsm.github.io/alfa/#/?id=changing-data) we learned we could use `set` function to make changes to the store in a component. However, it is common that you want to reuse the same piece of code which uses `set` to change some keys in the store. Then `action` is the function to help you create reusable functions that mutate the store which can be used across components. For a large code base, it also helps you to separate the business logic from you representation code and let you understand what component is doing what. (e.g., if a component needs an action called `addTodo` then it probably can add a new todo). An action function is a function that give you the ability to read from and write to the store.
+In the [Quick Guide](https://lsm.github.io/alfa/#/?id=changing-data) we learned we could use `set` function to make changes to the store in a component. However, it is common that you want to reuse the same piece of code which uses `set` to change some keys in the store. Then [`action`](/api#actionactionfunction-input-output) is the function to help you create reusable functions that mutate the store which can be used across components. For a large code base, it also helps you to separate the business logic from you representation code and let you understand what component is doing what. (e.g., if a component needs an action called `addTodo` then it probably can add a new todo). An action function is a function that give you the ability to read from and write to the store.
 
 ### How to Define an Action?
 
-To define an action function you need to import the `action` function from `alfa` first, then call it with your original function and the input/output desired.
+To define an action function you need to import the [`action`](/api#actionactionfunction-input-output) function from `alfa` first, then call it with your original function and the input/output desired.
 
 ```js
 import { action } from 'alfa'
@@ -83,7 +83,7 @@ function addToDoAction({ text, todos }) {
 export const addToDo = action(addToDoAction, ['text', 'todos'], 'todos')
 ```
 
-Like the design of `inject/subscribe`, `action` make it explicit about what are the input and output of the action function. Alfa enforces the output part and throws an error if you return something that is not predefined in the output:
+Like the design of `inject/subscribe`, [`action`](/api#actionactionfunction-input-output) make it explicit about what are the input and output of the action function. Alfa enforces the output part and throws an error if you return something that is not predefined in the output:
 
 ```js
 action(
@@ -115,7 +115,7 @@ function deleteToDoAction({ set, todos, todoID }) {
   setTimeout(function() {
     set({ todos: resultTodos })
     // You can call `set` as many times as you want.
-    set({ todosCount: todos.length })
+    set('todosCount', todos.length)
   }, 100)
 }
 
@@ -193,7 +193,11 @@ export default inject(TodoItem, ['deleteTodo'])
 
 ### What is Dynamic Keys for?
 
-To make changes to the store, `alfa` requires you to define the names of the outputs for both injected/subscribed components or action functions. What if the key you want to change is a dynamic value? For example, a unique id for a chat room? You can not predefine the output key in this case because it is data not code. Luckily, `alfa` supports this use case and it's called `Dynamic Keys`. To use it you need to define a function as the static property `keys` for your component.
+To make changes to the store, `alfa` requires you to define the names of the outputs for both injected/subscribed components or action functions. What if the key you want to change is a dynamic value? For example, a unique id for a chat room? You can not predefine the output key in this case because it is data not code. Luckily, `alfa` supports this use case and it's called `Dynamic Keys`.
+
+Another use case is you want to load more dependencies based on the `props` of the component at initialization stage.
+
+To use it you need to define a function as the static property [`keys`](/api#keysprops) for your component.
 
 ### How to Define Dynamic Keys?
 
@@ -234,7 +238,17 @@ ChatRoom.keys = props => {
 
 ### How to Use Dynamic Keys in Components?
 
-The injected props in the component has a static name `activeThreadID`. You can get and set it as a normal dependency. It helps you write abstract code without worrying about how to differentiate the chat rooms. Then a function to toggle the show/hide of the thread looks like this:
+The injected props in the component has static names (e.g., `chatRoom` and `activeThreadID`). You can get and set them as normal dependencies:
+
+```js
+// ...
+let chatRoom = this.props.chatRoom
+// ...
+this.props.set('activeThreadID', 'thread56')
+// ...
+```
+
+It helps you write clean and abstract code. Then in our example, a function to toggle the show/hide of the thread looks like this:
 
 ```jsx
 // ...
@@ -256,7 +270,7 @@ class ChatRoom extends Component {
 }
 ```
 
-When you call `this.props.set('activeThreadID', null)` Alfa maps the dynamic key back to the key we have in the `keys` function. In this case the `set` function call changes the value of the key `alfadev/activeThreadID` to `null` or the id of the thread.
+When you call `this.props.set('activeThreadID', null)` Alfa maps the dynamic key back to the real key we defined in the return object of the [`keys`](/api#keysprops) function. In this case the `set` function call changes the value of the key `alfadev/activeThreadID` to `null` or the id of the thread.
 
 Now defining the output of the ChatRoom component becomes more intuitive:
 
@@ -269,3 +283,26 @@ export default subscribe(
 ```
 
 You can find a full example for the usage of the dynamic keys in [injection.test.js](https://github.com/lsm/alfa/blob/master/test/injection.test.js) test case `Should set dynamic key correctly`.
+
+## Multiple Stores
+
+Sometimes you may want to have multiple stores for different sections of your application. It is easy to achieve with `alfa`, all you need to do is put components under separate [`Providers`](/api#provider):
+
+```jsx
+function App() {
+  return (
+    <div>
+      <Provider data={data1}>
+        <SubApp1 />
+      </Provider>
+      <Provider data={data2}>
+        <SubApp2 />
+      </Provider>
+    </div>
+  )
+}
+
+render(<App />, document.getElementById('root'))
+```
+
+Now you won't have any conflicts even you have the same `key` in both `SubApp1` and `SubApp2` since they are under different [`Providers`](/api#provider) and stores.
