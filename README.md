@@ -10,6 +10,8 @@
 [![Coverage Status][coverage-img]][coverage-url]
 [![Code Climate][climate-img]][climate-url]
 
+![Alfa - Effortless React State Management](docs/alfa.gif)
+
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/alfajs.svg)](https://saucelabs.com/u/alfajs)
 
 ## Why Alfa?

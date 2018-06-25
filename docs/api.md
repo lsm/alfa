@@ -65,7 +65,7 @@ Attach a curry function to the `actionFunction` which you can use it as `depende
 
 * **Return**
 
-  * `Function` - it returns the original `actionFunction` with a curry function `alfaAction` attached.
+  * `Function` - it returns the original `actionFunction` with a curry function attached as property `alfaAction`.
 
 ## keys(props)
 

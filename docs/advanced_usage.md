@@ -29,7 +29,7 @@ In the [Quick Guide](https://lsm.github.io/alfa/#/?id=changing-data) we learned 
 
 ### How to Define an Action?
 
-To define an action function you need to import the [`action`](/api#actionactionfunction-input-output) function from `alfa` first, then call it with your original function and the input/output desired.
+To define an action function you need to import the [`action`](/api#actionactionfunction-input-output) function from [`alfa`](https://github.com/lsm/alfa) first, then call it with your original function and the input/output desired.
 
 ```js
 import { action } from 'alfa'
@@ -193,9 +193,9 @@ export default inject(TodoItem, ['deleteTodo'])
 
 ### What is Dynamic Keys for?
 
-To make changes to the store, `alfa` requires you to define the names of the outputs for both injected/subscribed components or action functions. What if the key you want to change is a dynamic value? For example, a unique id for a chat room? You can not predefine the output key in this case because it is data not code. Luckily, `alfa` supports this use case and it's called `Dynamic Keys`.
+To make changes to the store, [`alfa`](https://github.com/lsm/alfa) requires you to define the names of the outputs for both injected/subscribed components or action functions. What if the key you want to change is a dynamic value? For example, a unique id for a chat room? You can not predefine the output key in this case because it is data not code. Luckily, [`alfa`](https://github.com/lsm/alfa) supports this use case and it's called `Dynamic Keys`.
 
-Another use case is you want to load more dependencies based on the `props` of the component at initialization stage.
+Another use case is when you want to load more dependencies based on the `props` of the component at initialization stage.
 
 To use it you need to define a function as the static property [`keys`](/api#keysprops) for your component.
 
@@ -286,7 +286,7 @@ You can find a full example for the usage of the dynamic keys in [injection.test
 
 ## Multiple Stores
 
-Sometimes you may want to have multiple stores for different sections of your application. It is easy to achieve with `alfa`, all you need to do is put components under separate [`Providers`](/api#provider):
+Sometimes you may want to have multiple stores for different sections of your application. It is easy to achieve with [`alfa`](https://github.com/lsm/alfa), all you need to do is put components under separate [`Providers`](/api#provider):
 
 ```jsx
 function App() {
