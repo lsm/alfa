@@ -1,3 +1,5 @@
+require('raf/polyfill')
+
 require('./setup')
 require('./provide.test')
 require('./action.test')
