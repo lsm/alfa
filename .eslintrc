@@ -43,8 +43,7 @@
             "modules": true,
             "spread" : true,
             "restParams" : true,
-            "impliedStrict": true,
-            "experimentalObjectRestSpread": true
+            "impliedStrict": true
         }
     }
 }
