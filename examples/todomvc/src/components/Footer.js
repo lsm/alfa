@@ -37,9 +37,10 @@ class Footer extends Component {
     })
     return (
       <a
-        className={css}
+        href={`#filter-${filter}`}
         style={{ cursor: 'pointer' }}
         onClick={() => this.props.set('filter', filter)}
+        className={css}
       >
         {title}
       </a>
