@@ -62,7 +62,9 @@ export const deleteTodo = action(
 export const editTodo = action(
   function({ todoID, todoText, todos }) {
     var resultTodos = todos.map(function(todo) {
-      if (todoID === todo.id) todo.text = todoText
+      if (todoID === todo.id) {
+        todo.text = todoText
+      }
       return todo
     })
 

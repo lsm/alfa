@@ -23,8 +23,11 @@ class TodoItem extends Component {
   }
 
   handleSave = (todoID, todoText) => {
-    if (0 === todoText.length) this.props.deleteTodo({ todoID })
-    else this.props.editTodo({ todoID, todoText })
+    if (0 === todoText.length) {
+      this.props.deleteTodo({ todoID })
+    } else {
+      this.props.editTodo({ todoID, todoText })
+    }
     this.setState({
       editing: false
     })

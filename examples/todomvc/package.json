@@ -5,18 +5,18 @@
   "devDependencies": {
     "babel-plugin-transform-class-properties": "6.24.1",
     "babel-plugin-transform-object-rest-spread": "6.26.0",
-    "enzyme": "3.3.0",
-    "eslint": "4.19.1",
+    "enzyme": "3.7.0",
+    "eslint": "5.7.0",
     "react-addons-test-utils": "15.6.2",
-    "react-scripts": "1.1.4"
+    "react-scripts": "2.0.4"
   },
   "dependencies": {
     "alfa": "0.6.x",
-    "classnames": "2.2.5",
-    "prop-types": "15.6.1",
-    "react": "16.4.0",
-    "react-dom": "16.4.0",
-    "react-test-renderer": "16.4.0",
+    "classnames": "2.2.6",
+    "prop-types": "15.6.2",
+    "react": "16.5.2",
+    "react-dom": "16.5.2",
+    "react-test-renderer": "16.5.2",
     "todomvc-app-css": "2.1.2"
   },
   "scripts": {
@@ -24,5 +24,11 @@
     "build": "react-scripts build",
     "eject": "react-scripts eject",
     "test": "react-scripts test"
-  }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }
