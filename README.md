@@ -18,39 +18,39 @@
 
 [React](https://facebook.github.io/react/) is an excellent library for creating interactive and stateful views. However, things become unclear when you need to `share & change data across components`.
 
-Alfa is an **intuitive and straightforward way** to manage React state. It completely decouples the complex relationships between components and let you focus on making **components that work anywhere**.
+Alfa offers an **intuitive and straightforward way** to manage React state. It completely decouples the complex relationships between components and lets you focus on making **components that work anywhere**.
 
 Its **simple** design allows you to adopt it in a matter of minutes while at the same time provides your essential tools to keep your application code easy to change and understand. Here is a list of things why it is the perfect fit for your next React app:
 
-* **Easy** - Only 4 functions/APIs to learn.
-* **Fast** - Alfa wraps your components with a thin layer. It introduces a little or no performance impacts.
-* **Small** - ~ 190LOC & 3KB minified + gzipped.
-* **Async** - Alfa supports asynchronous operation natively without additional packages.
-* **Explicit** - Alfa lets you know what a component requires **(input)** and what it changes **(output)**.
-* **Transparent** - You can use and unit test your components as it is without Alfa. Users of your lib/component could but don't have to use Alfa at all.
-* **React Native** - Support React Native out of the box.
-* **Server Render** - Support isomorphic app out of the box.
-* **Production Ready** - 100% test coverage and being used in productions.
+* **Easy** &ndash; Only 4 functions/APIs to learn.
+* **Fast** &ndash; Alfa wraps your components with a thin layer. It introduces little to no performance impacts.
+* **Small** &ndash; ~190LOC & 3KB minified + gzipped.
+* **Async** &ndash; Alfa supports asynchronous operations natively without additional packages.
+* **Explicit** &ndash; Alfa lets you know what a component requires **(input)** and what it changes **(output)**.
+* **Transparent** &ndash; You can use and unit test your components as they are without Alfa. Users of your lib/component could but don't have to use Alfa at all.
+* **React Native** &ndash; Supports React Native out of the box.
+* **Server Render** &ndash; Supports isomorphic apps out of the box.
+* **Production Ready** &ndash; 100% test coverage and being used in productions.
 
 ## Links
 
 * [Documentation](https://lsm.github.io/alfa)
-* [Hello Wrold Example](https://github.com/lsm/alfa/tree/master/examples/hello)
+* [Hello World Example](https://github.com/lsm/alfa/tree/master/examples/hello)
 * [TodoMVC Example](https://github.com/lsm/alfa/tree/master/examples/todomvc)
 
 ## Quick Guide
 
 ### Installation
 
-Use `npm` to add it to your package.json.
+Use `npm` to add it to your `package.json`.
 
-```
+```sh
 npm install --save alfa
 ```
 
 Alternatively, use `yarn` if you prefer:
 
-```
+```sh
 yarn add alfa
 ```
 
@@ -72,7 +72,7 @@ function HelloMessage(props) {
 export default subscribe(HelloMessage, ['name'])
 ```
 
-`subscribe` makes a new component which gets the variable `name` and feeds it into the `HelloMessage` as `props.name` on (re)rendering.
+`subscribe` makes a new component which gets the variable `name` and feeds it into the `HelloMessage` as `props.name` on (re-)rendering.
 
 Now let's see how to use the above component in our app:
 
@@ -99,7 +99,7 @@ const Root = provide(App, { name: 'Motoko' })
 render(<Root />, document.getElementById('root'))
 ```
 
-You don't need to pass the variable `name` to `HelloMessage` as alfa gets it from the store and pass it to `HelloMessage` component automatically. It allows us to quickly move the component around without worrying about how to get the data it depends on.
+You don't need to pass the variable `name` to `HelloMessage` as Alfa gets it from the store and passes it to `HelloMessage` component automatically. It allows us to quickly move the component around without worrying about how to get the data it depends on.
 
 ### Changing Data
 
@@ -141,7 +141,7 @@ class ChangeName extends Component {
 export default subscribe(ChangeName, ['set', 'name'], ['name'])
 ```
 
-As mentioned earlier Alfa makes things explicit. So we need to define the `output` (the 3rd argument when calling function `subscribe`) of the component explicitly if we want to change a value of a key in the data store. Otherwise, Alfa complains we are trying to use `set` without defining the correct `output`.
+As mentioned earlier, Alfa makes things explicit. So we need to define the `output` (the 3rd argument when calling the `subscribe` function) of the component explicitly if we want to change a value of a key in the data store. Otherwise, Alfa complains that we are trying to use `set` without defining the correct `output`.
 
 Now add the `ChangeName` component to `App` and your `index.js` ends up like this:
 
@@ -170,11 +170,11 @@ render(
 )
 ```
 
-Now each time you make a change in the input box React will rerender both `HellowMessage` and `ChangeName` components to reflect the change.
+Now each time you make a change in the input box, React will re-render both `HelloMessage` and `ChangeName` components to reflect the change.
 
-You can find the finished version of the above example in the folder [examples/hello](https://github.com/lsm/alfa/tree/master/examples/hello).
+You can find the finished version of the above example in the folder [`examples/hello`](https://github.com/lsm/alfa/tree/master/examples/hello).
 
-Please check documentation for [API](https://lsm.github.io/alfa/#/api) and [advanced usages](https://lsm.github.io/alfa/#/advanced_usage).
+Please check the documentation for [API](https://lsm.github.io/alfa/#/api) and [advanced usages](https://lsm.github.io/alfa/#/advanced_usage).
 
 ## License
 
