@@ -23,7 +23,7 @@ const config = {
       babelrc: false,
       presets: [
         [
-          'env',
+          '@babel/preset-env',
           {
             targets: {
               browsers: ['> 1%']
@@ -31,12 +31,12 @@ const config = {
             modules: false
           }
         ],
-        'react'
+        '@babel/preset-react'
       ],
       plugins: [
-        'external-helpers',
-        'transform-object-rest-spread',
-        'transform-class-properties'
+        '@babel/plugin-external-helpers',
+        '@babel/plugin-proposal-class-properties',
+        '@babel/plugin-proposal-object-rest-spread'
       ],
       exclude: '**/node_modules/**'
     }),
