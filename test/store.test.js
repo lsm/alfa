@@ -99,7 +99,7 @@ test('store.get() with invalidate key', t => {
 })
 
 test('store.subscribe()', t => {
-  t.plan(5)
+  t.plan(6)
 
   const store = createStore({
     a: 1,
@@ -141,6 +141,16 @@ test('store.subscribe()', t => {
   t.throws(() => {
     store.subscribe(['key1'], {})
   }, '`fn` must be a function')
+
+  store.subscribe(['silent'], function(value) {
+    throw new Error('`silent` set should not be triggered.')
+  })
+
+  t.throws(() => {
+    store.set('silent', 'silent value')
+  }, '`silent` set should not be triggered.')
+
+  store.set('silent', 'silent value', true)
 })
 
 test('store.unsubscribe()', t => {

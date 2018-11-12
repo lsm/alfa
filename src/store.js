@@ -32,6 +32,11 @@ export default class Store {
   isAlfaStore = true
 
   /**
+   * @type {Number}
+   */
+  silentVersion = 0
+
+  /**
    * Get value from store by key.
    *
    * @param  {String|undefined} key Name of the value to get.
@@ -72,15 +77,17 @@ export default class Store {
    * @param {String|Object}   key   Name of the value in store.  Or object of
    * key/value pairs to merge into the store.
    * @param {Any}             value Value to save.
+   * @param {Boolean}         silent set to true to avoid calling subscription
+   *                          functions.
    */
-  set(key, value) {
+  set(key, value, silent) {
     const store = this
 
     if ('string' === typeof key) {
-      setSingle(store, key, value)
+      setSingle(store, key, value, silent)
     } else if (isobject(key)) {
       Object.keys(key).forEach(function(_key) {
-        setSingle(store, _key, key[_key])
+        setSingle(store, _key, key[_key], silent)
       })
     } else {
       throw new TypeError('Type of `key` must be string or plain object.')
@@ -166,7 +173,7 @@ export default class Store {
 /**
  * Set a single value to an object.
  */
-function setSingle(store, key, value) {
+function setSingle(store, key, value, silent) {
   const { _store, _subscriptions } = store
 
   // Uncurry alfa action functions
@@ -176,6 +183,11 @@ function setSingle(store, key, value) {
 
   // Save the value to the store.
   _store[key] = value
+
+  if (silent) {
+    store.silentVersion += 1
+    return
+  }
 
   // Call subscribed functions if we have.
   const subs = _subscriptions[key]
