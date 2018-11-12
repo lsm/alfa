@@ -88,10 +88,10 @@ function createAlfaInjectedComponent(WrappedComponent, inputs, outputs) {
     // Props passed in directly to constructor has lower priority than inputs
     // injected from the store.
     var _props = { ...props, ...injectedProps }
-    const dynamicProps = getDynamicProps(keys, _props, outputs, alfaStore)
-    // Dynamic props has higher priority than static props.
-    if (dynamicProps) {
-      _props = { ..._props, ...dynamicProps.props }
+
+    if (keys) {
+      const dynamicInputs = getDynamicInputs(keys, _props, inputs)
+      _props = getDynamicProps(dynamicInputs, outputs, alfaStore)
     }
 
     if (WrappedComponent.prototype.isReactComponent) {
@@ -123,43 +123,52 @@ function createAlfaSubscribedComponent(WrappedComponent, inputs, outputs) {
       // Call the original constructor.
       super(props, context, updater)
       /* istanbul ignore next */
+      // Save the store for subscribe/unsubscribe.
+      this.store = context && context.alfaStore
+      // Get the state.
+      // console.log('silentVersion in constructor', this.silentVersion)
+      this.state = this.getState(props, this.store)
+      // Use bound setState as subscription function.
+      let setState = this.setState.bind(this)
+      this.setState = function() {
+        setState.apply(null, arguments)
+      }
+    }
 
-      const alfaStore = context && context.alfaStore
+    getState = (props, alfaStore) => {
+      if (!alfaStore || this.silentVersion === alfaStore.silentVersion) {
+        return this.state
+      }
+      // Sync silent version with alfa store
+      this.silentVersion = alfaStore.silentVersion
       // Get injected props which is part of the state of the component.
       const injectedProps = getInjectedProps(inputs, outputs, alfaStore)
-      // Merge injected props with props where the first one has higher priority.
-      const _props = { ...props, ...injectedProps }
-      // Get dynamic props.
-      const dynamicProps = getDynamicProps(keys, _props, outputs, alfaStore)
-
-      // Handle dymanic props.
-      if (dynamicProps) {
-        this.subKeys = [...inputs, ...dynamicProps.inputs]
-        this.subMaps = dynamicProps.maps
-        this.state = { ...injectedProps, ...dynamicProps.props }
-      } else {
-        this.subKeys = inputs
-        this.state = injectedProps
-      }
-
-      // Save the store for subscribe/unsubscribe.
-      this.store = alfaStore
-      this.setState = this.setState.bind(this)
+      // Merge injected props with props where the injectedProps has higher priority.
+      var _props = { ...props, ...injectedProps }
+      // Get dynamic inputs.
+      const dynamicInputs = getDynamicInputs(keys, _props, inputs)
+      this.maps = dynamicInputs.maps
+      this.inputs = dynamicInputs.inputs
+      // Get the props and return as state
+      return getDynamicProps(dynamicInputs, outputs, alfaStore)
     }
 
     componentDidMount() {
       // Call `setState` when subscribed keys changed.
-      this.store.subscribe(this.subKeys, this.setState, this.subMaps)
+      this.store && this.store.subscribe(this.inputs, this.setState, this.maps)
     }
 
     componentWillUnmount() {
       // Unsubcribe `setState` when component is about to unmount.
-      this.store.unsubscribe(this.setState)
+      this.store && this.store.unsubscribe(this.setState)
     }
 
     render() {
       // Render the original component with state as its props.
-      return createElement(WrappedComponent, { ...this.props, ...this.state })
+      return createElement(WrappedComponent, {
+        ...this.props,
+        ...this.getState(this.props, this.store)
+      })
     }
   }
 
@@ -197,39 +206,51 @@ function getInjectedProps(inputs, outputs, alfaStore) {
  * @param  {Object} alfaStore
  * @return {Object}
  */
-function getDynamicProps(keys, props, outputs, alfaStore) {
-  if (!keys && 'function' !== typeof keys) {
-    return
-  }
+function getDynamicProps({ keys, maps, inputs }, outputs, alfaStore) {
+  const _props = getInjectedProps(inputs, outputs, alfaStore)
 
-  const _keys = keys(props)
-  if (Array.isArray(_keys)) {
-    // Array of input keys.  There's no mapping in this case.  Item in the
-    // array is the name of the input key.  We use this array to get
-    // dependencies directly from the store.
-    return {
-      inputs: _keys,
-      props: getInjectedProps(_keys, outputs, alfaStore)
-    }
-  } else if (isobject(_keys)) {
-    // Object of mappings between injection keys and real input keys.
-    const injectionKeys = Object.keys(_keys)
-    const realInputs = injectionKeys.map(key => _keys[key])
-    const _props = getInjectedProps(realInputs, outputs, alfaStore)
-    const mappedProps = {}
-    injectionKeys.forEach(key => (mappedProps[key] = _props[_keys[key]]))
-
+  if (maps) {
+    keys.forEach(key => {
+      _props[key] = _props[maps[key]]
+    })
     // Map outputs
-    if (outputs && 'function' === typeof props.set) {
+    if (outputs && 'function' === typeof _props.set) {
       // The `set` of `props` which is obtained from calling
       // `alfaStore.setWithOutputs(outputs)`
-      const _setWithOutputs = props.set
+      const _setWithOutputs = _props.set
       // Call `_setWithOutputs` with maps if
-      props.set = function(key, value) {
-        _setWithOutputs(key, value, _keys)
+      _props.set = function(key, value) {
+        _setWithOutputs(key, value, maps)
       }
     }
+    return _props
+  } else {
+    // No mapped props
+    return _props
+  }
+}
 
-    return { maps: _keys, props: mappedProps, inputs: realInputs }
+function getDynamicInputs(getKeys, props, _inputs) {
+  if (getKeys && 'function' === typeof getKeys) {
+    const inputs = getKeys(props)
+
+    if (Array.isArray(inputs)) {
+      return {
+        inputs: [..._inputs, ...inputs]
+      }
+    } else if (isobject(inputs)) {
+      // Object of mappings between injection keys and real input keys.
+      const keys = Object.keys(inputs)
+      const realInputs = keys.map(key => inputs[key])
+      return {
+        keys,
+        maps: inputs,
+        inputs: [..._inputs, ...realInputs]
+      }
+    }
+  }
+
+  return {
+    inputs: _inputs
   }
 }

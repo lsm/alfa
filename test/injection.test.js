@@ -268,13 +268,21 @@ test('inject with dynamic keys', t => {
     }
 
     static keys = function(props) {
-      t.is(props.title, 'The title')
+      t.is(props.title, 'The title', 'static key props.title')
       return ['subTitle']
     }
 
     render() {
-      t.is(this.props.title, store.get('title'))
-      t.is(this.props.subTitle, store.get('subTitle'))
+      t.is(
+        this.props.title,
+        store.get('title'),
+        'inject static key props.title'
+      )
+      t.is(
+        this.props.subTitle,
+        store.get('subTitle'),
+        'inject dynamic key props.subTitle'
+      )
       return (
         <div>
           <h1>{this.props.title}</h1>
@@ -505,8 +513,10 @@ test('Call set without predefined output should throw', t => {
 })
 
 test('Should set dynamic key correctly', t => {
-  t.plan(3)
-  const store = createStore()
+  t.plan(4)
+  const store = createStore({
+    anotherTargetKey: 'anotherTargetKey value'
+  })
 
   class ReactComponent extends Component {
     static keys(props) {
@@ -518,6 +528,11 @@ test('Should set dynamic key correctly', t => {
 
     componentDidMount() {
       this.props.set('theDynamicKey', 'the value which does matter')
+      t.is(
+        this.props.anotherDynamicKey,
+        store.get('anotherTargetKey'),
+        'anotherDynamicKey should equal to anotherTargetKey'
+      )
       t.throws(() => {
         this.props.set({
           anotherDynamicKey: 'another value does not matter'
@@ -539,8 +554,12 @@ test('Should set dynamic key correctly', t => {
 
   mount(<App target="theTargetKey" anotherTarget="anotherTargetKey" />)
 
-  t.is(store.get('theTargetKey'), 'the value which does matter')
-  t.is(store.get('anotherTargetKey'), undefined)
+  t.is(
+    store.get('theTargetKey'),
+    'the value which does matter',
+    'set `theDynamicKey` should map to `theTargetKey`'
+  )
+  t.is(store.get('anotherTargetKey'), 'anotherTargetKey value')
 })
 
 test('Avoid calling subscription functions when the component has been removed in previous subscription function', t => {
