@@ -2,11 +2,10 @@
 
 > Effortless React State Management.
 
+[![CI status][ci-img]][ci-url]
 [![License MIT][license-img]][license-url]
 [![NPM version][npm-img]][npm-url]
-[![Downloads][down-img]][npm-url]
 [![Dependencies][dep-image]][dep-url]
-[![build status][travis-img]][travis-url]
 [![Coverage Status][coverage-img]][coverage-url]
 [![Code Climate][climate-img]][climate-url]
 
@@ -189,6 +188,8 @@ MIT
 [npm-img]: https://badge.fury.io/js/alfa.svg
 [down-img]: https://img.shields.io/npm/dm/alfa.svg
 [npm-url]: https://npmjs.org/package/alfa
+[ci-img]: https://circleci.com/gh/lsm/alfa/tree/master.svg?style=shield
+[ci-url]: https://circleci.com/gh/lsm/alfa/tree/master
 [travis-img]: https://travis-ci.org/lsm/alfa.svg?branch=master
 [travis-url]: http://travis-ci.org/lsm/alfa
 [coverage-img]: https://coveralls.io/repos/github/lsm/alfa/badge.svg?branch=master
