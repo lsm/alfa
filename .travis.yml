@@ -4,23 +4,22 @@ language: node_js
 matrix:
   fast_finish: true
   include:
-    - node_js: "8"
+    - node_js: '10'
       env: TASK=browser
-    - node_js: "8"
+    - node_js: '8'
       env: TASK=coveralls
-    - node_js: "8"
+    - node_js: '10'
       env: TASK=unit
 cache:
   directories:
-  - node_modules
+    - node_modules
 script:
   - make ${TASK}
 env:
   global:
-  - secure: D7TwkiKbaSeHWk7bUDA4aL1rYzQBrKjDdPgJYoV35km8KipPvujbWacpdREz4mgpXjtE01U1exLjQsTq2aoG576a/PArdQx+6Wfw7rTA18xRBBf6FovAw9y0i/6I6Y3Qhb2OevD/DfctEVuoQHK+IfEk1xHf3VtXJ2XXeN0VPqI=
-  - secure: FPMYWtm9QGNAQJ4zWT0e6vVwsvfeFe5xEBs4nv+XLd2RiKt+sa5eoVoOxqDl3h95MfTFngr+UylR7MKnwAgwrZzsDlMZrgDItObVgsVvEHBjCT185m9MyW7W0tPEHG3TFsuS71F6J+Qr2TiqUt3Y441A5Dp1Z74+dKkxTPp9go0=
-  # travis encrypt SAUCE_USERNAME=alfajs
-  - secure: "DAEtdjAZ4OgC2Wm2nJ9zY5LrnfGoYil2HkiZejnyhbDKjtViuwr4/fTHyHA4Whq2BOBhEsJLbQ+LLB717C/Dxii/lpSQm6mBPj10EtJMCoyZLwSjB9nhfKDxhG2jdv8nLHgAq1g86Gb6haenmlg24ue3X53OzmeC5+gQbU/VAU+EawFnVti7knB/olOGbHmBgKgBqtYuCBtKq4Hcav06qTChubrtL3O4a+Dk+YGpbIayMogUk71SxnL45f5My9n7HOE/VrTFZeoIw9h5LOw+pRbGuXdym/LHSqHPr0xdxB45G0ykC+ZYxNhpuiS72X3rGPwfUJHeSl63UdEXrjAgkk9GI8KB4ykuaysSdUka/kyBckkhvzlw+9tWhIsw9czeEdxGYhAh1DVrXCRBK2XxGKyqUi/eiT7I67qXG+Ym89yOPv7OF8iDNp9nwnrzATrrZy9SPxAP6J5MYit+gv1R8u4YDSYjWX/Tlydcu0ro/IksZFvyZ17CWoLoa7nZOEOWjiaB8+oUkgBQOG4gHqBciP/xmigyyZZ7bkyXP+J+iqc4VH3lbRAhE5emmNBJO7Aig5cJ5lXONduoxdpb925/UuREZ47iW5Bd8QS7ENJZKmRcsjCvpKUWkintxESzAmGlk+GFCoFDBiIzDK+szvp9WCQU3SGy5uYgdpDbOBy4OAo="
-  # travis encrypt SAUCE_ACCESS_KEY=
-  - secure: "cB/daEDTLSWDJv1ODONYJhTdxGUtIWtskOUyRoSOnPnyHIaVfL90Ny7dXrpwU1GS/ZWA5IHyId1joK4ida3JEtTqdftjOjVqt6w9Xv8UXPCXr0KAMB7sPCpwa3pS8s3pZEBmzqe1gjfhH2Mw6g6ZgNprDpWwWaiCAEO+NmMsQv4/34gEuDcAt+u18EZeiBMddlf6VsH5R8RfZdz8g/0LRWz7lw5sTC5k4ziM4D50PKgN1jpzV150WMo/xuYS//evBu7ScI33/PkGbtVgOokGoGkUaECEj/SmOQh0Hn7RbemKqyrvWAZyIKvFTECuus7cNJ1jPQukxrM7va/Gm9fEZFc0K+CMD0VEAzKELqY1UgKPXtIuCMs7VzM4d1IxY0HfIDExziPwkMWctD4lLDL7oGiSsrTXbmFJQNp407WDtFd+/Q29dtd1IoyOlJ5X8t8GnvtIWmtM0orf5TKOr2/0DMB9pGqyhglmiaM+qLOkRIqOs22h1QV+INlnyTr5FYcXogrRUTiqFgqgrjF+dhELi92loMOknFAmaRfiRjKv6ecDm/6aVUpNp3pbeft2l4frLdU3lkBhRyY4nt8U3ypVCMjEP3g/Qliw14Qn6aGMivU1IO1M53tfjDe9IDAzc4DG/7DsYPDl0jfc3eibrq2LCG4uiHxGa/T1KKAjq5Qh8i8="  
-
+    - secure: D7TwkiKbaSeHWk7bUDA4aL1rYzQBrKjDdPgJYoV35km8KipPvujbWacpdREz4mgpXjtE01U1exLjQsTq2aoG576a/PArdQx+6Wfw7rTA18xRBBf6FovAw9y0i/6I6Y3Qhb2OevD/DfctEVuoQHK+IfEk1xHf3VtXJ2XXeN0VPqI=
+    - secure: FPMYWtm9QGNAQJ4zWT0e6vVwsvfeFe5xEBs4nv+XLd2RiKt+sa5eoVoOxqDl3h95MfTFngr+UylR7MKnwAgwrZzsDlMZrgDItObVgsVvEHBjCT185m9MyW7W0tPEHG3TFsuS71F6J+Qr2TiqUt3Y441A5Dp1Z74+dKkxTPp9go0=
+    # travis encrypt SAUCE_USERNAME=alfajs
+    - secure: 'DAEtdjAZ4OgC2Wm2nJ9zY5LrnfGoYil2HkiZejnyhbDKjtViuwr4/fTHyHA4Whq2BOBhEsJLbQ+LLB717C/Dxii/lpSQm6mBPj10EtJMCoyZLwSjB9nhfKDxhG2jdv8nLHgAq1g86Gb6haenmlg24ue3X53OzmeC5+gQbU/VAU+EawFnVti7knB/olOGbHmBgKgBqtYuCBtKq4Hcav06qTChubrtL3O4a+Dk+YGpbIayMogUk71SxnL45f5My9n7HOE/VrTFZeoIw9h5LOw+pRbGuXdym/LHSqHPr0xdxB45G0ykC+ZYxNhpuiS72X3rGPwfUJHeSl63UdEXrjAgkk9GI8KB4ykuaysSdUka/kyBckkhvzlw+9tWhIsw9czeEdxGYhAh1DVrXCRBK2XxGKyqUi/eiT7I67qXG+Ym89yOPv7OF8iDNp9nwnrzATrrZy9SPxAP6J5MYit+gv1R8u4YDSYjWX/Tlydcu0ro/IksZFvyZ17CWoLoa7nZOEOWjiaB8+oUkgBQOG4gHqBciP/xmigyyZZ7bkyXP+J+iqc4VH3lbRAhE5emmNBJO7Aig5cJ5lXONduoxdpb925/UuREZ47iW5Bd8QS7ENJZKmRcsjCvpKUWkintxESzAmGlk+GFCoFDBiIzDK+szvp9WCQU3SGy5uYgdpDbOBy4OAo='
+    # travis encrypt SAUCE_ACCESS_KEY=
+    - secure: 'cB/daEDTLSWDJv1ODONYJhTdxGUtIWtskOUyRoSOnPnyHIaVfL90Ny7dXrpwU1GS/ZWA5IHyId1joK4ida3JEtTqdftjOjVqt6w9Xv8UXPCXr0KAMB7sPCpwa3pS8s3pZEBmzqe1gjfhH2Mw6g6ZgNprDpWwWaiCAEO+NmMsQv4/34gEuDcAt+u18EZeiBMddlf6VsH5R8RfZdz8g/0LRWz7lw5sTC5k4ziM4D50PKgN1jpzV150WMo/xuYS//evBu7ScI33/PkGbtVgOokGoGkUaECEj/SmOQh0Hn7RbemKqyrvWAZyIKvFTECuus7cNJ1jPQukxrM7va/Gm9fEZFc0K+CMD0VEAzKELqY1UgKPXtIuCMs7VzM4d1IxY0HfIDExziPwkMWctD4lLDL7oGiSsrTXbmFJQNp407WDtFd+/Q29dtd1IoyOlJ5X8t8GnvtIWmtM0orf5TKOr2/0DMB9pGqyhglmiaM+qLOkRIqOs22h1QV+INlnyTr5FYcXogrRUTiqFgqgrjF+dhELi92loMOknFAmaRfiRjKv6ecDm/6aVUpNp3pbeft2l4frLdU3lkBhRyY4nt8U3ypVCMjEP3g/Qliw14Qn6aGMivU1IO1M53tfjDe9IDAzc4DG/7DsYPDl0jfc3eibrq2LCG4uiHxGa/T1KKAjq5Qh8i8='

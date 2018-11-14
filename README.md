@@ -2,17 +2,14 @@
 
 > Effortless React State Management.
 
+[![CI status][ci-img]][ci-url]
 [![License MIT][license-img]][license-url]
 [![NPM version][npm-img]][npm-url]
-[![Downloads][down-img]][npm-url]
 [![Dependencies][dep-image]][dep-url]
-[![build status][travis-img]][travis-url]
 [![Coverage Status][coverage-img]][coverage-url]
 [![Code Climate][climate-img]][climate-url]
 
 ![Alfa - Effortless React State Management](docs/alfa.gif)
-
-[![Sauce Test Status](https://saucelabs.com/browser-matrix/alfajs.svg)](https://saucelabs.com/u/alfajs)
 
 ## Why Alfa?
 
@@ -22,21 +19,21 @@ Alfa offers an **intuitive and straightforward way** to manage React state. It c
 
 Its **simple** design allows you to adopt it in a matter of minutes while at the same time provides your essential tools to keep your application code easy to change and understand. Here is a list of things why it is the perfect fit for your next React app:
 
-* **Easy** &ndash; Only 4 functions/APIs to learn.
-* **Fast** &ndash; Alfa wraps your components with a thin layer. It introduces little to no performance impacts.
-* **Small** &ndash; ~190LOC & 3KB minified + gzipped.
-* **Async** &ndash; Alfa supports asynchronous operations natively without additional packages.
-* **Explicit** &ndash; Alfa lets you know what a component requires **(input)** and what it changes **(output)**.
-* **Transparent** &ndash; You can use and unit test your components as they are without Alfa. Users of your lib/component could but don't have to use Alfa at all.
-* **React Native** &ndash; Supports React Native out of the box.
-* **Server Render** &ndash; Supports isomorphic apps out of the box.
-* **Production Ready** &ndash; 100% test coverage and being used in productions.
+- **Easy** &ndash; Only 4 functions/APIs to learn.
+- **Fast** &ndash; Alfa wraps your components with a thin layer. It introduces little to no performance impacts.
+- **Small** &ndash; ~190LOC & 3KB minified + gzipped.
+- **Async** &ndash; Alfa supports asynchronous operations natively without additional packages.
+- **Explicit** &ndash; Alfa lets you know what a component requires **(input)** and what it changes **(output)**.
+- **Transparent** &ndash; You can use and unit test your components as they are without Alfa. Users of your lib/component could but don't have to use Alfa at all.
+- **React Native** &ndash; Supports React Native out of the box.
+- **Server Render** &ndash; Supports isomorphic apps out of the box.
+- **Production Ready** &ndash; 100% test coverage and being used in productions.
 
 ## Links
 
-* [Documentation](https://lsm.github.io/alfa)
-* [Hello World Example](https://github.com/lsm/alfa/tree/master/examples/hello)
-* [TodoMVC Example](https://github.com/lsm/alfa/tree/master/examples/todomvc)
+- [Documentation](https://lsm.github.io/alfa)
+- [Hello World Example](https://github.com/lsm/alfa/tree/master/examples/hello)
+- [TodoMVC Example](https://github.com/lsm/alfa/tree/master/examples/todomvc)
 
 ## Quick Guide
 
@@ -189,9 +186,12 @@ MIT
 [npm-img]: https://badge.fury.io/js/alfa.svg
 [down-img]: https://img.shields.io/npm/dm/alfa.svg
 [npm-url]: https://npmjs.org/package/alfa
+[ci-img]: https://circleci.com/gh/lsm/alfa/tree/master.svg?style=shield
+[ci-url]: https://circleci.com/gh/lsm/alfa/tree/master
 [travis-img]: https://travis-ci.org/lsm/alfa.svg?branch=master
 [travis-url]: http://travis-ci.org/lsm/alfa
 [coverage-img]: https://coveralls.io/repos/github/lsm/alfa/badge.svg?branch=master
 [coverage-url]: https://coveralls.io/github/lsm/alfa?branch=master
 [climate-img]: https://codeclimate.com/github/lsm/alfa/badges/gpa.svg
 [climate-url]: https://codeclimate.com/github/lsm/alfa
+[saucelabs-url]: https://saucelabs.com/browser-matrix/alfajs.svg

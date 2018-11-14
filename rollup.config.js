@@ -26,7 +26,7 @@ const config = {
           '@babel/preset-env',
           {
             targets: {
-              browsers: ['> 1%']
+              browsers: ['> 0.25%', 'not dead']
             },
             modules: false
           }
