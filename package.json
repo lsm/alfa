@@ -19,7 +19,7 @@
     "build:umd": "cross-env BABEL_ENV=rollup NODE_ENV=development rollup -c -o dist/alfa.js",
     "build:umd:min": "cross-env BABEL_ENV=rollup NODE_ENV=production rollup -c -o dist/alfa.min.js",
     "build": "npm run build:es && npm run build:cjs && npm run build:umd && npm run build:umd:min",
-    "build-watch": "cross-env BABEL_ENV=commonjs babel src --watch --out-dir lib",
+    "build-watch": "nodemon -w src -x npm run build",
     "nyc": "cross-env BABEL_ENV=development TEST_ENV=unit nyc babel-node test/unit.js",
     "lint": "eslint src",
     "test": "cross-env BABEL_ENV=development TEST_ENV=unit babel-node test/unit.js",
