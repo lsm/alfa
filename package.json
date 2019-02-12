@@ -23,7 +23,7 @@
     "nyc": "cross-env BABEL_ENV=development TEST_ENV=unit nyc babel-node test/unit.js",
     "lint": "eslint src",
     "test": "cross-env BABEL_ENV=development TEST_ENV=unit babel-node test/unit.js",
-    "watch": "cross-env BABEL_ENV=development TEST_ENV=unit babel-watch test/unit.js",
+    "watch": "nodemon -w src -w test -x cross-env BABEL_ENV=development TEST_ENV=unit babel-node test/unit.js",
     "report": "nyc report --reporter=html",
     "watch-report": "nodemon -w src -w test --exec cross-env BABEL_ENV=development TEST_ENV=unit nyc --reporter=html babel-node test/unit.js",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
