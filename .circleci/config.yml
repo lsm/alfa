@@ -11,6 +11,7 @@ workflows:
       - node-v6
       - node-v8
       - node-v10
+      - node-v11
 
 version: 2
 jobs:
