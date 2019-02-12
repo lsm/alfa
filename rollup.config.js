@@ -33,11 +33,7 @@ const config = {
         ],
         '@babel/preset-react'
       ],
-      plugins: [
-        '@babel/plugin-external-helpers',
-        '@babel/plugin-proposal-class-properties',
-        '@babel/plugin-proposal-object-rest-spread'
-      ],
+      plugins: ['@babel/plugin-proposal-class-properties'],
       exclude: '**/node_modules/**'
     }),
     replace({
