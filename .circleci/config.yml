@@ -46,6 +46,10 @@ jobs:
     <<: *node-base
     docker:
       - image: circleci/node:10
+  node-v11:
+    <<: *node-base
+    docker:
+      - image: circleci/node:11
 
   browser:
     docker:
