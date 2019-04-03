@@ -1,6 +1,6 @@
 {
   "name": "alfa",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Effortless React State Management.",
   "main": "lib/index.js",
   "module": "es/index.js",
