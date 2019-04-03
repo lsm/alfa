@@ -1,7 +1,5 @@
 ---
 engines:
-  csslint:
-    enabled: true
   duplication:
     enabled: true
     config:
@@ -15,7 +13,6 @@ engines:
     enabled: true
 ratings:
   paths:
-  - "**.css"
   - "**.inc"
   - "**.js"
   - "**.jsx"
@@ -24,4 +21,6 @@ exclude_paths:
 - node_modules/
 - test/
 - lib/
+- dist/
+- es/
 - examples/

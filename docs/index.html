@@ -8,6 +8,13 @@
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="https://unpkg.com/docsify/lib/themes/vue.css">
   <style type="text/css">
+    .markdown-section > p {
+      font-size: 18px;
+      color: #333;
+    }
+    .sidebar ul li a {
+      font-size: 15px;
+    }
     .sidebar-nav > ul > li > a {
       list-style: none;
       font-weight: 700;
@@ -20,11 +27,11 @@
     window.$docsify = {
       name: 'ALFA',
       repo: 'https://github.com/lsm/alfa',
-      homepage: 'https://raw.githubusercontent.com/lsm/alfa/master/README.md',
+      homepage: 'https://raw.githubusercontent.com/lsm/alfa/full-doc-in-readme/README.md',
       auto2top: true,
-      maxLevel: 4,
-      loadSidebar: true,
-      subMaxLevel: 3
+      maxLevel: 3,
+      loadSidebar: false,
+      subMaxLevel: 1
     }
   </script>
   <script src="https://unpkg.com/docsify/lib/docsify.min.js"></script>
