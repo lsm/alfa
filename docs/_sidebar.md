@@ -1,5 +1,5 @@
 <!-- docs/_sidebar.md -->
 
-* [Introduction](/)
-* [Advanced Usage](advanced_usage.md)
-* [API](api.md)
+* [Introduction](/#alfa)
+* [Advanced Usage](/#advanced-usage)
+* [API](/#api)
