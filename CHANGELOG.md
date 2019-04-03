@@ -1,3 +1,8 @@
+# 0.6.2 (2019/04/02)
+
+- Update dependencies.
+- Move all documentation into README.md.
+
 # 0.6.1 (2018/11/12)
 
 - Allow set internal store silently.
