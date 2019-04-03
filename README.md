@@ -9,7 +9,7 @@
 [![Coverage Status][coverage-img]][coverage-url]
 [![Code Climate][climate-img]][climate-url]
 
-![Alfa - Effortless React State Management](docs/alfa.gif)
+![Alfa - Effortless React State Management](https://raw.githubusercontent.com/lsm/alfa/master/docs/alfa.gif)
 
 ## Why Alfa?
 
