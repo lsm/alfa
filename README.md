@@ -612,7 +612,7 @@ MIT
 [dep-image]: https://david-dm.org/lsm/alfa.svg
 [dev-url]: https://david-dm.org/lsm/alfa?type=dev
 [dev-image]: https://david-dm.org/lsm/alfa/dev-status.svg
-[license-img]: https://img.shields.io/npm/l/alfa.svg
+[license-img]: https://img.shields.io/badge/License-MIT-green.svg
 [license-url]: http://opensource.org/licenses/MIT
 [npm-img]: https://badge.fury.io/js/alfa.svg
 [down-img]: https://img.shields.io/npm/dm/alfa.svg
