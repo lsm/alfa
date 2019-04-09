@@ -99,7 +99,7 @@ test('store.get() with invalidate key', t => {
 })
 
 test('store.subscribe()', t => {
-  t.plan(6)
+  t.plan(5)
 
   const store = createStore({
     a: 1,
@@ -142,15 +142,6 @@ test('store.subscribe()', t => {
     store.subscribe(['key1'], {})
   }, '`fn` must be a function')
 
-  store.subscribe(['silent'], function(value) {
-    throw new Error('`silent` set should not be triggered.')
-  })
-
-  t.throws(() => {
-    store.set('silent', 'silent value')
-  }, '`silent` set should not be triggered.')
-
-  store.set('silent', 'silent value', true)
 })
 
 test('store.unsubscribe()', t => {
@@ -165,4 +156,18 @@ test('store.unsubscribe()', t => {
   store.set('key', 'value')
   store.unsubscribe(sub)
   store.set('key', 'changed value')
+})
+
+
+test('store.merge()', t => {
+  t.plan(1)
+
+  const store = createStore()
+
+  store.subscribe(['mergedKey'], function() {
+    throw new Error('`mergedKey` should not be triggered by `merge`.')
+  })
+
+  store.merge({mergedKey: 'mergedKey value'})
+  t.is(store.get('mergedKey'), 'mergedKey value')
 })
