@@ -32,7 +32,7 @@ export class Provider extends Component {
   }
 
   render() {
-    return Children.only(this.props.children)
+    return this.props.children
   }
 }
 
