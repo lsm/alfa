@@ -80,7 +80,7 @@ export function normalizeOutputs(name, inputs, outputs) {
 }
 
 function createAlfaInjectedComponent(WrappedComponent, inputs, outputs) {
-  const keys = WrappedComponent.keys
+  const keys = typeof WrappedComponent.keys === 'function' ? WrappedComponent.keys : null
 
   function AlfaInjectedComponent(props, context, updater) {
     const alfaStore = context && context.alfaStore
@@ -112,27 +112,11 @@ function createAlfaInjectedComponent(WrappedComponent, inputs, outputs) {
 }
 
 function createAlfaSubscribedComponent(WrappedComponent, inputs, outputs) {
-  const keys = WrappedComponent.keys
+  const keys = typeof WrappedComponent.keys === 'function' ? WrappedComponent.keys : null
 
   class AlfaSubscribedComponent extends Component {
     static contextTypes = {
       alfaStore: PropTypes.object
-    }
-
-    constructor(props, context, updater) {
-      // Call the original constructor.
-      super(props, context, updater)
-      /* istanbul ignore next */
-      // Save the store for subscribe/unsubscribe.
-      this.store = context && context.alfaStore
-      // Get the state.
-      // console.log('silentVersion in constructor', this.silentVersion)
-      this.state = this.getState(props, this.store)
-      // Use bound setState as subscription function.
-      let setState = this.setState.bind(this)
-      this.setState = function() {
-        setState.apply(null, arguments)
-      }
     }
 
     getState = (props, alfaStore) => {
@@ -143,32 +127,40 @@ function createAlfaSubscribedComponent(WrappedComponent, inputs, outputs) {
       this.silentVersion = alfaStore.silentVersion
       // Get injected props which is part of the state of the component.
       const injectedProps = getInjectedProps(inputs, outputs, alfaStore)
+
       // Merge injected props with props where the injectedProps has higher priority.
-      var _props = { ...props, ...injectedProps }
-      // Get dynamic inputs.
-      const dynamicInputs = getDynamicInputs(keys, _props, inputs)
-      this.maps = dynamicInputs.maps
-      this.inputs = dynamicInputs.inputs
-      // Get the props and return as state
-      return getDynamicProps(dynamicInputs, outputs, alfaStore)
+      const _props = { ...props, ...injectedProps }
+
+      if (keys) {
+        // Get dynamic inputs.
+        const dynamicInputs = getDynamicInputs(keys, _props, inputs)
+        this.maps = dynamicInputs.maps
+        this.inputs = dynamicInputs.inputs
+        // Get the props and return as state
+        return getDynamicProps(dynamicInputs, outputs, alfaStore)
+      } else {
+        return _props
+      }
     }
 
     componentDidMount() {
       // Call `setState` when subscribed keys changed.
-      this.store && this.store.subscribe(this.inputs, this.setState, this.maps)
+      const store = this.context.alfaStore
+      if (store) {
+        this.setState = this.setState.bind(this)
+        store.subscribe(this.inputs || inputs, this.setState, this.maps)
+      }
     }
 
     componentWillUnmount() {
       // Unsubcribe `setState` when component is about to unmount.
-      this.store && this.store.unsubscribe(this.setState)
+      const store = this.context.alfaStore
+      store && store.unsubscribe(this.setState)
     }
 
     render() {
       // Render the original component with state as its props.
-      return createElement(WrappedComponent, {
-        ...this.props,
-        ...this.getState(this.props, this.store)
-      })
+      return createElement(WrappedComponent, this.getState(this.props, this.context.alfaStore))
     }
   }
 
@@ -231,22 +223,20 @@ function getDynamicProps({ keys, maps, inputs }, outputs, alfaStore) {
 }
 
 function getDynamicInputs(getKeys, props, _inputs) {
-  if (getKeys && 'function' === typeof getKeys) {
-    const inputs = getKeys(props)
+  const inputs = getKeys(props)
 
-    if (Array.isArray(inputs)) {
-      return {
-        inputs: [..._inputs, ...inputs]
-      }
-    } else if (isobject(inputs)) {
-      // Object of mappings between injection keys and real input keys.
-      const keys = Object.keys(inputs)
-      const realInputs = keys.map(key => inputs[key])
-      return {
-        keys,
-        maps: inputs,
-        inputs: [..._inputs, ...realInputs]
-      }
+  if (Array.isArray(inputs)) {
+    return {
+      inputs: [..._inputs, ...inputs]
+    }
+  } else if (isobject(inputs)) {
+    // Object of mappings between injection keys and real input keys.
+    const keys = Object.keys(inputs)
+    const realInputs = keys.map(key => inputs[key])
+    return {
+      keys,
+      maps: inputs,
+      inputs: [..._inputs, ...realInputs]
     }
   }
 
