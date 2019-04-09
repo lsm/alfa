@@ -72,3 +72,40 @@ test('Use the class interface <Provider />', t => {
   )
   t.is(wrapper.contains(<h1>App test initial data</h1>), true)
 })
+
+test('Render injected components without Provider', t => {
+  t.plan(1)
+  function FnComponent(props) {
+    return <h1>{props.title}</h1>
+  }
+
+  const InjectedFnComponent = inject(FnComponent, ['title'])
+
+  const wrapper = mount(
+    <InjectedFnComponent title="App test initial data" />
+  )
+  t.is(wrapper.contains(<h1>App test initial data</h1>), true)
+})
+
+
+test('Render subscribed components without Provider', t => {
+  t.plan(1)
+
+  class ReactComponent extends Component {
+    static propTypes = {
+      title: PropTypes.string
+    }
+
+    render() {
+      return <h1>{this.props.title}</h1>
+    }
+  }
+
+  const SubscribedReactComponent = subscribe(ReactComponent, ['title'])
+
+  const wrapper = mount(
+    <SubscribedReactComponent title="App test initial data" />
+  )
+  t.is(wrapper.contains(<h1>App test initial data</h1>), true)
+})
+

@@ -84,14 +84,20 @@ function createAlfaInjectedComponent(WrappedComponent, inputs, outputs) {
 
   function AlfaInjectedComponent(props, context) {
     const alfaStore = context && context.alfaStore
-    const injectedProps = getInjectedProps(inputs, outputs, alfaStore)
-    // Props passed in directly to constructor has lower priority than inputs
-    // injected from the store.
-    var _props = { ...props, ...injectedProps }
+    let _props
 
-    if (keys) {
-      const dynamicInputs = getDynamicInputs(keys, _props, inputs)
-      _props = getDynamicProps(dynamicInputs, outputs, alfaStore)
+    if (alfaStore) {
+      const injectedProps = getInjectedProps(inputs, outputs, alfaStore)
+      // Props passed in directly to constructor has lower priority than inputs
+      // injected from the store.
+      _props = { ...props, ...injectedProps }
+
+      if (keys) {
+        const dynamicInputs = getDynamicInputs(keys, _props, inputs)
+        _props = getDynamicProps(dynamicInputs, outputs, alfaStore)
+      }
+    } else {
+      _props = props
     }
 
     if (WrappedComponent.prototype.isReactComponent) {
@@ -120,11 +126,9 @@ function createAlfaSubscribedComponent(WrappedComponent, inputs, outputs) {
     }
 
     getState = (props, alfaStore) => {
-      if (!alfaStore || this.silentVersion === alfaStore.silentVersion) {
-        return this.state
+      if (!alfaStore) {
+        return props
       }
-      // Sync silent version with alfa store
-      this.silentVersion = alfaStore.silentVersion
       // Get injected props which is part of the state of the component.
       const injectedProps = getInjectedProps(inputs, outputs, alfaStore)
 
