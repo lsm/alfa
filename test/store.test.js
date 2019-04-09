@@ -171,3 +171,15 @@ test('store.merge()', t => {
   store.merge({mergedKey: 'mergedKey value'})
   t.is(store.get('mergedKey'), 'mergedKey value')
 })
+
+test('store.reset()', t => {
+  t.plan(2)
+
+  const store = createStore({key: 'value'})
+
+  t.is(store.get('key'), 'value')
+
+  store.reset()
+
+  t.is(store.get('key'), undefined, 'Reset store successfully.')
+})

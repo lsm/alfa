@@ -92,6 +92,10 @@ export default class Store {
     })
   }
 
+  reset() {
+    this._store = {}
+  }
+
   setWithOutputs = outputs => {
     const { set } = this
     return function checkOutputAndSet(key, value, maps) {
