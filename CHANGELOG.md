@@ -1,3 +1,15 @@
+# 0.7.0 (2019/04/09)
+
+- **[Breaking API]** Replace `Store.set(key, value, 'silent')` with `Store.merge`.
+  The internal `silentVersion` counter has been removed.
+- **[New API]** Add `Store.reset` for resetting store's internal data object.
+- **[New Behaviour]**
+  - Provider now picks up the new data when it's being rerenderred.
+    Children of Provider get rerenderred with new data.
+  - Provider accepts multiple components as its children.
+  - Subscribed/injected components could be used without Alfa
+    which means without wrapping inside a alfa.Provider.
+
 # 0.6.2 (2019/04/02)
 
 - Update dependencies.
