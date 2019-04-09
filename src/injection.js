@@ -82,7 +82,7 @@ export function normalizeOutputs(name, inputs, outputs) {
 function createAlfaInjectedComponent(WrappedComponent, inputs, outputs) {
   const keys = typeof WrappedComponent.keys === 'function' ? WrappedComponent.keys : null
 
-  function AlfaInjectedComponent(props, context, updater) {
+  function AlfaInjectedComponent(props, context) {
     const alfaStore = context && context.alfaStore
     const injectedProps = getInjectedProps(inputs, outputs, alfaStore)
     // Props passed in directly to constructor has lower priority than inputs
@@ -99,7 +99,7 @@ function createAlfaInjectedComponent(WrappedComponent, inputs, outputs) {
       return createElement(WrappedComponent, _props)
     } else {
       // Otherwise, call the original function.
-      return WrappedComponent(_props, context, updater)
+      return WrappedComponent(_props, context)
     }
   }
 
