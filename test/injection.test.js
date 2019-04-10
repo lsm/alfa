@@ -310,7 +310,7 @@ test('inject with dynamic keys', t => {
 })
 
 test('subscribe with dynamic keys', t => {
-  t.plan(10)
+  t.plan(11)
 
   const store = createStore({
     title: 'The title',
@@ -346,7 +346,9 @@ test('subscribe with dynamic keys', t => {
   const SubscribedReactComponent = subscribe(ReactComponent, ['title'])
   const App = provide(SubscribedReactComponent, store)
 
+  // Mount triggers 3 assertions.
   const wrapper1 = mount(<App />)
+
   t.ok(
     wrapper1.contains(
       <div>
@@ -357,9 +359,12 @@ test('subscribe with dynamic keys', t => {
     'render result 1'
   )
 
+  // Set triggers another 3 assertions for wrapper1 just like the mount.
   store.set('The title key', 'New sub title')
 
+  // Mount triggers 3 assertions.
   const wrapper2 = mount(<App />)
+
   t.ok(
     wrapper2.contains(
       <div>

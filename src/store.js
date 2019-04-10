@@ -20,9 +20,7 @@ export default class Store {
      */
     this._subscriptions = {}
 
-    this.set = this.set.bind(this)
-
-    // Initial store if we have data.
+    // Initialize store if we have data.
     data && this.set(data)
   }
 
@@ -30,11 +28,6 @@ export default class Store {
    * @type {Boolean}
    */
   isAlfaStore = true
-
-  /**
-   * @type {Number}
-   */
-  silentVersion = 0
 
   /**
    * Get value from store by key.
@@ -77,21 +70,30 @@ export default class Store {
    * @param {String|Object}   key   Name of the value in store.  Or object of
    * key/value pairs to merge into the store.
    * @param {Any}             value Value to save.
-   * @param {Boolean}         silent set to true to avoid calling subscription
-   *                          functions.
    */
-  set(key, value, silent) {
+  set = (key, value) => {
     const store = this
 
     if ('string' === typeof key) {
-      setSingle(store, key, value, silent)
+      setSingle(store, key, value)
     } else if (isobject(key)) {
       Object.keys(key).forEach(function(_key) {
-        setSingle(store, _key, key[_key], silent)
+        setSingle(store, _key, key[_key])
       })
     } else {
       throw new TypeError('Type of `key` must be string or plain object.')
     }
+  }
+
+  merge(dataObj) {
+    const store = this
+    Object.keys(dataObj).forEach(key => {
+      setSingle(store, key, dataObj[key], 'merge')
+    })
+  }
+
+  reset() {
+    this._store = {}
   }
 
   setWithOutputs = outputs => {
@@ -103,6 +105,7 @@ export default class Store {
         })
         return
       }
+
 
       if (Array.isArray(outputs) && outputs.indexOf(key) === -1) {
         // Throw exception if the output key is not allowed.
@@ -156,6 +159,7 @@ export default class Store {
       })
   }
 
+
   /**
    * Unsubscribe the function from all keys it's listening to.
    *
@@ -173,7 +177,8 @@ export default class Store {
 /**
  * Set a single value to an object.
  */
-function setSingle(store, key, value, silent) {
+
+function setSingle(store, key, value, flag) {
   const { _store, _subscriptions } = store
 
   // Uncurry alfa action functions
@@ -184,8 +189,7 @@ function setSingle(store, key, value, silent) {
   // Save the value to the store.
   _store[key] = value
 
-  if (silent) {
-    store.silentVersion += 1
+  if (flag === 'merge') {
     return
   }
 
@@ -195,6 +199,7 @@ function setSingle(store, key, value, silent) {
     var changed = {
       [key]: value
     }
+
     subs.forEach(function(subFn) {
       // Make sure the subFn is still legit at the time we are calling it since
       // all subscribing functions are actually `setStat`.  And previous
