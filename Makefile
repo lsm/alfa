@@ -7,16 +7,8 @@ build:
 build-watch:
 	npm run build-watch
 
-# Test on the saucelabs cloud.
-browser:
-	TEST_ENV=browser ./node_modules/.bin/karma start karma.conf.js
-
 clean-build:
 	rm -rf ./dist ./es ./lib
-
-# Test on local browsers.
-local-browser:
-	./node_modules/.bin/karma start karma.conf.js
 
 # Watch changes and run test.
 watch:
