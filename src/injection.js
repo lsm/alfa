@@ -1,6 +1,7 @@
-import isobject from 'isobject'
 import PropTypes from 'prop-types'
-import { Component, createElement } from 'react'
+import { createElement } from 'react'
+import { getProps } from './input'
+import { normalize } from './common'
 
 /**
  * Public API
@@ -10,22 +11,7 @@ export function inject(WrappedComponent, inputs, outputs) {
   const [_inputs, _outputs, keys] = normalize(WrappedComponent, inputs, outputs)
 
   function AlfaInjectedComponent(props, context) {
-    const alfaStore = context && context.alfaStore
-    let _props
-
-    if (alfaStore) {
-      const injectedProps = getInjectedProps(inputs, outputs, alfaStore)
-      // Props passed in directly to constructor has lower priority than inputs
-      // injected from the store.
-      _props = { ...props, ...injectedProps }
-
-      if (keys) {
-        const dynamicInputs = getDynamicInputs(keys, _props, inputs)
-        _props = getDynamicProps(dynamicInputs, outputs, alfaStore)
-      }
-    } else {
-      _props = props
-    }
+    let _props = getProps(props, _inputs, _outputs, context && context.alfaStore, keys)
 
     if (WrappedComponent.prototype.isReactComponent) {
       // Create an element if it's react component.
