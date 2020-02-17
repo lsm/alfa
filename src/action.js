@@ -1,5 +1,6 @@
 import isobject from 'isobject'
-import { normalizeInputs, normalizeOutputs } from './injection'
+import { normalizeInputs } from './input'
+import { normalizeOutputs } from './output'
 
 export default function action(func, inputs, outputs) {
   inputs = normalizeInputs('alfaAction', inputs)
