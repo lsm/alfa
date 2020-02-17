@@ -11,7 +11,7 @@ workflows:
       - node-v6
       - node-v8
       - node-v10
-      - node-v11
+      - node-v12
 
 version: 2
 jobs:
@@ -47,27 +47,7 @@ jobs:
     <<: *node-base
     docker:
       - image: circleci/node:10
-  node-v11:
+  node-v12:
     <<: *node-base
     docker:
-      - image: circleci/node:11
-
-  browser:
-    docker:
-      - image: circleci/node:10
-    working_directory: ~/repo
-    steps:
-      - run: node --version
-      - run: npm version
-      - checkout
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}-{{ .Environment.CIRCLE_JOB }}
-      - run: npm install
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}-{{ .Environment.CIRCLE_JOB }}
-      # run tests!
-      - run: make browser
+      - image: circleci/node:12
