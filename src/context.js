@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import React, { Component, createElement } from 'react'
+import React, { Children, Component, createElement } from 'react'
 
 import Store from './store'
 
@@ -25,15 +25,6 @@ export class Provider extends Component {
     alfaStore: PropTypes.object.isRequired
   }
 
-  shouldComponentUpdate(nextProps) {
-    if (nextProps.data) {
-      this.store.merge(nextProps.data)
-    } else {
-      this.store.reset()
-    }
-    return true
-  }
-
   getChildContext() {
     return {
       alfaStore: this.store
@@ -41,7 +32,7 @@ export class Provider extends Component {
   }
 
   render() {
-    return this.props.children
+    return Children.only(this.props.children)
   }
 }
 

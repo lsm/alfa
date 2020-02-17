@@ -2,9 +2,8 @@ import test from 'tape'
 import React, { Component } from 'react'
 import Adapter from 'enzyme-adapter-react-16'
 import PropTypes from 'prop-types'
-import { provide, Store } from '../src'
+import { provide, Store, inject, subscribe } from '../src'
 import { mount, configure } from 'enzyme'
-import { inject, subscribe } from '../src/injection'
 
 configure({
   adapter: new Adapter()
