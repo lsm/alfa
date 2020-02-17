@@ -8,8 +8,6 @@ workflows:
   multi-test:
     jobs:
       # - browser
-      - node-v6
-      - node-v8
       - node-v10
       - node-v12
 
@@ -35,14 +33,6 @@ jobs:
       # run tests!
       - run: make unit
       - run: make coveralls
-  node-v6:
-    <<: *node-base
-    docker:
-      - image: circleci/node:6
-  node-v8:
-    <<: *node-base
-    docker:
-      - image: circleci/node:8
   node-v10:
     <<: *node-base
     docker:
