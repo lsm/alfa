@@ -48,10 +48,10 @@ export default class Store {
       return _store[key as string]
     } else if (Array.isArray(key) && key.length > 0) {
       const results: KVObject = {}
-      key.forEach(function (k) {
-        if ('string' === typeof k) {
-          if (_store.hasOwnProperty(k)) {
-            results[k] = _store[k]
+      key.forEach(function (_key) {
+        if ('string' === typeof _key) {
+          if (Object.prototype.hasOwnProperty.call(_store, _key)) {
+            results[_key] = _store[_key]
           }
         } else {
           throw new TypeError(
