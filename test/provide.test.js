@@ -74,7 +74,7 @@ test('Use the class interface <Provider />', t => {
   t.is(wrapper.contains(<h1>App test initial data</h1>), true)
 })
 
-test('Rerender provider', t => {
+test('Provider should pickup the new data if it gets rerendered', t => {
   t.plan(3)
 
   function FnComponent(props) {
