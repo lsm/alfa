@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "allowJs": false,
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "importHelpers": true,
+    "isolatedModules": true,
+    "jsx": "react",
+    "lib": [],
+    "module": "esnext",
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "outDir": "lib",
+    "preserveConstEnums": true,
+    "removeComments": true,
+    "skipLibCheck": false,
+    "sourceMap": true,
+    "strict": true,
+    "target": "esnext"
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "src/**/*",
+    "test/**/*"
+  ],
+  "version": "0.8.0"
+}
