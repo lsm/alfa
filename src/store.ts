@@ -27,7 +27,9 @@ export default class Store {
    */
   constructor(data?: object) {
     // Initialize store if we have data.
-    data && this.set(data)
+    if (isObject(data)) {
+      this.set(data as KVObject)
+    }
   }
 
   /**
@@ -54,17 +56,13 @@ export default class Store {
             results[_key] = _store[_key]
           }
         } else {
-          throw new TypeError(
-            'Type of `key` must be string, array of strings or undefined.'
-          )
+          throw new TypeError('Type of `key` must be string, array of strings or undefined.')
         }
       })
       return results
     }
 
-    throw new TypeError(
-      'Type of `key` must be string, array of strings or undefined.'
-    )
+    throw new TypeError('Type of `key` must be string, array of strings or undefined.')
   }
 
   /**
@@ -75,13 +73,12 @@ export default class Store {
    * @param value   Value to save.
    */
   set = (key: InputKey, value?: AnyValue): void | never => {
-    const store = this
-
+    const { _setSingle } = this
     if ('string' === typeof key) {
-      store._setSingle(key, value)
+      _setSingle(key, value)
     } else if (isObject(key)) {
       Object.keys(key).forEach(function (_key) {
-        store._setSingle(_key, key[_key])
+        _setSingle(_key, key[_key])
       })
     } else {
       throw new TypeError('Type of `key` must be string or plain object.')
@@ -93,10 +90,9 @@ export default class Store {
    * @param data The data to merge with.
    */
   merge(data: KVObject): void {
-    const store = this
     Object.keys(data).forEach(key => {
-      store._setSingle(key, data[key], 'merge')
-    })
+      this._setSingle(key, data[key], 'silent')
+    }, this)
   }
 
   reset(): void {
@@ -106,7 +102,7 @@ export default class Store {
   setWithOutputs = (outputs: string[]): FunctionSet => {
     const { set } = this
 
-    return function checkOutputAndSet(key, value) {
+    return function checkOutputAndSet(key, value): void | never {
       if (isObject(key)) {
         const obj = key as KVObject
         Object.keys(obj).forEach(function (_key) {
@@ -116,23 +112,21 @@ export default class Store {
       }
 
       // key is a string.
-      let str = key as string
+      const str = key as string
 
       if (Array.isArray(outputs) && outputs.indexOf(str) === -1) {
         // Throw exception if the output key is not allowed.
-        throw new Error(
-          `Output key "${str}" is not allowed. You need to define it as an output when calling inject/subscribe.`
-        )
+        throw new Error(`Output key "${str}" is not allowed. You need to define it as an output when calling inject/subscribe.`)
       }
 
       set(str, value)
     }
   }
 
-  clone = () => {
+  clone = (): KVObject => {
     const cloned: KVObject = {}
     const { _store } = this
-    Object.keys(_store).forEach(key => (cloned[key] = _store[key]))
+    Object.keys(_store).forEach(key => cloned[key] = _store[key])
     return cloned
   }
 
@@ -154,13 +148,12 @@ export default class Store {
         if (Array.isArray(subs)) {
           subs.indexOf(key) === -1 && subs.push(fn)
         } else {
-          _subscriptions[key] = [fn]
+          _subscriptions[key] = [ fn ]
           return
         }
       })
     }
   }
-
 
   /**
    * Unsubscribe the function from all keys it's listening to.
@@ -182,7 +175,7 @@ export default class Store {
  * Set a single value to an object.
  */
 
-  private _setSingle(key: string, value: AnyValue, flag:StringSetFlag = 'loud' ): void {
+  private _setSingle = (key: string, value: AnyValue, flag: StringSetFlag = 'loud' ): void => {
     const { _store, _subscriptions } = this
 
     // Uncurry alfa action functions
@@ -200,9 +193,7 @@ export default class Store {
     // Call subscribed functions if we have any.
     const subs = _subscriptions[key]
     if (Array.isArray(subs)) {
-      var changed = {
-        [key]: value
-      }
+      const changed = { [key]: value }
 
       subs.forEach(function (subFn) {
         // Make sure the subFn is still legit at the time we are calling it since
