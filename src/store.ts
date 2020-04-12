@@ -1,3 +1,4 @@
+import { isObject } from './common'
 
 type AnyValue = any
 type KVObject = {
@@ -220,7 +221,3 @@ export default class Store {
     }
   }
 }
-
-function isObject(val: AnyValue) {
-  return val != null && typeof val === 'object' && Array.isArray(val) === false;
-};
