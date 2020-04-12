@@ -1,11 +1,10 @@
 import { isObject } from './common'
 
-type AnyValue = any
 type KVObject = {
-  [key: string]: AnyValue
+  [key: string]: unknown;
 }
 type InputKey = string | KVObject
-type FunctionSet = (key: InputKey, value?: AnyValue) => void;
+type FunctionSet = (key: InputKey, value?: unknown) => void;
 type FunctionSubscription = (data: KVObject) => void;
 type StringSetFlag = 'silent' | 'loud'
 
@@ -41,7 +40,7 @@ export default class Store {
    *
    * @param key Name of the value(s) to get.
    */
-  get(key: string | string[]): AnyValue | never {
+  get(key: string | string[]): unknown | never {
     const keyType = typeof key
     const _store = this._store
 
