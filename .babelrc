@@ -1,13 +1,17 @@
 {
   "presets": [
-    ["@babel/preset-env", {
+    ["@babel/env", {
       "targets": {
         "browsers": ["> 0.25%", "not dead"]
       }
     }],
-    "@babel/preset-react"
+    "@babel/react",
+    "@babel/typescript"
   ],
-  "plugins": ["@babel/plugin-proposal-object-rest-spread", "@babel/plugin-proposal-class-properties"],
+  "plugins": [
+    "@babel/proposal-object-rest-spread",
+    "@babel/proposal-class-properties"
+  ],
   "env": {
     "development": {
       "sourceMaps": "inline"
