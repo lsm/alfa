@@ -1,5 +1,5 @@
 import { isObject } from './common'
-import { StoreFunctionSubscription, StoreKVObject, ActionFunction } from './types';
+import { ActionFunction, StoreFunctionSubscription, StoreKVObject, StoreSetFunction, StoreSetKey } from './types'
 
 type SetFlag = 'silent' | 'loud'
 
@@ -67,7 +67,7 @@ export default class Store {
    * key/value pairs to merge into the store.
    * @param value   Value to save.
    */
-  set = (key: InputKey, value?: unknown): void | never => {
+  set = (key: StoreSetKey, value?: unknown): void | never => {
     const { _setSingle } = this
     if ('string' === typeof key) {
       _setSingle(key, value)
@@ -94,7 +94,7 @@ export default class Store {
     this._store = {}
   }
 
-  setWithOutputs = (outputs: string[]): FunctionSet => {
+  setWithOutputs = (outputs: string[]): StoreSetFunction => {
     const { set } = this
 
     return function checkOutputAndSet(key, value): void | never {
