@@ -1,4 +1,3 @@
-
 // Types for Store.
 export type StoreKVObject = {
   [key: string]: unknown;

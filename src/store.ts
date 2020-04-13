@@ -22,7 +22,7 @@ export default class Store {
    */
   constructor(data?: object) {
     // Initialize store if we have data.
-    if (isObject(data)) {
+    if (data) {
       this.set(data as StoreKVObject)
     }
   }
