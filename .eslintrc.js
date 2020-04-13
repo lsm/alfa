@@ -48,6 +48,13 @@ module.exports = {
       { allows: ['private'] }
     ],
     '@typescript-eslint/no-var-requires': 0,
+    '@typescript-eslint/no-this-alias': [
+      'error',
+      {
+        allowDestructuring: true, // Allow `const { props, state } = this`; false by default
+        allowedNames: ['self'], // Allow `const self = this`; `[]` by default
+      },
+    ],
     'no-extra-parens': 'error',
     semi: ['error', 'never'],
     // Array brackets
