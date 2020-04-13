@@ -1,12 +1,7 @@
 import { isObject } from './common'
+import { StoreFunctionSubscription, StoreKVObject, ActionFunction } from './types';
 
-type KVObject = {
-  [key: string]: unknown;
-}
-type InputKey = string | KVObject
-type FunctionSet = (key: InputKey, value?: unknown) => void;
-type FunctionSubscription = (data: KVObject) => void;
-type StringSetFlag = 'silent' | 'loud'
+type SetFlag = 'silent' | 'loud'
 
 /**
  * Store class - a key value store with subscription support.
@@ -15,12 +10,12 @@ export default class Store {
   /**
    * Internal object which holds the key/value map.
    */
-  private _store: KVObject = {}
+  private _store: StoreKVObject = {}
 
   /**
    * Internal object which holds all the subscription functions.
    */
-  private _subscriptions: {[key: string]: FunctionSubscription[]} = {}
+  private _subscriptions: { [key: string]: StoreFunctionSubscription[] } = {}
 
   /**
    * Constructor
@@ -28,7 +23,7 @@ export default class Store {
   constructor(data?: object) {
     // Initialize store if we have data.
     if (isObject(data)) {
-      this.set(data as KVObject)
+      this.set(data as StoreKVObject)
     }
   }
 
@@ -49,7 +44,7 @@ export default class Store {
     if ('string' === keyType) {
       return _store[key as string]
     } else if (Array.isArray(key) && key.length > 0) {
-      const results: KVObject = {}
+      const results: StoreKVObject = {}
       key.forEach(function (_key) {
         if ('string' === typeof _key) {
           if (Object.prototype.hasOwnProperty.call(_store, _key)) {
@@ -72,7 +67,7 @@ export default class Store {
    * key/value pairs to merge into the store.
    * @param value   Value to save.
    */
-  set = (key: InputKey, value?: AnyValue): void | never => {
+  set = (key: InputKey, value?: unknown): void | never => {
     const { _setSingle } = this
     if ('string' === typeof key) {
       _setSingle(key, value)
@@ -89,7 +84,7 @@ export default class Store {
    * Merge the store with the provided data.
    * @param data The data to merge with.
    */
-  merge(data: KVObject): void {
+  merge(data: StoreKVObject): void {
     Object.keys(data).forEach(key => {
       this._setSingle(key, data[key], 'silent')
     }, this)
@@ -104,7 +99,7 @@ export default class Store {
 
     return function checkOutputAndSet(key, value): void | never {
       if (isObject(key)) {
-        const obj = key as KVObject
+        const obj = key as StoreKVObject
         Object.keys(obj).forEach(function (_key) {
           checkOutputAndSet(_key, obj[_key])
         })
@@ -123,8 +118,8 @@ export default class Store {
     }
   }
 
-  clone = (): KVObject => {
-    const cloned: KVObject = {}
+  clone = (): StoreKVObject => {
+    const cloned: StoreKVObject = {}
     const { _store } = this
     Object.keys(_store).forEach(key => cloned[key] = _store[key])
     return cloned
@@ -136,7 +131,7 @@ export default class Store {
    * @param {Array}   keys  Array of keys that the function is subscribing to.
    * @param {Function} fn   Subscription function.
    */
-  subscribe = (keys: string[], fn: FunctionSubscription): void | never => {
+  subscribe = (keys: string[], fn: StoreFunctionSubscription): void | never => {
     if ('function' !== typeof fn) {
       throw new TypeError('Expect `fn` to be a function')
     }
@@ -145,11 +140,10 @@ export default class Store {
       const { _subscriptions } = this
       keys.forEach(function (key) {
         const subs = _subscriptions[key]
-        if (Array.isArray(subs)) {
-          subs.indexOf(key) === -1 && subs.push(fn)
+        if (Array.isArray(subs) && subs.indexOf(fn) === -1) {
+          subs.push(fn)
         } else {
-          _subscriptions[key] = [ fn ]
-          return
+          _subscriptions[key] = [fn]
         }
       })
     }
@@ -160,7 +154,7 @@ export default class Store {
    *
    * @param  {Function} fn The function to unsubcribe.
    */
-  unsubscribe = (fn: FunctionSubscription): void => {
+  unsubscribe = (fn: StoreFunctionSubscription): void => {
     const { _subscriptions } = this
     Object.keys(_subscriptions).forEach(function (key) {
       const subs = _subscriptions[key]
@@ -175,12 +169,12 @@ export default class Store {
  * Set a single value to an object.
  */
 
-  private _setSingle = (key: string, value: AnyValue, flag: StringSetFlag = 'loud' ): void => {
+  private _setSingle = (key: string, value: unknown, flag: SetFlag = 'loud'): void => {
     const { _store, _subscriptions } = this
 
     // Uncurry alfa action functions
-    if (typeof value === 'function' && value.alfaAction) {
-      value = value.alfaAction(this)
+    if (typeof value === 'function' && (value as ActionFunction).alfaAction) {
+      value = (value as ActionFunction).alfaAction(this)
     }
 
     // Save the value to the store.
