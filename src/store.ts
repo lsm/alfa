@@ -143,7 +143,7 @@ export default class Store {
         if (Array.isArray(subs) && subs.indexOf(fn) === -1) {
           subs.push(fn)
         } else {
-          _subscriptions[key] = [fn]
+          _subscriptions[key] = [ fn ]
         }
       })
     }

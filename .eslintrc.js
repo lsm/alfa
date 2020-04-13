@@ -55,7 +55,8 @@ module.exports = {
         allowedNames: ['self'], // Allow `const self = this`; `[]` by default
       },
     ],
-    'no-extra-parens': 'error',
+    "no-extra-parens": "off",
+    "@typescript-eslint/no-extra-parens": ["error"],
     semi: ['error', 'never'],
     // Array brackets
     'array-bracket-newline': ['error', { multiline: true }],
