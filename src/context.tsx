@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types'
 import React, { Component, ReactNode, createElement,
-  FunctionComponent, ComponentClass, ReactElement } from 'react'
+  ReactElement, ComponentType } from 'react'
 
 import Store from './store'
-import { StoreKVObject } from './types'
+import { StoreKVObject, ProviderContext } from './types'
 import { isObject } from './common'
 
 /**
@@ -20,13 +20,6 @@ type ProviderProps = {
   data?: ProviderData;
 }
 
-/**
- * Context type.
- */
-type ProviderContext = {
-  alfaStore: Store;
-}
-
 function checkProviderData(data?: object): void | never {
   if (data && !isObject(data)) {
     throw new Error('Expect `data` to be a plain object.')
@@ -34,7 +27,7 @@ function checkProviderData(data?: object): void | never {
 }
 
 /**
- * Class to make alfa-enabled component.
+ * Class to provide alfa store as context for alfa-enabled component.
  */
 export class Provider extends Component<ProviderProps> {
 
@@ -67,8 +60,6 @@ export class Provider extends Component<ProviderProps> {
     return this.props.children
   }
 }
-
-type ComponentType<P> = FunctionComponent<P> | ComponentClass<P> | string
 
 /**
  * Functional interface for creating alfa-enabled component.
