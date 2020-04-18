@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import { Component, createElement, ComponentType } from 'react'
+import { Component, createElement, ComponentType, ComponentClass } from 'react'
 
 import Store from './store'
 import { ProviderContext } from './types'
@@ -36,20 +36,23 @@ class Subscription<P> extends Component<P> {
   }
 }
 
-export function subscribe<P, IK extends string, DP = Pick<P, Exclude<keyof P, IK>>>(
+export function subscribe<P, IK extends string, OK extends string,
+  DP = Pick<P, Exclude<keyof P, IK>>,
+  IP = Pick<P, Extract<keyof P, IK>>
+>(
   WrappedComponent: ComponentType<P>,
   inputKeys: IK[],
-  outputKeys?: string[],
-): ComponentType<DP> {
+  outputKeys?: OK[],
+): ComponentClass<DP & Partial<IP>> {
   validate(WrappedComponent, inputKeys, outputKeys)
 
-  class AlfaSubscribedComponent extends Subscription<DP> {
+  class AlfaSubscribedComponent extends Subscription<DP & Partial<IP>> {
     inputKeys = inputKeys
 
     render(): React.ReactNode {
       // Render the original component with generated state as its props.
-      const props = getProps<DP, P>(this.props, inputKeys, outputKeys, this.store)
-      return createElement(WrappedComponent, props)
+      const props = getProps<DP, IP>(this.props, inputKeys, outputKeys, this.store)
+      return createElement(WrappedComponent, props as unknown as P)
     }
   }
 
