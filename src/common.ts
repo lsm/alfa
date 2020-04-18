@@ -48,12 +48,12 @@ export function isObject(val: unknown): boolean {
   return val != null && typeof val === 'object' && Array.isArray(val) === false
 }
 
-export function getProps<DirectProps, AllProps>(
+export function getProps<DirectProps, InjectedProps>(
   props: DirectProps,
   inputKeys: string[],
   outputKeys: string[] = [],
   store?: Store,
-): AllProps {
+):  DirectProps & Partial<InjectedProps> {
   if (store) {
     const injectedProps = store.get(inputKeys) as StoreKVObject
 
@@ -65,7 +65,12 @@ export function getProps<DirectProps, AllProps>(
     // Props passed in directly to constructor has lower priority than inputs
     // injected from the store.
     return { ...props, ...injectedProps } as unknown as AllProps
+    // Props passed in directly to constructor has lower priority
+    // than inputs injected from the store.
+    // Because we want to get the updated state for components
+    // when the store was updated.
+    return { ...props, ...injected }
   }
 
-  return props  as unknown as AllProps
+  return props
 }
