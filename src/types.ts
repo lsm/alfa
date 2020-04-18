@@ -16,4 +16,7 @@ export type ProviderContext = {
 // Types for action.
 
 export type ActionFunction<P, R> = (props: P) => R
-export type ActionFunctionHOF<P, R> = (store: Store) => ActionFunction<P, R>
+export type ActionFunctionHOF<P, R, IK,
+  DP = Pick<P, Exclude<keyof P, IK>>,
+  IP = Pick<P, Extract<keyof P, IK>>
+> = (store: Store) => ActionFunction<DP & Partial<IP>, R>
