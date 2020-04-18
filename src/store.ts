@@ -35,29 +35,34 @@ export default class Store {
   /**
    * Get value from store by key.
    *
-   * @param key Name of the value(s) to get.
+   * @param key Name of the value to get.
    */
-  get(key: string | string[]): unknown | never {
-    const keyType = typeof key
-    const _store = this._store
+  get(key: string): unknown {
+    return this._store[key as string]
+  }
 
-    if ('string' === keyType) {
-      return _store[key as string]
-    } else if (Array.isArray(key) && key.length > 0) {
-      const results: StoreKVObject = {}
-      key.forEach(function (_key) {
-        if ('string' === typeof _key) {
-          if (Object.prototype.hasOwnProperty.call(_store, _key)) {
-            results[_key] = _store[_key]
-          }
-        } else {
-          throw new TypeError('Type of `key` must be string, array of strings or undefined.')
-        }
-      })
-      return results
+  getAll<R>(keys: string[], outputs: string[] = []): R {
+    if (!Array.isArray(keys) || keys.length === 0) {
+      throw new TypeError('`keys` must be a non-empty array of strings.')
     }
 
-    throw new TypeError('Type of `key` must be string, array of strings or undefined.')
+    const self = this
+    const _store = this._store
+    const results: StoreKVObject = {} as StoreKVObject
+    keys.forEach(function (key) {
+      if ('string' === typeof key) {
+        if (Object.prototype.hasOwnProperty.call(_store, key)) {
+          let value = _store[key]
+          if (key === 'set') {
+            value = self.createSetWithOutputs(outputs)
+          }
+          results[key] = value
+        }
+      } else {
+        throw new TypeError('Type of `key` must be string, array of strings or undefined.')
+      }
+    })
+    return results as R
   }
 
   /**
