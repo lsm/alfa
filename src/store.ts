@@ -94,7 +94,7 @@ export default class Store {
     this._store = {}
   }
 
-  setWithOutputs = (outputs: string[]): StoreSetFunction => {
+  createSetWithOutputs = (outputs: string[]): StoreSetFunction => {
     const { set } = this
 
     return function checkOutputAndSet(key, value): void | never {
