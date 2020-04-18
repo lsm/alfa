@@ -55,16 +55,8 @@ export function getProps<DirectProps, InjectedProps>(
   store?: Store,
 ):  DirectProps & Partial<InjectedProps> {
   if (store) {
-    const injectedProps = store.get(inputKeys) as StoreKVObject
+    const injected = store.getAll<InjectedProps>(inputKeys, outputKeys)
 
-    // Need to create and inject set.
-    if (injectedProps.set) {
-      injectedProps.set = store.createSetWithOutputs(outputKeys)
-    }
-
-    // Props passed in directly to constructor has lower priority than inputs
-    // injected from the store.
-    return { ...props, ...injectedProps } as unknown as AllProps
     // Props passed in directly to constructor has lower priority
     // than inputs injected from the store.
     // Because we want to get the updated state for components
