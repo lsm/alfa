@@ -11,19 +11,22 @@ import { ProviderContext } from './types'
  * @param inputKeys        A list of store keys to inject.
  * @param outputKeys       A list of store keys this component might modify.
  */
-export function inject<P, IK extends string, DP = Pick<P, Exclude<keyof P, IK>>>(
+export function inject<P, IK extends string, OK extends string,
+  DP = Pick<P, Exclude<keyof P, IK>>,
+  IP = Pick<P, Extract<keyof P, IK>>
+>(
   WrappedComponent: ComponentType<P>,
   inputKeys: IK[],
-  outputKeys?: string[],
-): FunctionComponent<DP> {
+  outputKeys?: OK[],
+): FunctionComponent<DP & Partial<IP>> {
   validate(WrappedComponent, inputKeys, outputKeys)
 
-  function AlfaInjectedComponent(props: DP, context?: ProviderContext): ReactElement {
-    const _props = getProps<DP, P>(props, inputKeys, outputKeys, context?.alfaStore)
+  function AlfaInjectedComponent(props: DP & Partial<IP>, context?: ProviderContext): ReactElement {
+    const _props = getProps<DP, IP>(props, inputKeys, outputKeys, context?.alfaStore)
 
     if (WrappedComponent.prototype?.isReactComponent) {
       // Create an element if it's react component.
-      return createElement(WrappedComponent, _props)
+      return createElement(WrappedComponent, _props as unknown as P)
     } else {
       // Otherwise, call the original function.
       return (WrappedComponent as Function)(_props, context)
