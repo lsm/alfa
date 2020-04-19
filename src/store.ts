@@ -81,17 +81,23 @@ export default class Store {
    * key/value pairs to merge into the store.
    * @param value   Value to save.
    */
-  set = (key: StoreSetKey, value?: unknown): void | never => {
-    const { _setSingle } = this
+  set = <T, K extends keyof T, PK = Pick<T, Extract<keyof T, K>>>(
+    key: K | Partial<PK>,
+    value?: T[K],
+  ): void | never => {
+    const { _store } = this
+    let keysToDispatch: string[]
     if ('string' === typeof key) {
-      _setSingle(key, value)
+      _store[key] = value
+      keysToDispatch = [ key ]
     } else if (isObject(key)) {
-      Object.keys(key).forEach(function (_key) {
-        _setSingle(_key, key[_key])
-      })
+      Object.assign(_store, key as Partial<PK>)
+      keysToDispatch = Object.keys(key)
     } else {
       throw new TypeError('Type of `key` must be string or plain object.')
     }
+
+    this._dispatch(keysToDispatch)
   }
 
   /**
@@ -194,42 +200,44 @@ export default class Store {
   }
 
   /**
- * Set a single value to an object.
- */
-
-  private _setSingle = (key: string, value: unknown, flag: SetFlag = 'loud'): void => {
-    const { _store, _subscriptions } = this
+  * Dispatch the changed keys to call their corresponding subscription functions.
+  */
+  private _dispatch = (keys: string[]): void => {
+    const self = this
+    const { _subFns, _subMaps } = this
 
     // Uncurry alfa action functions
-    if (typeof value === 'function' && (value as ActionFunction).alfaAction) {
-      value = (value as ActionFunction).alfaAction(this)
-    }
+    // @todo implement actions
+    // if (typeof value === 'function' && (value as ActionFunction).alfaAction) {
+    //   value = (value as ActionFunction).alfaAction(this)
+    // }
 
-    // Save the value to the store.
-    _store[key] = value
+    const called: Record<number, boolean> = {}
 
-    if (flag === 'silent') {
-      return
-    }
+    keys.forEach(key => {
+      // Call subscription functions if we have any.
+      const subIds = _subMaps[key]
+      subIds.forEach(function(subId){
+        if (!called[subId]) {
+          // This subscription hasn't been called yet. Let's call it.
+          const subFn = _subFns[subId]
 
-    // Call subscribed functions if we have any.
-    const subs = _subscriptions[key]
-    if (Array.isArray(subs)) {
-      const changed = { [key]: value }
+          // Make sure the subFn is still legit at the time we are calling it since
+          // all subscription functions are actually `setState`.
+          // And previous `setState` calls could trigger unmounting a component
+          // which a later `setState` belongs to.
+          if (subFn) {
+            // Get the arguments from the store.
+            const args = self.getAll<StoreKVObject, string, string>(subFn.keys)
 
-      subs.forEach(function (subFn) {
-        // Make sure the subFn is still legit at the time we are calling it since
-        // all subscribing functions are actually `setStat`.  And previous
-        // `setState` calls could trigger unmount component which later `setState`
-        // belongs to.
+            // Call the subscription function.
+            subFn.fn(args)
+          }
 
-        // Need to make the below code reproducible by test.
-        // var _subs = subscriptions[key]
-        // if (_subs.indexOf(subFn) === -1) {
-        //   return
-        // }
-        subFn(changed)
+          // Mark the subscription as called.
+          called[subId] = true
+        }
       })
-    }
+    })
   }
 }
