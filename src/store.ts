@@ -37,32 +37,28 @@ export default class Store {
    *
    * @param key Name of the value to get.
    */
-  get(key: string): unknown {
-    return this._store[key as string]
+  get = <T, K extends keyof T>(key: K): T[K] => {
+    return (this._store as unknown as T)[key] as T[K]
   }
 
-  getAll<R>(keys: string[], outputs: string[] = []): R {
-    if (!Array.isArray(keys) || keys.length === 0) {
-      throw new TypeError('`keys` must be a non-empty array of strings.')
-    }
+  getAll<T, K extends keyof T, OK extends keyof T>(
+    keys: K[],
+    outputs?: OK[],
+  ): Record<K, T[K] | StoreSetFunction<T, OK>> {
+    const { get, createSetWithOutputs, _store } = this
+    const results = {} as Record<K, T[K] | StoreSetFunction<T, OK>>
 
-    const self = this
-    const _store = this._store
-    const results: StoreKVObject = {} as StoreKVObject
     keys.forEach(function (key) {
-      if ('string' === typeof key) {
-        if (Object.prototype.hasOwnProperty.call(_store, key)) {
-          let value = _store[key]
-          if (key === 'set') {
-            value = self.createSetWithOutputs(outputs)
-          }
-          results[key] = value
+      if (Object.prototype.hasOwnProperty.call(_store, key)) {
+        if (outputs && key === 'set') {
+          results[key] = createSetWithOutputs<T, OK>(outputs)
+        } else {
+          results[key] = get<T, K>(key)
         }
-      } else {
-        throw new TypeError('Type of `key` must be string, array of strings or undefined.')
       }
     })
-    return results as R
+
+    return results
   }
 
   /**
@@ -99,7 +95,7 @@ export default class Store {
     this._store = {}
   }
 
-  createSetWithOutputs = (outputs: string[]): StoreSetFunction => {
+  createSetWithOutputs = <T, K extends keyof T>(outputs: K[]): StoreSetFunction<T, K> => {
     const { set } = this
 
     return function checkOutputAndSet(key, value): void | never {
