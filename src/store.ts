@@ -115,24 +115,23 @@ export default class Store {
   createSetWithOutputs = <T, K extends keyof T>(outputs: K[]): StoreSetFunction<T, K> => {
     const { set } = this
 
-    return function checkOutputAndSet(key, value): void | never {
-      if (isObject(key)) {
-        const obj = key as StoreKVObject
-        Object.keys(obj).forEach(function (_key) {
-          checkOutputAndSet(_key, obj[_key])
-        })
-        return
-      }
-
-      // key is a string.
-      const str = key as string
-
-      if (Array.isArray(outputs) && outputs.indexOf(str) === -1) {
+    function check(key: K): void | never {
+      if (Array.isArray(outputs) && outputs.indexOf(key) === -1) {
         // Throw exception if the output key is not allowed.
-        throw new Error(`Output key "${str}" is not allowed. You need to define it as an output when calling inject/subscribe.`)
+        throw new Error(`Output key "${key}" is not allowed. You need to define it as an output when calling inject/subscribe.`)
+      }
+    }
+
+    return function checkOutputAndSet(output, value): void | never {
+      if (typeof output === 'string') {
+        check(output as K)
+        set<T, K>(output, value)
+      } else if (isObject(output)) {
+        Object.keys(output).forEach(check as (k: string) => void)
+        set<T, K>(output)
       }
 
-      set(str, value)
+      throw new TypeError('Expect string or plain object as first argument.')
     }
   }
 
