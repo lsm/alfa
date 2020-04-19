@@ -8,6 +8,8 @@ import { getProps, validate } from './common'
 class Subscription<P> extends Component<P> {
   store?: Store
 
+  unsubscribe?: () => void
+
   inputKeys?: string[]
 
   static contextTypes = { alfaStore: PropTypes.object }
@@ -26,13 +28,13 @@ class Subscription<P> extends Component<P> {
   componentDidMount(): void {
     // Call `setState` when subscribed keys changed.
     if (this.store && this.inputKeys) {
-      this.store.subscribe(this.inputKeys, this.setState)
+      this.unsubscribe = this.store.subscribe(this.inputKeys, this.setState)
     }
   }
 
   componentWillUnmount(): void {
-    // Unsubcribe `setState` when component is about to unmount.
-    this.store && this.store.unsubscribe(this.setState)
+    // Unsubscribe when component is about to unmount.
+    this.unsubscribe && this.unsubscribe()
   }
 }
 
