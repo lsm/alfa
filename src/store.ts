@@ -1,7 +1,10 @@
 import { isObject } from './common'
-import { ActionFunction, StoreFunctionSubscription, StoreKVObject, StoreSetFunction, StoreSetKey } from './types'
+import { StoreSubscriptionFunction, StoreKVObject, StoreSetFunction } from './types'
 
-type SetFlag = 'silent' | 'loud'
+interface SubFn {
+  fn: StoreSubscriptionFunction;
+  keys: string[];
+}
 
 /**
  * Store class - a key value store with subscription support.
@@ -13,9 +16,19 @@ export default class Store {
   private _store: StoreKVObject = {}
 
   /**
-   * Internal object which holds all the subscription functions.
+   * Internal object which holds a map between the subId to SubFn + their keys.
    */
-  private _subscriptions: { [key: string]: StoreFunctionSubscription[] } = {}
+  private _subFns: Record<number, SubFn> = {}
+
+  /**
+   * Internal object to hold the subscription key to subscription id map.
+   */
+  private _subMaps: Record<string, Set<number>> = {}
+
+  /**
+   * Store the value of the next subscription id.
+   */
+  private _nextSubId = 0
 
   /**
    * Constructor
@@ -129,24 +142,38 @@ export default class Store {
   /**
    * Call listening function when `set` was called on any of the `keys`.
    *
-   * @param {Array}   keys  Array of keys that the function is subscribing to.
+   * @param {Array}   keys  An array of keys that the function are subscribing to.
    * @param {Function} fn   Subscription function.
    */
-  subscribe = (keys: string[], fn: StoreFunctionSubscription): void | never => {
-    if ('function' !== typeof fn) {
-      throw new TypeError('Expect `fn` to be a function')
+  subscribe = (keys: string[], fn: StoreSubscriptionFunction): (() => void) => {
+    // We treat every subscribe call as a new subscrption despite the values of the function or keys.
+    // So, we store the combination of keys+fn in an object
+    // and using a number id as the unique identifier of the subscription.
+    const subId = this._nextSubId++
+    const subFn: SubFn = {
+      fn,
+      keys,
     }
 
-    if (Array.isArray(keys)) {
-      const { _subscriptions } = this
-      keys.forEach(function (key) {
-        const subs = _subscriptions[key]
-        if (Array.isArray(subs) && subs.indexOf(fn) === -1) {
-          subs.push(fn)
-        } else {
-          _subscriptions[key] = [ fn ]
-        }
-      })
+    // Add it to the subscription map.
+    this._subFns[subId] = subFn
+
+    // Now, construct the key -> SubFn[] map so we can know which functions to call
+    // once a key has changed.
+    const { _subMaps } = this
+    keys.forEach(function (key) {
+      const subs = _subMaps[key]
+      if (!subs) {
+        _subMaps[key] = new Set([ subId ])
+      } else {
+        subs.add(subId)
+      }
+    })
+
+    const { unsubscribe: unsub } = this
+
+    return function unsubscribe(): void {
+      unsub(subId)
     }
   }
 
@@ -155,15 +182,17 @@ export default class Store {
    *
    * @param  {Function} fn The function to unsubcribe.
    */
-  unsubscribe = (fn: StoreFunctionSubscription): void => {
-    const { _subscriptions } = this
-    Object.keys(_subscriptions).forEach(function (key) {
-      const subs = _subscriptions[key]
-      if (subs) {
-        // Remove the function.
-        _subscriptions[key] = subs.filter(f => f !== fn)
-      }
+  unsubscribe = (subId: number): void => {
+    const { _subMaps } = this
+
+    // First remove it from the key->subId map.
+    Object.values(_subMaps).forEach(function (subMap) {
+      // Remove the function.
+      subMap.delete(subId)
     })
+
+    // Then remove it from the subId->subFn map.
+    delete this._subFns[subId]
   }
 
   /**
