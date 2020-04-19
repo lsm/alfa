@@ -101,48 +101,6 @@ export default class Store {
   }
 
   /**
-   * Merge the store with the provided data.
-   * @param data The data to merge with.
-   */
-  merge<T>(data: T): void {
-    Object.assign(this._store, data)
-  }
-
-  reset(): void {
-    this._store = {}
-  }
-
-  createSetWithOutputs = <T, K extends keyof T>(outputs: K[]): StoreSetFunction<T, K> => {
-    const { set } = this
-
-    function check(key: K): void | never {
-      if (Array.isArray(outputs) && outputs.indexOf(key) === -1) {
-        // Throw exception if the output key is not allowed.
-        throw new Error(`Output key "${key}" is not allowed. You need to define it as an output when calling inject/subscribe.`)
-      }
-    }
-
-    return function checkOutputAndSet(output, value): void | never {
-      if (typeof output === 'string') {
-        check(output as K)
-        set<T, K>(output, value)
-      } else if (isObject(output)) {
-        Object.keys(output).forEach(check as (k: string) => void)
-        set<T, K>(output)
-      }
-
-      throw new TypeError('Expect string or plain object as first argument.')
-    }
-  }
-
-  clone = (): StoreKVObject => {
-    const cloned: StoreKVObject = {}
-    const { _store } = this
-    Object.keys(_store).forEach(key => cloned[key] = _store[key])
-    return cloned
-  }
-
-  /**
    * Call listening function when `set` was called on any of the `keys`.
    *
    * @param {Array}   keys  An array of keys that the function are subscribing to.
@@ -196,6 +154,48 @@ export default class Store {
 
     // Then remove it from the subId->subFn map.
     delete this._subFns[subId]
+  }
+
+  createSetWithOutputs = <T, K extends keyof T>(outputs: K[]): StoreSetFunction<T, K> => {
+    const { set } = this
+
+    function check(key: K): void | never {
+      if (Array.isArray(outputs) && outputs.indexOf(key) === -1) {
+        // Throw exception if the output key is not allowed.
+        throw new Error(`Output key "${key}" is not allowed. You need to define it as an output when calling inject/subscribe.`)
+      }
+    }
+
+    return function checkOutputAndSet(output, value): void | never {
+      if (typeof output === 'string') {
+        check(output as K)
+        set<T, K>(output, value)
+      } else if (isObject(output)) {
+        Object.keys(output).forEach(check as (k: string) => void)
+        set<T, K>(output)
+      }
+
+      throw new TypeError('Expect string or plain object as first argument.')
+    }
+  }
+
+  /**
+   * Merge the store with the provided data.
+   * @param data The data to merge with.
+   */
+  merge<T>(data: T): void {
+    Object.assign(this._store, data)
+  }
+
+  reset(): void {
+    this._store = {}
+  }
+
+  clone = (): StoreKVObject => {
+    const cloned: StoreKVObject = {}
+    const { _store } = this
+    Object.keys(_store).forEach(key => cloned[key] = _store[key])
+    return cloned
   }
 
   /**
