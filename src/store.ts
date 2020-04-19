@@ -98,10 +98,8 @@ export default class Store {
    * Merge the store with the provided data.
    * @param data The data to merge with.
    */
-  merge(data: StoreKVObject): void {
-    Object.keys(data).forEach(key => {
-      this._setSingle(key, data[key], 'silent')
-    }, this)
+  merge<T>(data: T): void {
+    Object.assign(this._store, data)
   }
 
   reset(): void {
