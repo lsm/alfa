@@ -3,22 +3,8 @@ import React, { Component, ReactNode, createElement,
   ReactElement, ComponentType } from 'react'
 
 import Store from './store'
-import { StoreKVObject, ProviderContext } from './types'
+import { StoreKVObject, ProviderContext, ProviderProps, ProviderData } from './types'
 import { isObject } from './common'
-
-/**
- * ProviderData. This could be several types:
- * 1. The initial data of the private store if it's an plain object.
- * 2. Nothing.  A private store will be created internally.
- */
-type ProviderData = object | undefined;
-
-/**
- * Props type of the Provider class.
- */
-type ProviderProps = {
-  data?: ProviderData;
-}
 
 function checkProviderData(data?: object): void | never {
   if (data && !isObject(data)) {

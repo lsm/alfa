@@ -1,10 +1,6 @@
 import { isObject } from './common'
-import { StoreSubscriptionFunction, StoreKVObject, StoreSetFunction } from './types'
-
-interface SubFn {
-  fn: StoreSubscriptionFunction;
-  keys: string[];
-}
+import { SubFn, StoreKVObject,
+  StoreSetFunction, StoreSubscriptionFunction } from './types'
 
 /**
  * Store class - a key value store with subscription support.
