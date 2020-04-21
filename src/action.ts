@@ -16,7 +16,7 @@ export default function action<
   return function(store: Store): ActionFunction<DP & Partial<IP>, R> {
     return function(args: DP & Partial<IP>): R {
       const injected = store.getAll<IP, IK, OK, P>(inputs, outputs)
-      const funcArgs = { ...injected, ...args } as unknown as P & {set?: StoreSetFunction<P, OK>}
+      const funcArgs = Object.assign(injected, args) as unknown as P & {set?: StoreSetFunction<P, OK>}
       const result = func(funcArgs)
 
       if (funcArgs.set && isObject(result)) {
