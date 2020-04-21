@@ -1,7 +1,7 @@
 import { ComponentType } from 'react'
 import Store from './store'
 
-export function validateInputs(name: string, inputKeys: string[]): string[] | never {
+export function validateInputs<IK>(name: string, inputKeys: IK[]): IK[] | never {
   if (Array.isArray(inputKeys) && inputKeys.every(key => typeof key === 'string')) {
     return inputKeys
   }
@@ -9,12 +9,14 @@ export function validateInputs(name: string, inputKeys: string[]): string[] | ne
   throw new TypeError(`${name}: inject/subscribe only accepts array of strings as second parameter (inputs).`)
 }
 
-export function validateOutputs(
+export function validateOutputs<IK, OK>(
   name: string,
-  inputs: string[], outputs: string[] = [], flag = 'force set',
+  inputs: IK[], outputs: OK[] = [], flag = 'force set',
 ): void | never {
   // Check if output keys are provided when `set` is present in input keys.
-  if (flag === 'force set' && inputs.indexOf('set') > -1 && (!Array.isArray(outputs) || outputs.length === 0)) {
+  if (flag === 'force set'
+    && inputs.indexOf('set' as unknown as IK) > -1
+    && (!Array.isArray(outputs) || outputs.length === 0)) {
     throw new Error(`${name}: outputKeys are required for "inject/subscribe"
     when "set" is one of values in the inputKeys.`)
   }
@@ -27,14 +29,14 @@ export function validateOutputs(
   }
 }
 
-export function validate<P>(
-  WrappedComponent: ComponentType<P> | Function,
-  inputs: string[], outputs: string[] = [],
+export function validate<T, IK, OK extends keyof T>(
+  WrappedComponent: ComponentType<T> | Function,
+  inputs: IK[], outputs: OK[] = [],
 ): void | never {
   if (typeof WrappedComponent === 'function') {
     const name = WrappedComponent.name
-    validateInputs(name, inputs)
-    validateOutputs(name, inputs, outputs)
+    validateInputs<IK>(name, inputs)
+    validateOutputs<IK, OK>(name, inputs, outputs)
   } else {
     // istanbul ignore next
     const error = `Alfa inject/subscribe only accepts
