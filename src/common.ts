@@ -55,7 +55,7 @@ export function getProps<DirectProps, InjectedProps>(
   store?: Store,
 ):  DirectProps & Partial<InjectedProps> {
   if (store) {
-    const injected = store.getAll<InjectedProps>(inputKeys, outputKeys)
+    const injected = store.getAll<IP, IK, OK, P>(inputKeys, outputKeys)
 
     // Props passed in directly to constructor has lower priority
     // than inputs injected from the store.

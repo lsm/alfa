@@ -54,17 +54,17 @@ export default class Store {
     return (this._store as unknown as T)[key] as T[K]
   }
 
-  getAll<T, K extends keyof T, OK extends keyof T>(
+  getAll<T, K extends keyof T, OK extends keyof P, P = T>(
     keys: K[],
     outputs?: OK[],
-  ): Record<K, T[K] | StoreSetFunction<T, OK>> {
+  ): Record<K, T[K] | StoreSetFunction<P, OK>> {
     const { get, createSetWithOutputs, _store } = this
-    const results = {} as Record<K, T[K] | StoreSetFunction<T, OK>>
+    const results = {} as Record<K, T[K] | StoreSetFunction<P, OK>>
 
     keys.forEach(function (key) {
       if (Object.prototype.hasOwnProperty.call(_store, key)) {
         if (outputs && key === 'set') {
-          results[key] = createSetWithOutputs<T, OK>(outputs)
+          results[key] = createSetWithOutputs<P, OK>(outputs)
         } else {
           results[key] = get<T, K>(key)
         }
