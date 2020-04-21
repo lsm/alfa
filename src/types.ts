@@ -1,10 +1,10 @@
 import Store from './store'
 
 // Types for Store.
-export type StoreKVObject = Record<string, unknown>
+export type StoreKVObject = {[k: string]: unknown}
 export type StoreSetKey = string | StoreKVObject
-export type StoreSetFunction = (key: StoreSetKey, value?: unknown) => void;
-export type StoreFunctionSubscription = (data: StoreKVObject) => void;
+export type StoreSetFunction<T, K extends keyof T, PK = Pick<T, Extract<keyof T, K>>> = (key: K | Partial<PK>, value?: T[K]) => void;
+export type StoreSubscriptionFunction = (data: StoreKVObject) => void;
 
 /**
  * Context type.
