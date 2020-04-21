@@ -53,7 +53,12 @@ export function subscribe<P, IK extends keyof IP, OK extends keyof P,
 
     render(): React.ReactNode {
       // Render the original component with generated state as its props.
-      const props = getProps<DP, IP>(this.props, inputKeys, outputKeys, this.store)
+      const props = getProps<P, IP, IK, OK, DP>(
+        this.props,
+        inputKeys,
+        outputKeys,
+        this.store,
+      )
       return createElement(WrappedComponent, props as unknown as P)
     }
   }

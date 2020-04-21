@@ -22,7 +22,12 @@ export function inject<P, IK extends keyof IP, OK extends keyof P,
   validate(WrappedComponent, inputKeys, outputKeys)
 
   function AlfaInjectedComponent(props: DP & Partial<IP>, context?: ProviderContext): ReactElement {
-    const _props = getProps<DP, IP>(props, inputKeys, outputKeys, context?.alfaStore)
+    const _props = getProps<P, IP, IK, OK, DP>(
+      props,
+      inputKeys,
+      outputKeys,
+      context?.alfaStore,
+    )
 
     if (WrappedComponent.prototype?.isReactComponent) {
       // Create an element if it's react component.

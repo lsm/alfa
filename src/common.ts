@@ -48,12 +48,12 @@ export function isObject(val: unknown): boolean {
   return val != null && typeof val === 'object' && Array.isArray(val) === false
 }
 
-export function getProps<DirectProps, InjectedProps>(
-  props: DirectProps,
-  inputKeys: string[],
-  outputKeys: string[] = [],
+export function getProps<P, IP, IK extends keyof IP, OK extends keyof P, DP>(
+  props: DP,
+  inputKeys: IK[],
+  outputKeys: OK[] = [],
   store?: Store,
-):  DirectProps & Partial<InjectedProps> {
+):  DP & Partial<IP> {
   if (store) {
     const injected = store.getAll<IP, IK, OK, P>(inputKeys, outputKeys)
 
