@@ -38,7 +38,7 @@ class Subscription<P> extends Component<P> {
   }
 }
 
-export function subscribe<P, IK extends string, OK extends string,
+export function subscribe<P, IK extends keyof IP, OK extends keyof P,
   DP = Pick<P, Exclude<keyof P, IK>>,
   IP = Pick<P, Extract<keyof P, IK>>
 >(
@@ -49,7 +49,7 @@ export function subscribe<P, IK extends string, OK extends string,
   validate(WrappedComponent, inputKeys, outputKeys)
 
   class AlfaSubscribedComponent extends Subscription<DP & Partial<IP>> {
-    inputKeys = inputKeys
+    inputKeys = inputKeys as string[]
 
     render(): React.ReactNode {
       // Render the original component with generated state as its props.

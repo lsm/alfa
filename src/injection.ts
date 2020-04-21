@@ -6,14 +6,14 @@ import { ProviderContext } from './types'
 
 /**
  * Inject HOF. It wraps a React component and inject dependencies from the
- * alfa store during rendering time.
+ * alfa store during the rendering time.
  * @param WrappedComponent The React Component that receives the injected props.
  * @param inputKeys        A list of store keys to inject.
  * @param outputKeys       A list of store keys this component might modify.
  */
-export function inject<P, IK extends string, OK extends string,
+export function inject<P, IK extends keyof IP, OK extends keyof P,
   DP = Pick<P, Exclude<keyof P, IK>>,
-  IP = Pick<P, Extract<keyof P, IK>>
+  IP = Pick<P, Extract<keyof P, IK>>,
 >(
   WrappedComponent: ComponentType<P>,
   inputKeys: IK[],
