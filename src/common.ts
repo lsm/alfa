@@ -63,7 +63,7 @@ export function getProps<P, IP, IK extends keyof IP, OK extends keyof P, DP>(
     // than inputs injected from the store.
     // Because we want to get the updated state for components
     // when the store was updated.
-    return Object.assign(props, injected)
+    return Object.assign({}, props, injected)
   }
 
   return props
