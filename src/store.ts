@@ -59,11 +59,9 @@ export default class Store {
 
     keys.forEach(function (key) {
       if (Object.prototype.hasOwnProperty.call(_store, key)) {
-        if (outputs && key === 'set') {
-          results[key] = createSetWithOutputs<P, OK>(outputs)
-        } else {
-          results[key] = get<T, K>(key)
-        }
+        results[key] = get<T, K>(key)
+      } else if (outputs && key === 'set') {
+        results[key] = createSetWithOutputs<P, OK>(outputs)
       }
     })
 
