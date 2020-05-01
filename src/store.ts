@@ -212,6 +212,12 @@ export default class Store {
     keys.forEach(key => {
       // Call subscription functions if we have any.
       const subIds = _subMaps[key]
+
+      // Call subscription functions if we have any.
+      if (!Array.isArray(subIds)) {
+        return
+      }
+
       subIds.forEach(function(subId){
         if (!called[subId]) {
           // This subscription hasn't been called yet. Let's call it.
