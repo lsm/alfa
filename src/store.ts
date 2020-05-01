@@ -167,9 +167,9 @@ export default class Store {
       } else if (isObject(output)) {
         Object.keys(output).forEach(check as (k: string) => void)
         set<T, K>(output)
+      } else {
+        throw new TypeError('Expect string or plain object as first argument.')
       }
-
-      throw new TypeError('Expect string or plain object as first argument.')
     }
   }
 
@@ -208,7 +208,6 @@ export default class Store {
     const called: Record<number, boolean> = {}
 
     keys.forEach(key => {
-      // Call subscription functions if we have any.
       const subIds = _subMaps[key]
 
       // Call subscription functions if we have any.
