@@ -1,10 +1,16 @@
 {
   "presets": [
-    ["@babel/env", {
-      "targets": {
-        "browsers": ["> 0.25%", "not dead"]
+    [
+      "@babel/env",
+      {
+        "targets": {
+          "browsers": [
+            "> 0.25%",
+            "not dead"
+          ]
+        }
       }
-    }],
+    ],
     "@babel/react",
     "@babel/typescript"
   ],
@@ -14,7 +20,7 @@
   ],
   "env": {
     "development": {
-      "sourceMaps": "inline"
+      "sourceMaps": true
     }
   }
 }
