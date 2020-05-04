@@ -29,7 +29,7 @@ export function validateOutputs<IK, OK>(
   }
 }
 
-export function validate<T, IK, OK extends keyof T>(
+export function validate<T, IK, OK>(
   WrappedComponent: ComponentType<T> | Function,
   inputs: IK[], outputs: OK[] = [],
 ): void | never {
@@ -50,14 +50,16 @@ export function isObject(val: unknown): boolean {
   return val != null && typeof val === 'object' && Array.isArray(val) === false
 }
 
-export function getProps<P, IP, IK extends keyof IP, OK extends keyof P, DP>(
+export function getProps<P, IP, OP,
+  IK extends keyof P, OK extends keyof OP, DP
+>(
   props: DP,
   inputKeys: IK[],
   outputKeys: OK[] = [],
   store?: Store,
 ):  DP & Partial<IP> {
   if (store) {
-    const injected = store.getAll<IP, IK, OK, P>(inputKeys, outputKeys)
+    const injected = store.getAll<P, OP, IK, OK>(inputKeys, outputKeys)
 
     // Props passed in directly to constructor has lower priority
     // than inputs injected from the store.

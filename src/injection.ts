@@ -11,7 +11,9 @@ import { ProviderContext } from './types'
  * @param inputKeys        A list of store keys to inject.
  * @param outputKeys       A list of store keys this component might modify.
  */
-export function inject<P, IK extends keyof IP, OK extends keyof P,
+export function inject<P, OP = Omit<P, 'set'>,
+  IK extends keyof P = keyof P,
+  OK extends keyof OP = keyof OP,
   DP = Pick<P, Exclude<keyof P, IK>>,
   IP = Pick<P, Extract<keyof P, IK>>,
 >(
@@ -22,7 +24,7 @@ export function inject<P, IK extends keyof IP, OK extends keyof P,
   validate(WrappedComponent, inputKeys, outputKeys)
 
   function AlfaInjectedComponent(props: DP & Partial<IP>, context?: ProviderContext): ReactElement {
-    const _props = getProps<P, IP, IK, OK, DP>(
+    const _props = getProps<P, IP, OP, IK, OK, DP>(
       props,
       inputKeys,
       outputKeys,

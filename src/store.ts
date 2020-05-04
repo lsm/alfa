@@ -50,18 +50,18 @@ export default class Store {
     return (this._store as unknown as T)[key] as T[K]
   }
 
-  getAll<T, K extends keyof T, OK extends keyof P, P = T>(
+  getAll<IP, OP, K extends keyof IP, OK extends keyof OP>(
     keys: K[],
     outputs?: OK[],
-  ): Record<K, T[K] | StoreSetFunction<P, OK>> {
+  ): Record<K, IP[K] | StoreSetFunction<OP, OK>> {
     const { get, createSetWithOutputs, _store } = this
-    const results = {} as Record<K, T[K] | StoreSetFunction<P, OK>>
+    const results = {} as Record<K, IP[K] | StoreSetFunction<OP, OK>>
 
     keys.forEach(function (key) {
       if (Object.prototype.hasOwnProperty.call(_store, key)) {
-        results[key] = get<T, K>(key)
+        results[key] = get<IP, K>(key)
       } else if (outputs && key === 'set') {
-        results[key] = createSetWithOutputs<P, OK>(outputs)
+        results[key] = createSetWithOutputs<OP, OK>(outputs)
       }
     })
 
@@ -76,7 +76,7 @@ export default class Store {
    * @param value   Value to save.
    */
   set = <T, K extends keyof T, PK = Pick<T, Extract<keyof T, K>>>(
-    key: K | Partial<PK>,
+    key: keyof K | Partial<PK>,
     value?: T[K],
   ): void | never => {
     const { _store } = this
@@ -150,7 +150,7 @@ export default class Store {
     delete this._subFns[subId]
   }
 
-  createSetWithOutputs = <T, K extends keyof T>(outputs: K[]): StoreSetFunction<T, K> => {
+  createSetWithOutputs = <T, K extends keyof T = keyof T>(outputs: K[]): StoreSetFunction<T, K> => {
     const { set } = this
 
     function check(key: K): void | never {
@@ -163,10 +163,10 @@ export default class Store {
     return function checkOutputAndSet(output, value): void | never {
       if (typeof output === 'string') {
         check(output as K)
-        set<T, K>(output, value)
+        set(output, value)
       } else if (isObject(output)) {
         Object.keys(output).forEach(check as (k: string) => void)
-        set<T, K>(output)
+        set(output)
       } else {
         throw new TypeError('Expect string or plain object as first argument.')
       }
@@ -226,7 +226,7 @@ export default class Store {
           // which a later `setState` belongs to.
           if (subFn) {
             // Get the arguments from the store.
-            const args = self.getAll<StoreKVObject, string, string>(subFn.keys)
+            const args = self.getAll<StoreKVObject, StoreKVObject, string, string>(subFn.keys)
 
             // Call the subscription function.
             subFn.fn(args)

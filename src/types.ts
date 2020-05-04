@@ -5,8 +5,8 @@ export interface StoreKVObject {
   [k: string]: unknown;
 }
 export type StoreSetKey = string | StoreKVObject
-export interface StoreSetFunction<T, K extends keyof T, PK = Pick<T, Extract<keyof T, K>>> {
-  (key: K | Partial<PK>, value?: T[K]): void;
+export interface StoreSetFunction<T, K extends keyof T = keyof T, PK = Pick<T, Extract<T, K>>> {
+  (key: keyof K | Partial<PK>, value?: T[K]): void;
 }
 export interface StoreSubscriptionFunction {
   (data: StoreKVObject): void;
