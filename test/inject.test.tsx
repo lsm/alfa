@@ -10,6 +10,8 @@ import { StoreSetFunction } from '../src/types'
 configure({ adapter: new Adapter() })
 
 test('incorrect inject inputs', t => {
+  t.plan(6)
+
   /**
    * Test invalidate input
    */
@@ -37,8 +39,6 @@ test('incorrect inject inputs', t => {
   t.throws(() => {
     inject(function() { return false }, [ 'title' ], 123)
   }, TypeError)
-
-  t.end()
 })
 
 test('inject react component', t => {
@@ -107,4 +107,61 @@ test('inject react component', t => {
 
     wrapper.unmount()
   })
+})
+
+test('inject or subscribe set without output keys should throw', t => {
+  t.plan(1)
+
+  const FnComponent: React.FC = function (): JSX.Element {
+    return <p/>
+  }
+
+  t.throws(() => {
+    inject(FnComponent, [ 'set' ])
+  }, 'inject "set" without output key')
+})
+
+test('Call set without predefined output should throw', t => {
+  t.plan(3)
+
+  type OutputProps = {
+    predefinedOutput: string;
+  }
+  type Props = {
+    set: StoreSetFunction<OutputProps>;
+  }
+
+  class ReactComponent extends Component<Props> {
+    componentDidMount(): void {
+      this.props.set('predefinedOutput', 'the value')
+      this.props.set({ predefinedOutput: 'the value' })
+
+      t.throws(() => {
+        this.props.set('invaildOutput', 'the value which does not matter')
+      }, 'Output key "invaildOutput" is not allowed')
+      t.throws(() => {
+        this.props.set({ anotherInvaildOutput: 'the value which does not matter' })
+      }, 'Output key "anotherInvaildOutput" is not allowed')
+      t.throws(() => {
+        this.props.set({
+          predefinedOutput: 'new value',
+          someInvaildOutput: 'the value which does not matter',
+        })
+      }, 'Output key "someInvaildOutput" is not allowed')
+    }
+
+    render(): React.ReactNode {
+      return <div></div>
+    }
+  }
+
+  const InjectedReactComponent = inject<Props, OutputProps>(
+    ReactComponent,
+    [ 'set' ],
+    [ 'predefinedOutput' ],
+  )
+  const App = provide(InjectedReactComponent, {})
+  const wrapper = mount(<App />)
+
+  wrapper.unmount()
 })
