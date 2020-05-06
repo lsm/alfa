@@ -1,8 +1,4 @@
-if ('unit' === process.env.TEST_ENV) {
-  setup()
-}
-
-var initialized = false
+let initialized = false
 
 function setup() {
   if (initialized) {
@@ -25,8 +21,10 @@ function setup() {
 
   global.window = window
   global.document = window.document
-  global.navigator = {
-    userAgent: 'node.js'
-  }
+  global.navigator = { userAgent: 'node.js' }
   copyProps(window, global)
+}
+
+if ('unit' === process.env.TEST_ENV) {
+  setup()
 }
