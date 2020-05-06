@@ -18,7 +18,7 @@
     "preserveConstEnums": true,
     "removeComments": true,
     "skipLibCheck": false,
-    "sourceMap": true,
+    "inlineSourceMap": true,
     "strict": true,
     "target": "es5"
   },

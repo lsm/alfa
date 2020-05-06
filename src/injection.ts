@@ -31,7 +31,7 @@ export function inject<P, OP = Omit<P, 'set'>,
       context?.alfaStore,
     )
 
-    if (WrappedComponent.prototype?.isReactComponent) {
+    if (WrappedComponent.prototype && WrappedComponent.prototype.isReactComponent) {
       // Create an element if it's react component.
       return createElement(WrappedComponent, _props as unknown as P)
     } else {
