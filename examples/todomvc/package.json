@@ -8,7 +8,7 @@
     "enzyme": "3.7.0",
     "eslint": "5.7.0",
     "react-addons-test-utils": "15.6.2",
-    "react-scripts": "2.0.4"
+    "react-scripts": "5.0.1"
   },
   "dependencies": {
     "alfa": "0.6.x",
