@@ -5,7 +5,7 @@
   "devDependencies": {
     "babel-plugin-transform-class-properties": "6.24.1",
     "babel-plugin-transform-object-rest-spread": "6.26.0",
-    "react-scripts": "2.0.4"
+    "react-scripts": "5.0.1"
   },
   "dependencies": {
     "alfa": "0.6.x",
